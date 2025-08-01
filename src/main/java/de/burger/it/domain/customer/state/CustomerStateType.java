@@ -1,15 +1,44 @@
 package de.burger.it.domain.customer.state;
 
+/**
+ * Enum representing the possible states of a customer.
+ * Each state type can be converted to its corresponding state object.
+ */
 public enum CustomerStateType {
+    /**
+     * Represents a newly created customer.
+     */
     CREATE {
-        public CustomerState toState() { return new CreatedState(); }
+        @Override
+        public CustomerState toState() { 
+            return new CreatedState(); 
+        }
     },
+    
+    /**
+     * Represents an active customer.
+     */
     ACTIVE {
-        public CustomerState toState() { return new ActivetedState(); }
+        @Override
+        public CustomerState toState() { 
+            return new ActivatedState(); 
+        }
     },
+    
+    /**
+     * Represents a suspended customer.
+     */
     SUSPENDED {
-        public CustomerState toState() { return new SuspendedState(); }
+        @Override
+        public CustomerState toState() { 
+            return new SuspendedState(); 
+        }
     };
 
+    /**
+     * Converts this state type to its corresponding state object.
+     *
+     * @return the state object corresponding to this state type
+     */
     public abstract CustomerState toState();
 }

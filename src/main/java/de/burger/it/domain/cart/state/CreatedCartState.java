@@ -1,10 +1,16 @@
 package de.burger.it.domain.cart.state;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * Represents the created state of a cart.
+ * This is the initial state when a cart is first created.
+ */
 @ToString
+@NoArgsConstructor
 public class CreatedCartState implements CartState {
-
+    
     @Override
     public CartState create() {
         return this;

@@ -1,6 +1,16 @@
 package de.burger.it.domain.order.state;
 
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+/**
+ * Represents the delivered state of an order.
+ * This state indicates that the order has been delivered to the customer.
+ */
+@ToString
+@NoArgsConstructor
 public class DeliveredState implements OrderState {
+    
     @Override
     public OrderState pay() {
         throw new IllegalStateException("Already paid");
@@ -18,6 +28,6 @@ public class DeliveredState implements OrderState {
 
     @Override
     public OrderStateType code() {
-        return  OrderStateType.DELIVERED;
+        return OrderStateType.DELIVERED;
     }
 }

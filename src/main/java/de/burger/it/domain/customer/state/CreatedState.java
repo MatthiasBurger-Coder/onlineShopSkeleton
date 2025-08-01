@@ -1,9 +1,16 @@
 package de.burger.it.domain.customer.state;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * Represents the created state of a customer.
+ * This is the initial state when a customer is first created in the system.
+ */
 @ToString
-public class CreatedState implements CustomerState{
+@NoArgsConstructor
+public class CreatedState implements CustomerState {
+    
     @Override
     public CustomerState create() {
         return this;
@@ -16,7 +23,7 @@ public class CreatedState implements CustomerState{
 
     @Override
     public CustomerState active() {
-        return new ActivetedState();
+        return new ActivatedState();
     }
 
     @Override
