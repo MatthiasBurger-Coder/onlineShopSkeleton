@@ -24,17 +24,26 @@ public class CustomerService {
     }
 
     public void createNewCustomer(Customer customer) {
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
+        }
         customerStatusAssignmentPort.assign(customer, CustomerStateType.CREATE);
         publisher.publishEvent(new CustomerCreateEvent(customer));
     }
 
     public void suspendCustomer(Customer customer) {
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
+        }
         publisher.publishEvent(new CustomerSuspendEvent(customer));
         var cartList = cartService.findAllCartByCustomer(customer);
         cartList.forEach(cart -> cartService.close(cart, customer));
     }
 
     public CustomerState getState(Customer customer) {
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
+        }
         return customerStatusAssignmentPort.findBy(customer.id()).toState();
     }
 }

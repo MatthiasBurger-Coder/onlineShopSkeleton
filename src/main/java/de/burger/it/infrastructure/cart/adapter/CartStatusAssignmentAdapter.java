@@ -19,6 +19,12 @@ public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
 
     @Override
     public void assign(Cart cart, CartStateType newState) {
+        if (cart == null) {
+            throw new IllegalArgumentException("Cart cannot be null");
+        }
+        if (newState == null) {
+            throw new IllegalArgumentException("State cannot be null");
+        }
         var assignment = new CartStatusAssignment(
                 cart.id(),
                 newState,
@@ -30,6 +36,9 @@ public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
 
     @Override
     public CartStateType findBy(UUID cartId) {
+        if (cartId == null) {
+            throw new IllegalArgumentException("Cart ID cannot be null");
+        }
         return store.get(cartId).state();
     }
 }

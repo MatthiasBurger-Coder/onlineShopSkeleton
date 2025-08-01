@@ -17,11 +17,20 @@ public class CustomerStatusAssignmentAdapter implements CustomerStatusAssignment
 
     @Override
     public CustomerStateType findBy(UUID customerId) {
+        if (customerId == null) {
+            throw new IllegalArgumentException("Customer ID cannot be null");
+        }
         return store.get(customerId).state();
     }
 
     @Override
     public void assign(Customer customer, CustomerStateType newState) {
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
+        }
+        if (newState == null) {
+            throw new IllegalArgumentException("State cannot be null");
+        }
         var assignment = new CustomerStatusAssignment(
                 customer.id(),
                 newState

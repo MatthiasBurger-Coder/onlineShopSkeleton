@@ -17,11 +17,20 @@ public class OrderStatusAssignmentAdapter implements OrderStatusAssignmentPort {
 
     @Override
     public OrderStateType findBy(UUID orderId) {
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order ID cannot be null");
+        }
         return store.get(orderId).state();
     }
 
     @Override
     public void assign(Order order, OrderStateType newState) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null");
+        }
+        if (newState == null) {
+            throw new IllegalArgumentException("State cannot be null");
+        }
         var assignment = new OrderStatusAssignment(
                 order.id(),
                 newState

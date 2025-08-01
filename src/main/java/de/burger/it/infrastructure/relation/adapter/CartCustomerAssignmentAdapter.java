@@ -17,6 +17,12 @@ public class CartCustomerAssignmentAdapter implements CartCustomerAssignmentPort
 
     @Override
     public void assign(Cart cart, Customer customer) {
+        if (cart == null) {
+            throw new IllegalArgumentException("Cart cannot be null");
+        }
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
+        }
         var assignment = new CartCustomerAssignment(
                 cart.id(),
                 customer.id()
@@ -26,6 +32,9 @@ public class CartCustomerAssignmentAdapter implements CartCustomerAssignmentPort
 
     @Override
     public List<CartCustomerAssignment> findAllByCard(UUID cartId) {
+        if (cartId == null) {
+            throw new IllegalArgumentException("Cart ID cannot be null");
+        }
         return store.values().stream()
                 .flatMap(List::stream)
                 .filter(a -> a.cartId().equals(cartId))
@@ -34,6 +43,9 @@ public class CartCustomerAssignmentAdapter implements CartCustomerAssignmentPort
 
     @Override
     public List<CartCustomerAssignment> findAllByCustomer(UUID customerId) {
+        if (customerId == null) {
+            throw new IllegalArgumentException("Customer ID cannot be null");
+        }
         return store.getOrDefault(customerId, Collections.emptyList());
     }
 }
