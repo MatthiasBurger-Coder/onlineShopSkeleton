@@ -17,7 +17,8 @@ public class CustomerProcessConfig {
                                                                               OnCustomerCreateSaveRepository saveRepository,
                                                                               OnCustomerCreateNewCart createNewCart) {
         return new ProcessPipeline<CustomerCreateEvent>()
-                .append(assignActive::execute).append(saveRepository::execute)
+                .append(assignActive::execute)
+                .append(saveRepository::execute)
                 .append(createNewCart::execute);
     }
 

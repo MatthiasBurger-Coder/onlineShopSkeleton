@@ -1,39 +1,39 @@
 package de.burger.it.application.cart.listener;
 
-import de.burger.it.application.dispatcher.StateEventDispatcher;
+import de.burger.it.application.process.ProcessPipeline;
 import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
-import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
-import de.burger.it.domain.cart.state.CartStateType;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CartEventListener {
 
-    private final StateEventDispatcher dispatcher;
-    private final CartStatusAssignmentPort cartStatusAssignmentPort;
+    private final ProcessPipeline<CartCreateEvent> cartCreatePipeline;
+    private final ProcessPipeline<CartActiveEvent> cartActivePipeline;
+    private final ProcessPipeline<CartCloseEvent> cartClosePipeline;
 
-    public CartEventListener(StateEventDispatcher dispatcher, CartStatusAssignmentPort cartStatusAssignmentPort) {
-        this.dispatcher = dispatcher;
-        this.cartStatusAssignmentPort = cartStatusAssignmentPort;
+    public CartEventListener(ProcessPipeline<CartCreateEvent> cartCreatePipeline,
+                             ProcessPipeline<CartActiveEvent> cartActivePipeline,
+                             ProcessPipeline<CartCloseEvent> cartClosePipeline) {
+        this.cartCreatePipeline = cartCreatePipeline;
+        this.cartActivePipeline = cartActivePipeline;
+        this.cartClosePipeline = cartClosePipeline;
     }
 
     @EventListener
     public void handleCartCreated(CartCreateEvent event) {
-        dispatcher.dispatch(CartStateType.CREATED, event);
+        cartCreatePipeline.execute(event);
     }
 
     @EventListener
     public void handleCartClose(CartCloseEvent event) {
-        var assingment = cartStatusAssignmentPort.findBy(event.cart().id());
-        dispatcher.dispatch(assingment, event);
+        cartClosePipeline.execute(event);
     }
 
     @EventListener
     public void handleCartActivate(CartActiveEvent event) {
-        var assingment = cartStatusAssignmentPort.findBy(event.cart().id());
-        dispatcher.dispatch(assingment, event);
+        cartActivePipeline.execute(event);
     }
 }
