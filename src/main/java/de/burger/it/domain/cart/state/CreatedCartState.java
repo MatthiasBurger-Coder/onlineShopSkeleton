@@ -1,9 +1,7 @@
 package de.burger.it.domain.cart.state;
 
 import lombok.ToString;
-import org.springframework.stereotype.Component;
 
-@Component
 @ToString
 public class CreatedCartState implements CartState {
 

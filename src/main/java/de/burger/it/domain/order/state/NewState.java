@@ -1,8 +1,5 @@
 package de.burger.it.domain.order.state;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class NewState implements OrderState {
     public OrderState pay() {
         return new PaidState();

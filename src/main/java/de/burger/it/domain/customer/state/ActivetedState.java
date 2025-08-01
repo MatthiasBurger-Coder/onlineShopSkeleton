@@ -1,9 +1,7 @@
 package de.burger.it.domain.customer.state;
 
 import lombok.ToString;
-import org.springframework.stereotype.Component;
 
-@Component
 @ToString
 public class ActivetedState implements CustomerState {
     @Override

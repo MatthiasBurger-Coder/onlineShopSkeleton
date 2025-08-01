@@ -1,6 +1,6 @@
 package de.burger.it.domain.order.state;
 
-public class DelieveredState implements OrderState {
+public class DeliveredState implements OrderState {
     @Override
     public OrderState pay() {
         throw new IllegalStateException("Already paid");

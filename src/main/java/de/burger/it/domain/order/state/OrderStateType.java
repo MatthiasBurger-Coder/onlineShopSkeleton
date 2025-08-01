@@ -22,7 +22,7 @@ public enum OrderStateType {
     DELIVERED {
         @Override
         public OrderState toState() {
-            return new DelieveredState();
+            return new DeliveredState();
         }
     };
 

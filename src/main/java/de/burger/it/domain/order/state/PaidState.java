@@ -1,8 +1,5 @@
 package de.burger.it.domain.order.state;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class PaidState implements OrderState {
     public OrderState pay() {
         return this;
@@ -12,7 +9,7 @@ public class PaidState implements OrderState {
         throw new IllegalStateException("Can't cancel paid order");
     }
 
-    public OrderState deliver() { return new DelieveredState(); }
+    public OrderState deliver() { return new DeliveredState(); }
 
     public OrderStateType code() {
         return OrderStateType.PAID;
