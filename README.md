@@ -12,14 +12,16 @@ A sophisticated state management system for e-commerce applications, demonstrati
 
 ## Architecture Overview
 
-The project follows a clean architecture approach with distinct layers:
+The project implements a hexagonal architecture (also known as ports and adapters architecture) with clear separation of concerns:
 
 ### Domain Layer
-Contains the core business logic, entities, and business rules:
-- **Models**: Simple, immutable domain entities (Cart, Customer, Order)
+The core of the application, containing business logic, entities, and business rules:
+- **Models**: Simple, immutable domain entities (Cart, Customer, Order) implemented as Java records
 - **States**: State classes implementing the State pattern for each entity
 - **Events**: Event classes representing state change triggers
-- **Ports**: Interfaces defining the required infrastructure capabilities
+- **Ports**: Interfaces (with "Port" suffix) defining the required capabilities from outside the domain
+
+The domain layer is completely independent of external frameworks and infrastructure details, following the dependency inversion principle.
 
 ### Application Layer
 Orchestrates the flow of data and coordinates domain operations:
@@ -30,8 +32,10 @@ Orchestrates the flow of data and coordinates domain operations:
 
 ### Infrastructure Layer
 Provides implementations for the domain ports:
+- **Adapters**: Implementations of domain ports (with "Adapter" suffix)
 - **Repositories**: In-memory implementations of data storage
-- **Adapters**: Implementations of domain ports
+
+All dependencies flow inward toward the domain layer, ensuring that the domain remains isolated from external concerns.
 
 ## State Transitions
 
@@ -108,37 +112,60 @@ src/
 │           └── burger/
 │               └── it/
 │                   ├── Main.java
-│                   ├── adapter/
-│                   │   ├── cart/
-│                   │   ├── customer/
-│                   │   ├── order/
-│                   │   └── relation/
 │                   ├── application/
 │                   │   ├── cart/
+│                   │   │   ├── handler/
+│                   │   │   ├── listener/
+│                   │   │   └── service/
 │                   │   ├── config/
 │                   │   ├── customer/
+│                   │   │   ├── handler/
+│                   │   │   ├── listener/
+│                   │   │   └── service/
 │                   │   ├── dispatcher/
 │                   │   ├── order/
+│                   │   │   └── service/
 │                   │   └── process/
 │                   ├── domain/
 │                   │   ├── cart/
+│                   │   │   ├── event/
+│                   │   │   ├── model/
+│                   │   │   ├── port/
+│                   │   │   └── state/
 │                   │   ├── customer/
+│                   │   │   ├── event/
+│                   │   │   ├── model/
+│                   │   │   ├── port/
+│                   │   │   └── state/
 │                   │   ├── order/
+│                   │   │   ├── model/
+│                   │   │   ├── port/
+│                   │   │   └── state/
 │                   │   └── relation/
+│                   │       ├── model/
+│                   │       └── port/
 │                   └── infrastructure/
 │                       ├── cart/
+│                       │   ├── adapter/
+│                       │   └── model/
 │                       ├── customer/
+│                       │   ├── adapter/
+│                       │   ├── model/
+│                       │   └── port/
 │                       ├── order/
+│                       │   └── adapter/
 │                       └── relation/
+│                           ├── adapter/
+│                           └── model/
 ```
 
 ## Design Patterns Used
 
-- **State Pattern**: For managing entity states and transitions
-- **Observer Pattern**: For event notification and handling
-- **Dependency Injection**: For loose coupling between components
-- **Adapter Pattern**: For adapting domain ports to infrastructure implementations
-- **Factory Method**: For creating state objects
+- **State Pattern**: For managing entity states and transitions (e.g., CartState, CustomerState, OrderState)
+- **Observer Pattern**: For event notification and handling through the event-driven architecture
+- **Dependency Injection**: For loose coupling between components using Spring Framework
+- **Ports and Adapters Pattern**: Core of the hexagonal architecture, with ports defined in the domain and implemented by adapters in the infrastructure layer
+- **Factory Method**: For creating state objects and handling state transitions
 
 ## Contributing
 
