@@ -3,71 +3,271 @@ package de.burger.it;
 import de.burger.it.application.cart.service.CartService;
 import de.burger.it.application.customer.service.CustomerService;
 import de.burger.it.application.config.AppConfig;
+import de.burger.it.application.order.service.OrderService;
+import de.burger.it.domain.cart.model.Cart;
 import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.order.model.Order;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.UUID;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-
+        // Initialize Spring context
         var context = new AnnotationConfigApplicationContext(AppConfig.class);
-
-        var customer1Service = context.getBean(CustomerService.class);
-        var customer1 = new Customer(UUID.randomUUID(), "Matthias", "<EMAIL>");
-        customer1Service.createNewCustomer(customer1);
-        var customer1State = customer1Service.getState(customer1);
-
-        var customer2Service = context.getBean(CustomerService.class);
-        var customer2 = new Customer(UUID.randomUUID(), "Matthias", "<zweinstein>");
-        customer2Service.createNewCustomer(customer2);
-        var customer2State = customer2Service.getState(customer2);
-
-
-        var cartService1 = context.getBean(CartService.class);
-        cartService1.create(customer1);
-        var cartService2 = context.getBean(CartService.class);
-
-        var listOfAllCarts1 = cartService1.findAllCartByCustomer(customer1);
-        var listOfAllCarts2 = cartService2.findAllCartByCustomer(customer2);
-
-        var listOfAllCartStats1 = listOfAllCarts1.stream().map(cartService1::getState).toList();
-        var listOfAllCartStats2 = listOfAllCarts2.stream().map(cartService2::getState).toList();
-
-        System.out.println(customer1);
-        System.out.println(customer1State);
-        System.out.println(listOfAllCarts1);
-        System.out.println(listOfAllCartStats1);
-        System.out.println("-------------");
-
-        System.out.println(customer2);
-        System.out.println(customer2State);
-        System.out.println(listOfAllCarts2);
-        System.out.println(listOfAllCartStats2);
-        System.out.println("-------------");
-
-        customer1Service.suspendCustomer(customer1);
-        customer1State = customer1Service.getState(customer1);
-        listOfAllCarts1 = cartService1.findAllCartByCustomer(customer1);
-        listOfAllCartStats1 = listOfAllCarts1.stream().map(cartService1::getState).toList();
-
-        System.out.println(customer1);
-        System.out.println(customer1State);
-        System.out.println(listOfAllCarts1);
-        System.out.println(listOfAllCartStats1);
-        System.out.println("-------------");
-
-        cartService1.activate(listOfAllCarts1.getFirst(), customer1);
-        customer1State = customer1Service.getState(customer1);
-        listOfAllCarts1 = cartService1.findAllCartByCustomer(customer1);
-        listOfAllCartStats1 = listOfAllCarts1.stream().map(cartService1::getState).toList();
-
-        System.out.println(customer1);
-        System.out.println(customer1State);
-        System.out.println(listOfAllCarts1);
-        System.out.println(listOfAllCartStats1);
-
+        
+        // Get services
+        var customerService = context.getBean(CustomerService.class);
+        var cartService = context.getBean(CartService.class);
+        var orderService = context.getBean(OrderService.class);
+        
+        System.out.println("==========================================================");
+        System.out.println("                CUSTOMER WORKFLOWS                        ");
+        System.out.println("==========================================================");
+        
+        // 1. Customer Creation Workflow
+        System.out.println("\n--- 1. CUSTOMER CREATION WORKFLOW ---");
+        Customer customer1 = runCustomerCreationWorkflow(customerService, cartService);
+        
+        // 2. Customer Suspension Workflow
+        System.out.println("\n--- 2. CUSTOMER SUSPENSION WORKFLOW ---");
+        runCustomerSuspensionWorkflow(customerService, cartService, customer1);
+        
+        System.out.println("\n==========================================================");
+        System.out.println("                  CART WORKFLOWS                          ");
+        System.out.println("==========================================================");
+        
+        // 3. Cart Creation Workflow
+        System.out.println("\n--- 3. CART CREATION WORKFLOW ---");
+        Cart cart = runCartCreationWorkflow(customerService, cartService);
+        
+        // 4. Cart Activation Workflow
+        System.out.println("\n--- 4. CART ACTIVATION WORKFLOW ---");
+        runCartActivationWorkflow(customerService, cartService, cart);
+        
+        // 5. Cart Closure Workflow
+        System.out.println("\n--- 5. CART CLOSURE WORKFLOW ---");
+        runCartClosureWorkflow(customerService, cartService, cart);
+        
+        System.out.println("\n==========================================================");
+        System.out.println("                  ORDER WORKFLOWS                         ");
+        System.out.println("==========================================================");
+        
+        // 6. Order Creation Workflow
+        System.out.println("\n--- 6. ORDER CREATION WORKFLOW ---");
+        Order order = runOrderCreationWorkflow(customerService, cartService, orderService);
+        
+        // 7. Order Payment Workflow
+        System.out.println("\n--- 7. ORDER PAYMENT WORKFLOW ---");
+        runOrderPaymentWorkflow(orderService, order);
+        
+        // 8. Order Delivery Workflow
+        System.out.println("\n--- 8. ORDER DELIVERY WORKFLOW ---");
+        runOrderDeliveryWorkflow(orderService, order);
+        
+        // 9. Order Cancellation Workflow
+        System.out.println("\n--- 9. ORDER CANCELLATION WORKFLOW ---");
+        Order orderToCancel = runOrderCancellationWorkflow(customerService, cartService, orderService);
+    }
+    
+    /**
+     * Demonstrates the customer creation workflow
+     */
+    private static Customer runCustomerCreationWorkflow(CustomerService customerService, CartService cartService) {
+        // Create a new customer
+        var customer = new Customer(UUID.randomUUID(), "Matthias", "customer@example.com");
+        customerService.createNewCustomer(customer);
+        var customerState = customerService.getState(customer);
+        
+        // Display customer information
+        System.out.println("Created customer: " + customer);
+        System.out.println("Customer state: " + customerState);
+        
+        // Display customer's carts
+        var carts = cartService.findAllCartByCustomer(customer);
+        var cartStates = carts.stream().map(cartService::getState).toList();
+        System.out.println("Customer carts: " + carts);
+        System.out.println("Cart states: " + cartStates);
+        
+        return customer;
+    }
+    
+    /**
+     * Demonstrates the customer suspension workflow
+     */
+    private static void runCustomerSuspensionWorkflow(CustomerService customerService, CartService cartService, Customer customer) {
+        // Suspend the customer
+        customerService.suspendCustomer(customer);
+        var customerState = customerService.getState(customer);
+        
+        // Display customer information after suspension
+        System.out.println("Suspended customer: " + customer);
+        System.out.println("Customer state after suspension: " + customerState);
+        
+        // Display customer's carts after suspension
+        var carts = cartService.findAllCartByCustomer(customer);
+        var cartStates = carts.stream().map(cartService::getState).toList();
+        System.out.println("Customer carts after suspension: " + carts);
+        System.out.println("Cart states after suspension: " + cartStates);
+    }
+    
+    /**
+     * Demonstrates the cart creation workflow
+     */
+    private static Cart runCartCreationWorkflow(CustomerService customerService, CartService cartService) {
+        // Create a new customer for this workflow
+        var customer = new Customer(UUID.randomUUID(), "John", "john@example.com");
+        customerService.createNewCustomer(customer);
+        
+        // Create a cart for the customer
+        cartService.create(customer);
+        
+        // Get the customer's carts
+        var carts = cartService.findAllCartByCustomer(customer);
+        var cart = carts.getFirst();
+        var cartState = cartService.getState(cart);
+        
+        // Display cart information
+        System.out.println("Created cart: " + cart);
+        System.out.println("Cart state: " + cartState);
+        System.out.println("For customer: " + customer);
+        
+        return cart;
+    }
+    
+    /**
+     * Demonstrates the cart activation workflow
+     */
+    private static void runCartActivationWorkflow(CustomerService customerService, CartService cartService, Cart cart) {
+        // Get the customer for this cart
+        var customer = new Customer(UUID.randomUUID(), "Jane", "jane@example.com");
+        customerService.createNewCustomer(customer);
+        
+        // Create a cart for the customer
+        cartService.create(customer);
+        var carts = cartService.findAllCartByCustomer(customer);
+        var cartToActivate = carts.getFirst();
+        
+        // Display cart state before activation
+        System.out.println("Cart before activation: " + cartToActivate);
+        System.out.println("Cart state before activation: " + cartService.getState(cartToActivate));
+        
+        // Activate the cart
+        cartService.activate(cartToActivate, customer);
+        
+        // Display cart state after activation
+        System.out.println("Cart after activation: " + cartToActivate);
+        System.out.println("Cart state after activation: " + cartService.getState(cartToActivate));
+    }
+    
+    /**
+     * Demonstrates the cart closure workflow
+     */
+    private static void runCartClosureWorkflow(CustomerService customerService, CartService cartService, Cart cart) {
+        // Get the customer for this cart
+        var customer = new Customer(UUID.randomUUID(), "Bob", "bob@example.com");
+        customerService.createNewCustomer(customer);
+        
+        // Create a cart for the customer
+        cartService.create(customer);
+        var carts = cartService.findAllCartByCustomer(customer);
+        var cartToClose = carts.getFirst();
+        
+        // Display cart state before closure
+        System.out.println("Cart before closure: " + cartToClose);
+        System.out.println("Cart state before closure: " + cartService.getState(cartToClose));
+        
+        // Close the cart
+        cartService.close(cartToClose, customer);
+        
+        // Display cart state after closure
+        System.out.println("Cart after closure: " + cartToClose);
+        System.out.println("Cart state after closure: " + cartService.getState(cartToClose));
+    }
+    
+    /**
+     * Demonstrates the order creation workflow
+     */
+    private static Order runOrderCreationWorkflow(CustomerService customerService, CartService cartService, OrderService orderService) {
+        // Create a new customer for this workflow
+        var customer = new Customer(UUID.randomUUID(), "Alice", "alice@example.com");
+        customerService.createNewCustomer(customer);
+        
+        // Create a cart for the customer
+        cartService.create(customer);
+        var carts = cartService.findAllCartByCustomer(customer);
+        var cart = carts.getFirst();
+        
+        // Activate the cart
+        cartService.activate(cart, customer);
+        
+        // Create an order from the cart
+        var order = orderService.createNewOrder(cart);
+        
+        // Display order information
+        System.out.println("Created order: " + order);
+        System.out.println("From cart: " + cart);
+        System.out.println("For customer: " + customer);
+        
+        return order;
+    }
+    
+    /**
+     * Demonstrates the order payment workflow
+     */
+    private static void runOrderPaymentWorkflow(OrderService orderService, Order order) {
+        // Display order before payment
+        System.out.println("Order before payment: " + order);
+        
+        // Pay the order
+        orderService.payOrder(order);
+        
+        // Display order after payment
+        System.out.println("Order after payment: " + order);
+    }
+    
+    /**
+     * Demonstrates the order delivery workflow
+     */
+    private static void runOrderDeliveryWorkflow(OrderService orderService, Order order) {
+        // Display order before delivery
+        System.out.println("Order before delivery: " + order);
+        
+        // Deliver the order
+        orderService.deliverOrder(order);
+        
+        // Display order after delivery
+        System.out.println("Order after delivery: " + order);
+    }
+    
+    /**
+     * Demonstrates the order cancellation workflow
+     */
+    private static Order runOrderCancellationWorkflow(CustomerService customerService, CartService cartService, OrderService orderService) {
+        // Create a new customer for this workflow
+        var customer = new Customer(UUID.randomUUID(), "Charlie", "charlie@example.com");
+        customerService.createNewCustomer(customer);
+        
+        // Create a cart for the customer
+        cartService.create(customer);
+        var carts = cartService.findAllCartByCustomer(customer);
+        var cart = carts.getFirst();
+        
+        // Activate the cart
+        cartService.activate(cart, customer);
+        
+        // Create an order from the cart
+        var order = orderService.createNewOrder(cart);
+        
+        // Display order before cancellation
+        System.out.println("Order before cancellation: " + order);
+        
+        // Cancel the order
+        orderService.cancelOrder(order);
+        
+        // Display order after cancellation
+        System.out.println("Order after cancellation: " + order);
+        
+        return order;
     }
 }
