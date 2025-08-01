@@ -2,7 +2,6 @@ package de.burger.it.application.cart.handler;
 
 import de.burger.it.application.dispatcher.StateEventHandler;
 import de.burger.it.domain.cart.event.CartCreateEvent;
-import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartStateType;
 import de.burger.it.domain.relation.port.CartCustomerAssignmentPort;
 import org.springframework.stereotype.Component;

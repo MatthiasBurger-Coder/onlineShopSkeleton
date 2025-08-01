@@ -31,9 +31,7 @@ public class CustomerService {
     public void suspendCustomer(Customer customer) {
         publisher.publishEvent(new CustomerSuspendEvent(customer));
         var cartList = cartService.findAllCartByCustomer(customer);
-        cartList.forEach(cart -> {
-            cartService.close(cart, customer);
-        });
+        cartList.forEach(cart -> cartService.close(cart, customer));
     }
 
     public CustomerState getState(Customer customer) {

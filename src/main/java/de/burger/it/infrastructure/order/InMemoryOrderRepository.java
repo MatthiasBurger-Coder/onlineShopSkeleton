@@ -1,6 +1,5 @@
 package de.burger.it.infrastructure.order;
 
-import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.order.model.Order;
 import de.burger.it.domain.order.port.OrderRepository;
 import org.springframework.stereotype.Repository;
