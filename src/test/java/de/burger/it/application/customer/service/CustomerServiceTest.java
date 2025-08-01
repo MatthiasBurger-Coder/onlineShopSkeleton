@@ -1,13 +1,15 @@
 package de.burger.it.application.customer.service;
 
 import de.burger.it.application.cart.service.CartService;
+import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartLike;
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
 import de.burger.it.domain.customer.event.CustomerSuspendEvent;
 import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.NullCustomer;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerState;
 import de.burger.it.domain.customer.state.CustomerStateType;
-import de.burger.it.domain.cart.model.Cart;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,9 +59,9 @@ class CustomerServiceTest {
     @Test
     void suspendCustomer_shouldPublishEventAndCloseAllCarts() {
         // Given
-        Cart cart1 = new Cart(UUID.randomUUID());
-        Cart cart2 = new Cart(UUID.randomUUID());
-        List<Cart> carts = List.of(cart1, cart2);
+        CartLike cart1 = new Cart(UUID.randomUUID());
+        CartLike cart2 = new Cart(UUID.randomUUID());
+        List<CartLike> carts = List.of(cart1, cart2);
         
         when(cartService.findAllCartByCustomer(customer)).thenReturn(carts);
 
@@ -93,24 +95,36 @@ class CustomerServiceTest {
     // RedPath Tests
 
     @Test
-    void createNewCustomer_whenCustomerIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> customerService.createNewCustomer(null));
+    void createNewCustomer_whenCustomerIsNull_shouldReturnWithoutException() {
+        // When
+        customerService.createNewCustomer(NullCustomer.getInstance());
+
+        // Then
+        // Verify that no event is published and no assignment is made
+        verifyNoInteractions(publisher);
+        verifyNoInteractions(customerStatusAssignmentPort);
     }
 
     @Test
-    void suspendCustomer_whenCustomerIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> customerService.suspendCustomer(null));
+    void suspendCustomer_whenCustomerIsNull_shouldReturnWithoutException() {
+        // When
+        customerService.suspendCustomer(NullCustomer.getInstance());
+
+        // Then
+        // Verify that no event is published and no cart service interactions
+        verifyNoInteractions(publisher);
+        verifyNoInteractions(cartService);
     }
 
     @Test
-    void getState_whenCustomerIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> customerService.getState(null));
+    void getState_whenCustomerIsNull_shouldReturnNull() {
+        // When
+        CustomerState result = customerService.getState(NullCustomer.getInstance());
+
+        // Then
+        // Verify that null is returned and no status assignment port interactions
+        assertNull(result);
+        verifyNoInteractions(customerStatusAssignmentPort);
     }
 
     @Test

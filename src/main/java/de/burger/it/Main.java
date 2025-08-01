@@ -1,12 +1,13 @@
 package de.burger.it;
 
 import de.burger.it.application.cart.service.CartService;
-import de.burger.it.application.customer.service.CustomerService;
 import de.burger.it.application.config.AppConfig;
+import de.burger.it.application.customer.service.CustomerService;
 import de.burger.it.application.order.service.OrderService;
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartLike;
 import de.burger.it.domain.customer.model.Customer;
-import de.burger.it.domain.order.model.Order;
+import de.burger.it.domain.customer.model.CustomerLike;
+import de.burger.it.domain.order.model.OrderLike;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class Main {
         
         // 1. Customer Creation Workflow
         System.out.println("\n--- 1. CUSTOMER CREATION WORKFLOW ---");
-        Customer customer1 = runCustomerCreationWorkflow(customerService, cartService);
+        CustomerLike customer1 = runCustomerCreationWorkflow(customerService, cartService);
         
         // 2. Customer Suspension Workflow
         System.out.println("\n--- 2. CUSTOMER SUSPENSION WORKFLOW ---");
@@ -39,7 +40,7 @@ public class Main {
         
         // 3. Cart Creation Workflow
         System.out.println("\n--- 3. CART CREATION WORKFLOW ---");
-        Cart cart = runCartCreationWorkflow(customerService, cartService);
+        CartLike cart = runCartCreationWorkflow(customerService, cartService);
         
         // 4. Cart Activation Workflow
         System.out.println("\n--- 4. CART ACTIVATION WORKFLOW ---");
@@ -55,7 +56,7 @@ public class Main {
         
         // 6. Order Creation Workflow
         System.out.println("\n--- 6. ORDER CREATION WORKFLOW ---");
-        Order order = runOrderCreationWorkflow(customerService, cartService, orderService);
+        OrderLike order = runOrderCreationWorkflow(customerService, cartService, orderService);
         
         // 7. Order Payment Workflow
         System.out.println("\n--- 7. ORDER PAYMENT WORKFLOW ---");
@@ -67,13 +68,13 @@ public class Main {
         
         // 9. Order Cancellation Workflow
         System.out.println("\n--- 9. ORDER CANCELLATION WORKFLOW ---");
-        Order orderToCancel = runOrderCancellationWorkflow(customerService, cartService, orderService);
+        OrderLike orderToCancel = runOrderCancellationWorkflow(customerService, cartService, orderService);
     }
     
     /**
      * Demonstrates the customer creation workflow
      */
-    private static Customer runCustomerCreationWorkflow(CustomerService customerService, CartService cartService) {
+    private static CustomerLike runCustomerCreationWorkflow(CustomerService customerService, CartService cartService) {
         // Create a new customer
         var customer = new Customer(UUID.randomUUID(), "Matthias", "customer@example.com");
         customerService.createNewCustomer(customer);
@@ -95,7 +96,7 @@ public class Main {
     /**
      * Demonstrates the customer suspension workflow
      */
-    private static void runCustomerSuspensionWorkflow(CustomerService customerService, CartService cartService, Customer customer) {
+    private static void runCustomerSuspensionWorkflow(CustomerService customerService, CartService cartService, CustomerLike customer) {
         // Suspend the customer
         customerService.suspendCustomer(customer);
         var customerState = customerService.getState(customer);
@@ -114,7 +115,7 @@ public class Main {
     /**
      * Demonstrates the cart creation workflow
      */
-    private static Cart runCartCreationWorkflow(CustomerService customerService, CartService cartService) {
+    private static CartLike runCartCreationWorkflow(CustomerService customerService, CartService cartService) {
         // Create a new customer for this workflow
         var customer = new Customer(UUID.randomUUID(), "John", "john@example.com");
         customerService.createNewCustomer(customer);
@@ -138,7 +139,7 @@ public class Main {
     /**
      * Demonstrates the cart activation workflow
      */
-    private static void runCartActivationWorkflow(CustomerService customerService, CartService cartService, Cart cart) {
+    private static void runCartActivationWorkflow(CustomerService customerService, CartService cartService, CartLike cart) {
         // Get the customer for this cart
         var customer = new Customer(UUID.randomUUID(), "Jane", "jane@example.com");
         customerService.createNewCustomer(customer);
@@ -163,7 +164,7 @@ public class Main {
     /**
      * Demonstrates the cart closure workflow
      */
-    private static void runCartClosureWorkflow(CustomerService customerService, CartService cartService, Cart cart) {
+    private static void runCartClosureWorkflow(CustomerService customerService, CartService cartService, CartLike cart) {
         // Get the customer for this cart
         var customer = new Customer(UUID.randomUUID(), "Bob", "bob@example.com");
         customerService.createNewCustomer(customer);
@@ -188,7 +189,7 @@ public class Main {
     /**
      * Demonstrates the order creation workflow
      */
-    private static Order runOrderCreationWorkflow(CustomerService customerService, CartService cartService, OrderService orderService) {
+    private static OrderLike runOrderCreationWorkflow(CustomerService customerService, CartService cartService, OrderService orderService) {
         // Create a new customer for this workflow
         var customer = new Customer(UUID.randomUUID(), "Alice", "alice@example.com");
         customerService.createNewCustomer(customer);
@@ -215,7 +216,7 @@ public class Main {
     /**
      * Demonstrates the order payment workflow
      */
-    private static void runOrderPaymentWorkflow(OrderService orderService, Order order) {
+    private static void runOrderPaymentWorkflow(OrderService orderService, OrderLike order) {
         // Display order before payment
         System.out.println("Order before payment: " + order);
         
@@ -229,7 +230,7 @@ public class Main {
     /**
      * Demonstrates the order delivery workflow
      */
-    private static void runOrderDeliveryWorkflow(OrderService orderService, Order order) {
+    private static void runOrderDeliveryWorkflow(OrderService orderService, OrderLike order) {
         // Display order before delivery
         System.out.println("Order before delivery: " + order);
         
@@ -243,7 +244,7 @@ public class Main {
     /**
      * Demonstrates the order cancellation workflow
      */
-    private static Order runOrderCancellationWorkflow(CustomerService customerService, CartService cartService, OrderService orderService) {
+    private static OrderLike runOrderCancellationWorkflow(CustomerService customerService, CartService cartService, OrderService orderService) {
         // Create a new customer for this workflow
         var customer = new Customer(UUID.randomUUID(), "Charlie", "charlie@example.com");
         customerService.createNewCustomer(customer);

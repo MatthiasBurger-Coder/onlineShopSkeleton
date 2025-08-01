@@ -1,14 +1,18 @@
 package de.burger.it.application.customer.service;
 
 import de.burger.it.application.cart.service.CartService;
+import de.burger.it.domain.cart.model.CartLike;
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
 import de.burger.it.domain.customer.event.CustomerSuspendEvent;
 import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerState;
 import de.burger.it.domain.customer.state.CustomerStateType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CustomerService {
@@ -23,26 +27,26 @@ public class CustomerService {
         this.cartService = cartService;
     }
 
-    public void createNewCustomer(Customer customer) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
+    public void createNewCustomer(CustomerLike customer) {
+        if (customer.isNull()) {
+            return;
         }
-        customerStatusAssignmentPort.assign(customer, CustomerStateType.CREATE);
-        publisher.publishEvent(new CustomerCreateEvent(customer));
+        customerStatusAssignmentPort.assign((Customer) customer, CustomerStateType.CREATE);
+        publisher.publishEvent(new CustomerCreateEvent((Customer) customer));
     }
 
-    public void suspendCustomer(Customer customer) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
+    public void suspendCustomer(CustomerLike customer) {
+        if (customer.isNull()) {
+            return;
         }
-        publisher.publishEvent(new CustomerSuspendEvent(customer));
-        var cartList = cartService.findAllCartByCustomer(customer);
+        publisher.publishEvent(new CustomerSuspendEvent((Customer) customer));
+        List<CartLike> cartList = cartService.findAllCartByCustomer(customer);
         cartList.forEach(cart -> cartService.close(cart, customer));
     }
 
-    public CustomerState getState(Customer customer) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
+    public CustomerState getState(CustomerLike customer) {
+        if (customer.isNull()) {
+            return null; // Return null or a default state for NullCustomer
         }
         return customerStatusAssignmentPort.findBy(customer.id()).toState();
     }

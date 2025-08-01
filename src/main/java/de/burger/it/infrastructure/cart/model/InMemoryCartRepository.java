@@ -2,6 +2,8 @@ package de.burger.it.infrastructure.cart.model;
 
 import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartLike;
+import de.burger.it.domain.cart.model.NullCart;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -12,8 +14,9 @@ public class InMemoryCartRepository implements CartRepositoryPort {
     private final Map<UUID, Cart> store = new HashMap<>();
 
     @Override
-    public Cart findById(UUID cartId) {
-        return store.get(cartId);
+    public CartLike findById(UUID cartId) {
+        Cart cart = store.get(cartId);
+        return cart != null ? cart : NullCart.getInstance();
     }
 
     @Override
@@ -26,7 +29,7 @@ public class InMemoryCartRepository implements CartRepositoryPort {
         store.remove(cartId);
     }
     @Override
-    public Collection<Cart> findAll() {
-        return store.values();
+    public Collection<CartLike> findAll() {
+        return new ArrayList<>(store.values());
     }
 }

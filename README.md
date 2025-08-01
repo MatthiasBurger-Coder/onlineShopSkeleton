@@ -58,16 +58,18 @@ All dependencies flow inward toward the domain layer, ensuring that the domain r
 
 ## Technologies Used
 
-- **Java 24**: Latest Java features including records and pattern matching
+- **Java 21**: Latest Java features including records and pattern matching (strictly Java 21 must be used, as Mockito's Byte Buddy dependency only supports up to Java 21)
 - **Spring Framework 6.2.8**: Core, Context, and Beans modules for dependency injection
 - **Lombok 1.18.38**: Reducing boilerplate code
-- **JUnit Jupiter 5.13.1**: Testing framework
+- **JUnit Jupiter 5.10.1**: Testing framework
+- **Mockito 5.10.0**: Mocking framework for testing
+- **Jetbrains Annotations 24.1.0**: Annotations for better code analysis
 - **Gradle 8.x**: Build automation
 
 ## Setup Instructions
 
 ### Prerequisites
-- Java Development Kit (JDK) 24 or later
+- Java Development Kit (JDK) 21 (strictly Java 21, as Mockito's Byte Buddy dependency only supports up to Java 21)
 - Gradle 8.x or later
 
 ### Building the Project
@@ -78,6 +80,23 @@ All dependencies flow inward toward the domain layer, ensuring that the domain r
 ### Running the Application
 ```bash
 ./gradlew run
+```
+
+### Running Tests
+```bash
+./gradlew test
+```
+
+This will execute all unit tests in the project. The test results will be available in the `build/reports/tests/test` directory.
+
+You can also run specific test classes:
+```bash
+./gradlew test --tests "de.burger.it.application.cart.service.CartServiceTest"
+```
+
+Or specific test methods:
+```bash
+./gradlew test --tests "de.burger.it.application.order.service.OrderServiceTest.testCreateNewOrder"
 ```
 
 ## Usage Examples
@@ -100,6 +119,29 @@ cartService.activate(carts.getFirst(), customer);
 
 // Suspend a customer
 customerService.suspendCustomer(customer);
+```
+
+### Null Object Pattern Usage
+
+The system uses the Null Object pattern to eliminate null checks:
+
+```
+// Example from OrderService
+public OrderLike createNewOrder(CartLike cart) {
+    if (cart.isNull()) {
+        return NullOrder.getInstance();
+    }
+    var order = new Order(UUID.randomUUID());
+    eventPublisher.publishEvent(new OrderCreateEvent(order));
+    return order;
+}
+
+// Using the returned OrderLike without worrying about nulls
+OrderLike order = orderService.createNewOrder(cart);
+// No need for null check - isNull() method can be used instead
+if (!order.isNull()) {
+    // Proceed with order operations
+}
 ```
 
 ## Project Structure
@@ -166,6 +208,7 @@ src/
 - **Dependency Injection**: For loose coupling between components using Spring Framework
 - **Ports and Adapters Pattern**: Core of the hexagonal architecture, with ports defined in the domain and implemented by adapters in the infrastructure layer
 - **Factory Method**: For creating state objects and handling state transitions
+- **Null Object Pattern**: For eliminating null checks by providing special "null" implementations (NullCart, NullCustomer, NullOrder) that implement common interfaces (CartLike, CustomerLike, OrderLike)
 
 ## Contributing
 

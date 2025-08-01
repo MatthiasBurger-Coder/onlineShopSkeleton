@@ -1,11 +1,13 @@
 package de.burger.it.application.order.service;
 
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartLike;
 import de.burger.it.domain.order.event.OrderCancelEvent;
 import de.burger.it.domain.order.event.OrderCreateEvent;
 import de.burger.it.domain.order.event.OrderDeliverEvent;
 import de.burger.it.domain.order.event.OrderPayEvent;
+import de.burger.it.domain.order.model.NullOrder;
 import de.burger.it.domain.order.model.Order;
+import de.burger.it.domain.order.model.OrderLike;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -21,33 +23,33 @@ public class OrderService {
         this.eventPublisher = eventPublisher;
     }
 
-    public Order createNewOrder(Cart cart) {
-        if (cart == null) {
-            throw new IllegalArgumentException("Cart cannot be null");
+    public OrderLike createNewOrder(CartLike cart) {
+        if (cart.isNull()) {
+            return NullOrder.getInstance();
         }
         var order = new Order(UUID.randomUUID());
         eventPublisher.publishEvent(new OrderCreateEvent(order));
         return order;
     }
-    
-    public void payOrder(Order order) {
-        if (order == null) {
-            throw new IllegalArgumentException("Order cannot be null");
+
+    public void payOrder(OrderLike order) {
+        if (order.isNull()) {
+            return;
         }
-        eventPublisher.publishEvent(new OrderPayEvent(order));
+        eventPublisher.publishEvent(new OrderPayEvent((Order) order));
     }
-    
-    public void cancelOrder(Order order) {
-        if (order == null) {
-            throw new IllegalArgumentException("Order cannot be null");
+
+    public void cancelOrder(OrderLike order) {
+        if (order.isNull()) {
+            return;
         }
-        eventPublisher.publishEvent(new OrderCancelEvent(order));
+        eventPublisher.publishEvent(new OrderCancelEvent((Order) order));
     }
-    
-    public void deliverOrder(Order order) {
-        if (order == null) {
-            throw new IllegalArgumentException("Order cannot be null");
+
+    public void deliverOrder(OrderLike order) {
+        if (order.isNull()) {
+            return;
         }
-        eventPublisher.publishEvent(new OrderDeliverEvent(order));
+        eventPublisher.publishEvent(new OrderDeliverEvent((Order) order));
     }
 }

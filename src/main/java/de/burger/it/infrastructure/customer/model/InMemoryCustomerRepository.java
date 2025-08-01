@@ -2,6 +2,8 @@ package de.burger.it.infrastructure.customer.model;
 
 import de.burger.it.infrastructure.customer.port.CustomerRepository;
 import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.CustomerLike;
+import de.burger.it.domain.customer.model.NullCustomer;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -12,8 +14,9 @@ public class InMemoryCustomerRepository implements CustomerRepository {
     private final Map<UUID, Customer> store = new HashMap<>();
 
     @Override
-    public Optional<Customer> findById(UUID customerId) {
-        return Optional.ofNullable(store.get(customerId));
+    public CustomerLike findById(UUID customerId) {
+        Customer customer = store.get(customerId);
+        return customer != null ? customer : NullCustomer.getInstance();
     }
 
     @Override

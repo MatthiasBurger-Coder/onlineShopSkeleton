@@ -4,15 +4,19 @@ import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
 import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartLike;
+import de.burger.it.domain.cart.model.NullCart;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
 import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.relation.port.CartCustomerAssignmentPort;
 import lombok.ToString;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,63 +40,68 @@ public class CartService {
 
     }
 
-    public void create(Customer customer) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
+    public void create(CustomerLike customer) {
+        if (customer.isNull()) {
+            return;
         }
         var cart = new Cart(UUID.randomUUID());
-        var cartCreateEvent = new CartCreateEvent(cart, customer);
+        var cartCreateEvent = new CartCreateEvent(cart, (Customer) customer);
         publisher.publishEvent(cartCreateEvent);
     }
 
-    public void close(Cart cart, Customer customer) {
-        if (cart == null) {
-            throw new IllegalArgumentException("Cart cannot be null");
+    public void close(CartLike cart, CustomerLike customer) {
+        if (cart.isNull() || customer.isNull()) {
+            return;
         }
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
-        }
-        var cartCloseEvent = new CartCloseEvent(cart, customer);
+        var cartCloseEvent = new CartCloseEvent((Cart) cart, (Customer) customer);
         publisher.publishEvent(cartCloseEvent);
     }
 
-    public void activate(Cart cart, Customer customer) {
-        if (cart == null) {
-            throw new IllegalArgumentException("Cart cannot be null");
+    public void activate(CartLike cart, CustomerLike customer) {
+        if (cart.isNull() || customer.isNull()) {
+            return;
         }
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
-        }
-        var cartActiveEvent = new CartActiveEvent(cart, customer);
+        var cartActiveEvent = new CartActiveEvent((Cart) cart, (Customer) customer);
         publisher.publishEvent(cartActiveEvent);
     }
 
-    public Cart findById(UUID cartId) {
+    public CartLike findById(UUID cartId) {
         if (cartId == null) {
-            throw new IllegalArgumentException("Cart ID cannot be null");
+            return NullCart.getInstance();
         }
-        return cartRepository.findById(cartId);
+        CartLike cart = cartRepository.findById(cartId);
+        return cart != null ? cart : NullCart.getInstance();
     }
 
-    public List<Cart> findAllCartByCustomer(Customer customer) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
+    public List<CartLike> findAllCartByCustomer(CustomerLike customer) {
+        if (customer.isNull()) {
+            return Collections.emptyList();
         }
         var cartCustomerAssignments = cartCustomerAssignmentPort.findAllByCustomer(customer.id());
-        return cartCustomerAssignments.stream().map(cartCustomerAssignment -> cartRepository.findById(cartCustomerAssignment.cartId())).toList();
+        return cartCustomerAssignments.stream()
+                .map(cartCustomerAssignment -> {
+                    CartLike cart = cartRepository.findById(cartCustomerAssignment.cartId());
+                    return cart != null ? cart : NullCart.getInstance();
+                })
+                .toList();
     }
 
-    public List<Cart> findAllCartByCarts(Cart cart) {
-        if (cart == null) {
-            throw new IllegalArgumentException("Cart cannot be null");
+    public List<CartLike> findAllCartByCarts(CartLike cart) {
+        if (cart.isNull()) {
+            return Collections.emptyList();
         }
         var cartCustomerAssignments = cartCustomerAssignmentPort.findAllByCard(cart.id());
-        return cartCustomerAssignments.stream().map(cartCustomerAssignment -> cartRepository.findById(cartCustomerAssignment.cartId())).toList();
+        return cartCustomerAssignments.stream()
+                .map(cartCustomerAssignment -> {
+                    CartLike foundCart = cartRepository.findById(cartCustomerAssignment.cartId());
+                    return foundCart != null ? foundCart : NullCart.getInstance();
+                })
+                .toList();
     }
 
-    public CartState getState(Cart cart) {
-        if (cart == null) {
-            throw new IllegalArgumentException("Cart cannot be null");
+    public CartState getState(CartLike cart) {
+        if (cart.isNull()) {
+            return null; // Return null or a default state for NullCart
         }
         return cartStatusAssignmentPort.findBy(cart.id()).toState();
     }

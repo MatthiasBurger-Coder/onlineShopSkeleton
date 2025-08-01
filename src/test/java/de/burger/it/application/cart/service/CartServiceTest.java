@@ -4,11 +4,14 @@ import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
 import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartLike;
+import de.burger.it.domain.cart.model.NullCart;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
 import de.burger.it.domain.cart.state.CartStateType;
 import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.NullCustomer;
 import de.burger.it.domain.relation.model.CartCustomerAssignment;
 import de.burger.it.domain.relation.port.CartCustomerAssignmentPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,7 +90,7 @@ class CartServiceTest {
         when(cartRepository.findById(cart.id())).thenReturn(cart);
 
         // When
-        Cart result = cartService.findById(cart.id());
+        CartLike result = cartService.findById(cart.id());
 
         // Then
         assertEquals(cart, result);
@@ -105,7 +108,7 @@ class CartServiceTest {
         when(cartRepository.findById(cartId)).thenReturn(cart);
 
         // When
-        List<Cart> result = cartService.findAllCartByCustomer(customer);
+        List<CartLike> result = cartService.findAllCartByCustomer(customer);
 
         // Then
         assertEquals(1, result.size());
@@ -124,7 +127,7 @@ class CartServiceTest {
         when(cartRepository.findById(cartId)).thenReturn(cart);
 
         // When
-        List<Cart> result = cartService.findAllCartByCarts(cart);
+        List<CartLike> result = cartService.findAllCartByCarts(cart);
 
         // Then
         assertEquals(1, result.size());
@@ -152,66 +155,93 @@ class CartServiceTest {
     // RedPath Tests
 
     @Test
-    void create_whenCustomerIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.create(null));
+    void create_whenCustomerIsNull_shouldReturnWithoutException() {
+        // When
+        cartService.create(NullCustomer.getInstance());
+
+        // Then
+        // Verify that no event is published
+        verifyNoInteractions(publisher);
     }
 
     @Test
-    void close_whenCartIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.close(null, customer));
+    void close_whenCartIsNull_shouldReturnWithoutException() {
+        // When
+        cartService.close(NullCart.getInstance(), customer);
+
+        // Then
+        // Verify that no event is published
+        verifyNoInteractions(publisher);
     }
 
     @Test
-    void close_whenCustomerIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.close(cart, null));
+    void close_whenCustomerIsNull_shouldReturnWithoutException() {
+        // When
+        cartService.close(cart, NullCustomer.getInstance());
+
+        // Then
+        // Verify that no event is published
+        verifyNoInteractions(publisher);
     }
 
     @Test
-    void activate_whenCartIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.activate(null, customer));
+    void activate_whenCartIsNull_shouldReturnWithoutException() {
+        // When
+        cartService.activate(NullCart.getInstance(), customer);
+
+        // Then
+        // Verify that no event is published
+        verifyNoInteractions(publisher);
     }
 
     @Test
-    void activate_whenCustomerIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.activate(cart, null));
+    void activate_whenCustomerIsNull_shouldReturnWithoutException() {
+        // When
+        cartService.activate(cart, NullCustomer.getInstance());
+
+        // Then
+        // Verify that no event is published
+        verifyNoInteractions(publisher);
     }
 
     @Test
-    void findById_whenIdIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.findById(null));
+    void findById_whenIdIsNull_shouldReturnNullCart() {
+        // When
+        CartLike result = cartService.findById(null);
+
+        // Then
+        assertTrue(result.isNull());
+        assertEquals(NullCart.getInstance(), result);
     }
 
     @Test
-    void findAllCartByCustomer_whenCustomerIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.findAllCartByCustomer(null));
+    void findAllCartByCustomer_whenCustomerIsNull_shouldReturnEmptyList() {
+        // When
+        List<CartLike> result = cartService.findAllCartByCustomer(NullCustomer.getInstance());
+
+        // Then
+        assertTrue(result.isEmpty());
+        verifyNoInteractions(cartCustomerAssignmentPort);
     }
 
     @Test
-    void findAllCartByCarts_whenCartIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.findAllCartByCarts(null));
+    void findAllCartByCarts_whenCartIsNull_shouldReturnEmptyList() {
+        // When
+        List<CartLike> result = cartService.findAllCartByCarts(NullCart.getInstance());
+
+        // Then
+        assertTrue(result.isEmpty());
+        verifyNoInteractions(cartCustomerAssignmentPort);
     }
 
     @Test
-    void getState_whenCartIsNull_shouldThrowException() {
-        // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> cartService.getState(null));
+    void getState_whenCartIsNull_shouldReturnNull() {
+        // When
+        CartState result = cartService.getState(NullCart.getInstance());
+
+        // Then
+        assertNull(result);
+        verifyNoInteractions(cartStatusAssignmentPort);
     }
 
     @Test
@@ -220,7 +250,7 @@ class CartServiceTest {
         when(cartCustomerAssignmentPort.findAllByCustomer(customer.id())).thenReturn(Collections.emptyList());
 
         // When
-        List<Cart> result = cartService.findAllCartByCustomer(customer);
+        List<CartLike> result = cartService.findAllCartByCustomer(customer);
 
         // Then
         assertTrue(result.isEmpty());
