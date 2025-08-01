@@ -12,10 +12,10 @@ import java.util.List;
 @Component
 public class OnCustomerCreateAssignActive implements StateEventHandler<CustomerStateType, CustomerCreateEvent> {
 
-    private final CustomerStatusAssignmentPort customerStatusAssignmentAdapter;
+    private final CustomerStatusAssignmentPort customerStatusAssignmentPort;
 
-    public OnCustomerCreateAssignActive(CustomerStatusAssignmentPort customerStatusAssignmentAdapter) {
-        this.customerStatusAssignmentAdapter = customerStatusAssignmentAdapter;
+    public OnCustomerCreateAssignActive(CustomerStatusAssignmentPort customerStatusAssignmentPort) {
+        this.customerStatusAssignmentPort = customerStatusAssignmentPort;
     }
 
     @Override
@@ -30,6 +30,6 @@ public class OnCustomerCreateAssignActive implements StateEventHandler<CustomerS
 
     @Override
     public void execute(CustomerCreateEvent event) {
-        customerStatusAssignmentAdapter.assign(event.customer(), CustomerStateType.ACTIVE);
+        customerStatusAssignmentPort.assign(event.customer(), CustomerStateType.ACTIVE);
     }
 }

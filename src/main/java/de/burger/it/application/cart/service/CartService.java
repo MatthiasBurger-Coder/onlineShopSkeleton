@@ -22,17 +22,17 @@ public class CartService {
 
     private final ApplicationEventPublisher publisher;
 
-    private final CartStatusAssignmentPort cartStatusAssignmentAdapter;
-    private final CartCustomerAssignmentPort cartCustomerAssignmentAdapter;
+    private final CartStatusAssignmentPort cartStatusAssignmentPort;
+    private final CartCustomerAssignmentPort cartCustomerAssignmentPort;
     private final CartRepository cartRepository;
 
     public CartService(ApplicationEventPublisher publisher, CartRepository cartRepository,
-                       CartStatusAssignmentPort cartStatusAssignmentAdapter,
-                       CartCustomerAssignmentPort cartCustomerAssignmentAdapter) {
+                       CartStatusAssignmentPort cartStatusAssignmentPort,
+                       CartCustomerAssignmentPort cartCustomerAssignmentPort) {
         this.publisher = publisher;
         this.cartRepository = cartRepository;
-        this.cartStatusAssignmentAdapter = cartStatusAssignmentAdapter;
-        this.cartCustomerAssignmentAdapter = cartCustomerAssignmentAdapter;
+        this.cartStatusAssignmentPort = cartStatusAssignmentPort;
+        this.cartCustomerAssignmentPort = cartCustomerAssignmentPort;
 
     }
 
@@ -57,17 +57,17 @@ public class CartService {
     }
 
     public List<Cart> findAllCartByCustomer(Customer customer) {
-        var cartCustomerAssignments = cartCustomerAssignmentAdapter.findAllByCustomer(customer.id());
+        var cartCustomerAssignments = cartCustomerAssignmentPort.findAllByCustomer(customer.id());
         return cartCustomerAssignments.stream().map(cartCustomerAssignment -> cartRepository.findById(cartCustomerAssignment.cartId())).toList();
     }
 
     public List<Cart> findAllCartByCarts(Cart cart) {
-        var cartCustomerAssignments = cartCustomerAssignmentAdapter.findAllByCard(cart.id());
+        var cartCustomerAssignments = cartCustomerAssignmentPort.findAllByCard(cart.id());
         return cartCustomerAssignments.stream().map(cartCustomerAssignment -> cartRepository.findById(cartCustomerAssignment.cartId())).toList();
     }
 
     public CartState getState(Cart cart) {
-        return cartStatusAssignmentAdapter.findBy(cart.id()).toState();
+        return cartStatusAssignmentPort.findBy(cart.id()).toState();
     }
 
 }

@@ -12,10 +12,10 @@ import java.util.List;
 @Component
 public class OnCartCreateAssignCustomer implements StateEventHandler<CartStateType, CartCreateEvent> {
 
-    private final CartCustomerAssignmentPort cartStatusAssignmentAdapter;
+    private final CartCustomerAssignmentPort cartCustomerAssignmentPort;
 
-    public OnCartCreateAssignCustomer(CartCustomerAssignmentPort cartStatusAssignmentAdapter) {
-        this.cartStatusAssignmentAdapter = cartStatusAssignmentAdapter;
+    public OnCartCreateAssignCustomer(CartCustomerAssignmentPort cartCustomerAssignmentPort) {
+        this.cartCustomerAssignmentPort = cartCustomerAssignmentPort;
     }
 
     @Override
@@ -30,6 +30,6 @@ public class OnCartCreateAssignCustomer implements StateEventHandler<CartStateTy
 
     @Override
     public void execute(CartCreateEvent event) {
-        cartStatusAssignmentAdapter.assign(event.cart(),event.customer());
+        cartCustomerAssignmentPort.assign(event.cart(),event.customer());
     }
 }

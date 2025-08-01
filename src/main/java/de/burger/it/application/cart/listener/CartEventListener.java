@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 public class CartEventListener {
 
     private final StateEventDispatcher dispatcher;
-    private final CartStatusAssignmentPort cartStatusAssignmentAdapter;
+    private final CartStatusAssignmentPort cartStatusAssignmentPort;
 
-    public CartEventListener(StateEventDispatcher dispatcher, CartStatusAssignmentPort cartStatusAssignmentAdapter) {
+    public CartEventListener(StateEventDispatcher dispatcher, CartStatusAssignmentPort cartStatusAssignmentPort) {
         this.dispatcher = dispatcher;
-        this.cartStatusAssignmentAdapter = cartStatusAssignmentAdapter;
+        this.cartStatusAssignmentPort = cartStatusAssignmentPort;
     }
 
     @EventListener
@@ -27,13 +27,13 @@ public class CartEventListener {
 
     @EventListener
     public void handleCartClose(CartCloseEvent event) {
-        var assingment = cartStatusAssignmentAdapter.findBy(event.cart().id());
+        var assingment = cartStatusAssignmentPort.findBy(event.cart().id());
         dispatcher.dispatch(assingment, event);
     }
 
     @EventListener
     public void handleCartActivate(CartActiveEvent event) {
-        var assingment = cartStatusAssignmentAdapter.findBy(event.cart().id());
+        var assingment = cartStatusAssignmentPort.findBy(event.cart().id());
         dispatcher.dispatch(assingment, event);
     }
 }

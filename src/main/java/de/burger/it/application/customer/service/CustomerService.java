@@ -14,17 +14,17 @@ import org.springframework.stereotype.Service;
 public class CustomerService {
 
     private final ApplicationEventPublisher publisher;
-    private final CustomerStatusAssignmentPort customerStatusAssignmentAdapter;
+    private final CustomerStatusAssignmentPort customerStatusAssignmentPort;
     private final CartService cartService;
 
-    public CustomerService(CustomerStatusAssignmentPort customerStatusAssignmentAdapter, ApplicationEventPublisher publisher, CartService cartService) {
-        this.customerStatusAssignmentAdapter = customerStatusAssignmentAdapter;
+    public CustomerService(CustomerStatusAssignmentPort customerStatusAssignmentPort, ApplicationEventPublisher publisher, CartService cartService) {
+        this.customerStatusAssignmentPort = customerStatusAssignmentPort;
         this.publisher = publisher;
         this.cartService = cartService;
     }
 
     public void createNewCustomer(Customer customer) {
-        customerStatusAssignmentAdapter.assign(customer, CustomerStateType.CREATE);
+        customerStatusAssignmentPort.assign(customer, CustomerStateType.CREATE);
         publisher.publishEvent(new CustomerCreateEvent(customer));
     }
 
@@ -35,6 +35,6 @@ public class CustomerService {
     }
 
     public CustomerState getState(Customer customer) {
-        return customerStatusAssignmentAdapter.findBy(customer.id()).toState();
+        return customerStatusAssignmentPort.findBy(customer.id()).toState();
     }
 }

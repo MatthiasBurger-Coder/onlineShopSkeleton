@@ -12,10 +12,10 @@ import java.util.List;
 @Component
 public class OnCustomerSuspendAssignSuspend implements StateEventHandler<CustomerStateType, CustomerSuspendEvent> {
 
-    private final CustomerStatusAssignmentPort customerStatusAssignmentAdapter;
+    private final CustomerStatusAssignmentPort customerStatusAssignmentPort;
 
-    public OnCustomerSuspendAssignSuspend(CustomerStatusAssignmentPort customerStatusAssignmentAdapter) {
-        this.customerStatusAssignmentAdapter = customerStatusAssignmentAdapter;
+    public OnCustomerSuspendAssignSuspend(CustomerStatusAssignmentPort customerStatusAssignmentPort) {
+        this.customerStatusAssignmentPort = customerStatusAssignmentPort;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class OnCustomerSuspendAssignSuspend implements StateEventHandler<Custome
 
     @Override
     public void execute(CustomerSuspendEvent event) {
-        customerStatusAssignmentAdapter.assign(event.customer(), CustomerStateType.SUSPENDED);
+        customerStatusAssignmentPort.assign(event.customer(), CustomerStateType.SUSPENDED);
 
     }
 }

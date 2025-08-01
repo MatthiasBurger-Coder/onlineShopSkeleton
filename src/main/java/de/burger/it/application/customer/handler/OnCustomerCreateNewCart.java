@@ -15,7 +15,7 @@ public class OnCustomerCreateNewCart implements StateEventHandler<CustomerStateT
 
     private final CartService cartService;
 
-    public OnCustomerCreateNewCart(CartService cartService, CustomerStatusAssignmentPort customerStatusAssignmentAdapter) {
+    public OnCustomerCreateNewCart(CartService cartService, CustomerStatusAssignmentPort customerStatusAssignmentPort) {
         this.cartService = cartService;
     }
 
