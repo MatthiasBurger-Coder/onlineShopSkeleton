@@ -1,13 +1,13 @@
 package de.burger.it.infrastructure.cart.model;
 
-import de.burger.it.domain.cart.port.CartRepository;
+import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.model.Cart;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 @Repository
-public class InMemoryCartRepository implements CartRepository {
+public class InMemoryCartRepository implements CartRepositoryPort {
 
     private final Map<UUID, Cart> store = new HashMap<>();
 

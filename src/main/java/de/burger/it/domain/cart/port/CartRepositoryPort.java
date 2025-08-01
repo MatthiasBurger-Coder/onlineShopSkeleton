@@ -5,7 +5,7 @@ import de.burger.it.domain.cart.model.Cart;
 import java.util.Collection;
 import java.util.UUID;
 
-public interface CartRepository {
+public interface CartRepositoryPort {
     Cart findById(UUID cartId);
 
     void save(Cart cart);

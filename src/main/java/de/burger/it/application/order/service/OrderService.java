@@ -3,16 +3,16 @@ package de.burger.it.application.order.service;
 import de.burger.it.application.cart.service.CartService;
 import de.burger.it.domain.cart.model.Cart;
 import de.burger.it.domain.order.model.Order;
-import de.burger.it.domain.order.port.OrderRepository;
+import de.burger.it.domain.order.port.OrderRepositoryPort;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
 public class OrderService {
-    private final OrderRepository orderRepository;
+    private final OrderRepositoryPort orderRepository;
 
-    public OrderService(OrderRepository orderRepository, CartService cartService) {
+    public OrderService(OrderRepositoryPort orderRepository, CartService cartService) {
         this.orderRepository = orderRepository;
     }
 

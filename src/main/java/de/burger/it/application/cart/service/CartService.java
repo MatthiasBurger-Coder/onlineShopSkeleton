@@ -4,7 +4,7 @@ import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
 import de.burger.it.domain.cart.model.Cart;
-import de.burger.it.domain.cart.port.CartRepository;
+import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
 import de.burger.it.domain.customer.model.Customer;
@@ -24,9 +24,9 @@ public class CartService {
 
     private final CartStatusAssignmentPort cartStatusAssignmentPort;
     private final CartCustomerAssignmentPort cartCustomerAssignmentPort;
-    private final CartRepository cartRepository;
+    private final CartRepositoryPort cartRepository;
 
-    public CartService(ApplicationEventPublisher publisher, CartRepository cartRepository,
+    public CartService(ApplicationEventPublisher publisher, CartRepositoryPort cartRepository,
                        CartStatusAssignmentPort cartStatusAssignmentPort,
                        CartCustomerAssignmentPort cartCustomerAssignmentPort) {
         this.publisher = publisher;
