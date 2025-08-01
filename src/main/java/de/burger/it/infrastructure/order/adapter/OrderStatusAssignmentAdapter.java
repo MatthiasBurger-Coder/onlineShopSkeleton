@@ -1,27 +1,23 @@
-package de.burger.it.adapter.order;
+package de.burger.it.infrastructure.order.adapter;
 
 import de.burger.it.domain.order.model.Order;
 import de.burger.it.domain.order.model.OrderStatusAssignment;
 import de.burger.it.domain.order.port.OrderStatusAssignmentPort;
-import de.burger.it.infrastructure.cart.port.OrderStatusAssignmentRepository;
 import de.burger.it.domain.order.state.OrderStateType;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class OrderStatusAssignmentAdapter implements OrderStatusAssignmentPort {
 
-    private final OrderStatusAssignmentRepository repository;
-
-    public OrderStatusAssignmentAdapter(OrderStatusAssignmentRepository repository) {
-        this.repository = repository;
-    }
-
+    private final Map<UUID, OrderStatusAssignment> store = new ConcurrentHashMap<>();
 
     @Override
-    public OrderStateType findBy(UUID customerId) {
-        return repository.findBy(customerId).state();
+    public OrderStateType findBy(UUID orderId) {
+        return store.get(orderId).state();
     }
 
     @Override
@@ -30,6 +26,6 @@ public class OrderStatusAssignmentAdapter implements OrderStatusAssignmentPort {
                 order.id(),
                 newState
         );
-        repository.save(assignment);
+        store.put(assignment.orderId(), assignment);
     }
 }

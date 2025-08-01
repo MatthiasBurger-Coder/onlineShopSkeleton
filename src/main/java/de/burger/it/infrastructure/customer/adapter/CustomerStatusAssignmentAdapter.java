@@ -1,34 +1,31 @@
-package de.burger.it.adapter.customer;
+package de.burger.it.infrastructure.customer.adapter;
 
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.CustomerStatusAssignment;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
-import de.burger.it.infrastructure.customer.port.CustomerStatusAssignmentRepository;
 import de.burger.it.domain.customer.state.CustomerStateType;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class CustomerStatusAssignmentAdapter implements CustomerStatusAssignmentPort {
 
-    private final CustomerStatusAssignmentRepository repository;
-
-    public CustomerStatusAssignmentAdapter(CustomerStatusAssignmentRepository repository) {
-        this.repository = repository;
-    }
+    private final Map<UUID, CustomerStatusAssignment> store = new ConcurrentHashMap<>();
 
     @Override
     public CustomerStateType findBy(UUID customerId) {
-        return repository.findBy(customerId).state();
+        return store.get(customerId).state();
     }
 
     @Override
-    public void assign(Customer cart, CustomerStateType newState) {
+    public void assign(Customer customer, CustomerStateType newState) {
         var assignment = new CustomerStatusAssignment(
-                cart.id(),
+                customer.id(),
                 newState
         );
-        repository.save(assignment);
+        store.put(assignment.customerId(), assignment);
     }
 }
