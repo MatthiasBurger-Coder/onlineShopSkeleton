@@ -9,6 +9,7 @@ A sophisticated state management system for e-commerce applications, demonstrati
 - **Domain-Driven Design**: Clear separation between domain, application, and infrastructure layers
 - **Immutable Data Structures**: Using Java records for clean, immutable domain models
 - **Dependency Injection**: Leveraging Spring Framework for flexible component wiring
+- **Process Pipeline**: Fluent API for building and executing processing pipelines
 
 ## Architecture Overview
 
@@ -29,6 +30,7 @@ Orchestrates the flow of data and coordinates domain operations:
 - **Event Listeners**: Components listening for domain events
 - **Event Handlers**: Components handling specific events based on current state
 - **Event Dispatcher**: Routes events to appropriate handlers based on state
+- **Process Pipeline**: Provides a fluent API for building and executing processing pipelines
 
 ### Infrastructure Layer
 Provides implementations for the domain ports:
@@ -36,6 +38,25 @@ Provides implementations for the domain ports:
 - **Repositories**: In-memory implementations of data storage
 
 All dependencies flow inward toward the domain layer, ensuring that the domain remains isolated from external concerns.
+
+## Workflows
+
+The application demonstrates 9 key workflows:
+
+### Customer Workflows
+1. **Customer Creation**: Creating a new customer and associated cart
+2. **Customer Suspension**: Suspending an existing customer
+
+### Cart Workflows
+3. **Cart Creation**: Creating a new cart for a customer
+4. **Cart Activation**: Activating a cart for use
+5. **Cart Closure**: Closing a cart when it's no longer needed
+
+### Order Workflows
+6. **Order Creation**: Creating a new order from a cart
+7. **Order Payment**: Processing payment for an order
+8. **Order Delivery**: Marking an order as delivered
+9. **Order Cancellation**: Cancelling an existing order
 
 ## State Transitions
 
@@ -103,7 +124,7 @@ Or specific test methods:
 
 The `Main.java` file demonstrates basic usage of the system:
 
-```
+```java
 // Create a customer
 var customer = new Customer(UUID.randomUUID(), "John Doe", "john@example.com");
 customerService.createNewCustomer(customer);
@@ -125,7 +146,7 @@ customerService.suspendCustomer(customer);
 
 The system uses the Null Object pattern to eliminate null checks:
 
-```
+```java
 // Example from OrderService
 public OrderLike createNewOrder(CartLike cart) {
     if (cart.isNull()) {
@@ -142,6 +163,36 @@ OrderLike order = orderService.createNewOrder(cart);
 if (!order.isNull()) {
     // Proceed with order operations
 }
+```
+
+### Process Pipeline Usage
+
+The system uses a fluent Process Pipeline API for handling events:
+
+```java
+// Example of building a processing pipeline
+ProcessPipeline<CartCreateEvent> pipeline = new ProcessPipeline<CartCreateEvent>()
+    .append(event -> {
+        // First step: assign cart status
+        cartStatusAssignmentPort.assignStatus(event.getCart(), CartStateType.CREATED);
+        return event;
+    })
+    .append(event -> {
+        // Second step: assign customer to cart
+        cartCustomerAssignmentPort.assignCustomer(event.getCart(), event.getCustomer());
+        return event;
+    })
+    .appendIf(
+        event -> !event.getCustomer().isNull(), // Condition
+        event -> {
+            // Conditional step: save to repository only if customer is not null
+            cartRepositoryPort.save(event.getCart());
+            return event;
+        }
+    );
+
+// Execute the pipeline
+pipeline.execute(cartCreateEvent);
 ```
 
 ## Project Structure
@@ -209,6 +260,7 @@ src/
 - **Ports and Adapters Pattern**: Core of the hexagonal architecture, with ports defined in the domain and implemented by adapters in the infrastructure layer
 - **Factory Method**: For creating state objects and handling state transitions
 - **Null Object Pattern**: For eliminating null checks by providing special "null" implementations (NullCart, NullCustomer, NullOrder) that implement common interfaces (CartLike, CustomerLike, OrderLike)
+- **Pipeline Pattern**: For building and executing processing pipelines with a fluent API
 
 ## Contributing
 
