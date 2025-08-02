@@ -41,7 +41,10 @@ public class EventProcessor<E> {
             return null;
         }
         
-        List<EventHandler<? extends E>> eventHandlers = handlers.getOrDefault(event.getClass(), List.of());
+        List<EventHandler<? extends E>> eventHandlers = handlers.entrySet().stream()
+                .filter(entry -> entry.getKey().isAssignableFrom(event.getClass()))
+                .flatMap(entry -> entry.getValue().stream())
+                .toList();
         T result = event;
         
         for (EventHandler<? extends E> handler : eventHandlers) {

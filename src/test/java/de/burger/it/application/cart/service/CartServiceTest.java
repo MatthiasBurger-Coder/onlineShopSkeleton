@@ -10,6 +10,7 @@ import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
 import de.burger.it.domain.cart.state.CartStateType;
+import de.burger.it.domain.cart.state.NullCartState;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.NullCustomer;
 import de.burger.it.domain.relation.model.CartCustomerAssignment;
@@ -118,21 +119,21 @@ class CartServiceTest {
     }
 
     @Test
-    void findAllCartByCarts_shouldReturnCartsForCart() {
+    void findAllCartsByCart_shouldReturnCartsForCart() {
         // Given
         UUID cartId = cart.id();
         CartCustomerAssignment assignment = new CartCustomerAssignment(cartId, customer.id());
         
-        when(cartCustomerAssignmentPort.findAllByCard(cartId)).thenReturn(List.of(assignment));
+        when(cartCustomerAssignmentPort.findAllByCart(cartId)).thenReturn(List.of(assignment));
         when(cartRepository.findById(cartId)).thenReturn(cart);
 
         // When
-        List<CartLike> result = cartService.findAllCartByCarts(cart);
+        List<CartLike> result = cartService.findAllCartsByCart(cart);
 
         // Then
         assertEquals(1, result.size());
         assertEquals(cart, result.getFirst());
-        verify(cartCustomerAssignmentPort).findAllByCard(cartId);
+        verify(cartCustomerAssignmentPort).findAllByCart(cartId);
         verify(cartRepository).findById(cartId);
     }
 
@@ -225,9 +226,9 @@ class CartServiceTest {
     }
 
     @Test
-    void findAllCartByCarts_whenCartIsNull_shouldReturnEmptyList() {
+    void findAllCartsByCart_whenCartIsNull_shouldReturnEmptyList() {
         // When
-        List<CartLike> result = cartService.findAllCartByCarts(NullCart.getInstance());
+        List<CartLike> result = cartService.findAllCartsByCart(NullCart.getInstance());
 
         // Then
         assertTrue(result.isEmpty());
@@ -235,12 +236,12 @@ class CartServiceTest {
     }
 
     @Test
-    void getState_whenCartIsNull_shouldReturnNull() {
+    void getState_whenCartIsNull_shouldReturnNullState() {
         // When
         CartState result = cartService.getState(NullCart.getInstance());
 
         // Then
-        assertNull(result);
+        assertEquals(NullCartState.getInstance(), result);
         verifyNoInteractions(cartStatusAssignmentPort);
     }
 

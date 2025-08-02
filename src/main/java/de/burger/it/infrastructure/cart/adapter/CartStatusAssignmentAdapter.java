@@ -4,7 +4,6 @@ import de.burger.it.domain.cart.model.Cart;
 import de.burger.it.domain.cart.model.CartStatusAssignment;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartStateType;
-import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Data
 @Component
 public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
     private final Map<UUID, CartStatusAssignment> store = new ConcurrentHashMap<>();
@@ -39,6 +37,7 @@ public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
         if (cartId == null) {
             throw new IllegalArgumentException("Cart ID cannot be null");
         }
-        return store.get(cartId).state();
+        CartStatusAssignment assignment = store.get(cartId);
+        return assignment != null ? assignment.state() : null;
     }
 }

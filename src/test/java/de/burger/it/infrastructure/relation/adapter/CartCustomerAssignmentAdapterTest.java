@@ -43,12 +43,12 @@ class CartCustomerAssignmentAdapterTest {
     }
 
     @Test
-    void findAllByCard_shouldReturnAssignmentsForCart() {
+    void findAllByCart_shouldReturnAssignmentsForCart() {
         // Given
         adapter.assign(cart, customer);
         
         // When
-        List<CartCustomerAssignment> assignments = adapter.findAllByCard(cartId);
+        List<CartCustomerAssignment> assignments = adapter.findAllByCart(cartId);
         
         // Then
         assertEquals(1, assignments.size());
@@ -87,10 +87,10 @@ class CartCustomerAssignmentAdapterTest {
     // RedPath Tests
 
     @Test
-    void findAllByCard_whenCartIdIsNull_shouldThrowException() {
+    void findAllByCart_whenCartIdIsNull_shouldThrowException() {
         // When/Then
         // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> adapter.findAllByCard(null));
+        assertThrows(Exception.class, () -> adapter.findAllByCart(null));
     }
 
     @Test
@@ -115,9 +115,9 @@ class CartCustomerAssignmentAdapterTest {
     }
 
     @Test
-    void findAllByCard_whenNoAssignmentsExist_shouldReturnEmptyList() {
+    void findAllByCart_whenNoAssignmentsExist_shouldReturnEmptyList() {
         // When
-        List<CartCustomerAssignment> assignments = adapter.findAllByCard(UUID.randomUUID());
+        List<CartCustomerAssignment> assignments = adapter.findAllByCart(UUID.randomUUID());
         
         // Then
         assertTrue(assignments.isEmpty());

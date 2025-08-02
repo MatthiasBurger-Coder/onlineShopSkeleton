@@ -14,6 +14,6 @@ public class OnCartCreateAssignCustomer {
     }
 
     public void execute(CartCreateEvent event) {
-        cartCustomerAssignmentPort.assign(event.cart(),event.customer());
+        cartCustomerAssignmentPort.assign(event.getCart(), event.getCustomer());
     }
 }

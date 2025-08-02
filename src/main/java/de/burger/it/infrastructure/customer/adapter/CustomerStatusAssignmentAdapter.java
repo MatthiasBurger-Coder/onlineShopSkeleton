@@ -20,7 +20,8 @@ public class CustomerStatusAssignmentAdapter implements CustomerStatusAssignment
         if (customerId == null) {
             throw new IllegalArgumentException("Customer ID cannot be null");
         }
-        return store.get(customerId).state();
+        CustomerStatusAssignment assignment = store.get(customerId);
+        return assignment != null ? assignment.state() : null;
     }
 
     @Override

@@ -15,6 +15,6 @@ public class OnOrderDeliverAssignDeliveredState {
     }
 
     public void execute(OrderDeliverEvent event) {
-        orderStatusAssignmentPort.assign(event.order(), OrderStateType.DELIVERED);
+        orderStatusAssignmentPort.assign(event.getOrder(), OrderStateType.DELIVERED);
     }
 }

@@ -81,8 +81,11 @@ class CustomerStatusAssignmentAdapterTest {
     }
 
     @Test
-    void findBy_whenCustomerIdNotFound_shouldThrowException() {
-        // When/Then
-        assertThrows(NullPointerException.class, () -> adapter.findBy(UUID.randomUUID()));
+    void findBy_whenCustomerIdNotFound_shouldReturnNull() {
+        // When
+        CustomerStateType state = adapter.findBy(UUID.randomUUID());
+
+        // Then
+        assertNull(state);
     }
 }

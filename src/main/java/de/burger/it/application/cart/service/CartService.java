@@ -9,6 +9,7 @@ import de.burger.it.domain.cart.model.NullCart;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
+import de.burger.it.domain.cart.state.NullCartState;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.relation.port.CartCustomerAssignmentPort;
@@ -86,11 +87,11 @@ public class CartService {
                 .toList();
     }
 
-    public List<CartLike> findAllCartByCarts(CartLike cart) {
+    public List<CartLike> findAllCartsByCart(CartLike cart) {
         if (cart.isNull()) {
             return Collections.emptyList();
         }
-        var cartCustomerAssignments = cartCustomerAssignmentPort.findAllByCard(cart.id());
+        var cartCustomerAssignments = cartCustomerAssignmentPort.findAllByCart(cart.id());
         return cartCustomerAssignments.stream()
                 .map(cartCustomerAssignment -> {
                     CartLike foundCart = cartRepository.findById(cartCustomerAssignment.cartId());
@@ -101,9 +102,10 @@ public class CartService {
 
     public CartState getState(CartLike cart) {
         if (cart.isNull()) {
-            return null; // Return null or a default state for NullCart
+            return NullCartState.getInstance();
         }
-        return cartStatusAssignmentPort.findBy(cart.id()).toState();
+        var stateType = cartStatusAssignmentPort.findBy(cart.id());
+        return stateType != null ? stateType.toState() : NullCartState.getInstance();
     }
 
 }

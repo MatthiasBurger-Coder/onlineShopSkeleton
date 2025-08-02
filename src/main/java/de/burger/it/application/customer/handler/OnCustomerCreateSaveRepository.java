@@ -13,6 +13,6 @@ public class OnCustomerCreateSaveRepository {
     }
 
     public void execute(CustomerCreateEvent event) {
-        customerRepository.save(event.customer());
+        customerRepository.save(event.getCustomer());
     }
 }

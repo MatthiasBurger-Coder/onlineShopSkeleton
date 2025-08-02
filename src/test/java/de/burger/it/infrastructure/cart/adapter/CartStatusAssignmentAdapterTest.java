@@ -81,8 +81,11 @@ class CartStatusAssignmentAdapterTest {
     }
 
     @Test
-    void findBy_whenCartIdNotFound_shouldThrowException() {
-        // When/Then
-        assertThrows(NullPointerException.class, () -> adapter.findBy(UUID.randomUUID()));
+    void findBy_whenCartIdNotFound_shouldReturnNull() {
+        // When
+        CartStateType state = adapter.findBy(UUID.randomUUID());
+
+        // Then
+        assertNull(state);
     }
 }
