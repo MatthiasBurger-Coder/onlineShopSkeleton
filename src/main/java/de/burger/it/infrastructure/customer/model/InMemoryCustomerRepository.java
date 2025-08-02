@@ -7,11 +7,12 @@ import de.burger.it.domain.customer.model.NullCustomer;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class InMemoryCustomerRepository implements CustomerRepository {
 
-    private final Map<UUID, Customer> store = new HashMap<>();
+    private final Map<UUID, Customer> store = new ConcurrentHashMap<>();
 
     @Override
     public CustomerLike findById(UUID customerId) {

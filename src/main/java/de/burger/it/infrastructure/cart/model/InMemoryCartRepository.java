@@ -7,11 +7,12 @@ import de.burger.it.domain.cart.model.NullCart;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class InMemoryCartRepository implements CartRepositoryPort {
 
-    private final Map<UUID, Cart> store = new HashMap<>();
+    private final Map<UUID, Cart> store = new ConcurrentHashMap<>();
 
     @Override
     public CartLike findById(UUID cartId) {

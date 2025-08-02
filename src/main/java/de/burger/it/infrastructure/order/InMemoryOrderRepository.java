@@ -9,11 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class InMemoryOrderRepository implements OrderRepositoryPort {
 
-    private final Map<UUID, Order> store = new HashMap<>();
+    private final Map<UUID, Order> store = new ConcurrentHashMap<>();
 
     @Override
     public OrderLike findById(UUID orderId) {
