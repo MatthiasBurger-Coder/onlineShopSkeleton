@@ -20,7 +20,8 @@ public class OrderStatusAssignmentAdapter implements OrderStatusAssignmentPort {
         if (orderId == null) {
             throw new IllegalArgumentException("Order ID cannot be null");
         }
-        return store.get(orderId).state();
+        OrderStatusAssignment assignment = store.get(orderId);
+        return assignment != null ? assignment.state() : null;
     }
 
     @Override

@@ -10,6 +10,7 @@ import de.burger.it.domain.customer.model.NullCustomer;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerState;
 import de.burger.it.domain.customer.state.CustomerStateType;
+import de.burger.it.domain.customer.state.NullCustomerState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,6 +70,7 @@ class CustomerServiceTest {
         customerService.suspendCustomer(customer);
 
         // Then
+        verify(customerStatusAssignmentPort).assign(customer, CustomerStateType.SUSPENDED);
         verify(publisher).publishEvent(any(CustomerSuspendEvent.class));
         verify(cartService).findAllCartByCustomer(customer);
         verify(cartService).close(cart1, customer);
@@ -114,16 +116,16 @@ class CustomerServiceTest {
         // Verify that no event is published and no cart service interactions
         verifyNoInteractions(publisher);
         verifyNoInteractions(cartService);
+        verifyNoInteractions(customerStatusAssignmentPort);
     }
 
     @Test
-    void getState_whenCustomerIsNull_shouldReturnNull() {
+    void getState_whenCustomerIsNull_shouldReturnNullState() {
         // When
         CustomerState result = customerService.getState(NullCustomer.getInstance());
 
         // Then
-        // Verify that null is returned and no status assignment port interactions
-        assertNull(result);
+        assertEquals(NullCustomerState.getInstance(), result);
         verifyNoInteractions(customerStatusAssignmentPort);
     }
 
@@ -135,6 +137,7 @@ class CustomerServiceTest {
         // When/Then
         Exception exception = assertThrows(RuntimeException.class, () -> customerService.suspendCustomer(customer));
         assertEquals("Cart service error", exception.getMessage());
+        verify(customerStatusAssignmentPort).assign(customer, CustomerStateType.SUSPENDED);
         verify(publisher).publishEvent(any(CustomerSuspendEvent.class));
     }
 

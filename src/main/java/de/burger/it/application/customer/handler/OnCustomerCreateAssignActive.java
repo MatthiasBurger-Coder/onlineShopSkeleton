@@ -15,6 +15,6 @@ public class OnCustomerCreateAssignActive {
     }
 
     public void execute(CustomerCreateEvent event) {
-        customerStatusAssignmentPort.assign(event.customer(), CustomerStateType.ACTIVE);
+        customerStatusAssignmentPort.assign(event.getCustomer(), CustomerStateType.ACTIVE);
     }
 }

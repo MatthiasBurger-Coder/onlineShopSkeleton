@@ -1,5 +1,20 @@
 package de.burger.it.domain.customer.event;
 
 import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.common.event.DomainEvent;
 
-public record CustomerCreateEvent (Customer customer) { }
+/**
+ * Event emitted when a new customer is created.
+ */
+public class CustomerCreateEvent extends DomainEvent {
+
+    private final Customer customer;
+
+    public CustomerCreateEvent(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+}

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CartCustomerAssignmentPort {
-    List<CartCustomerAssignment> findAllByCard(UUID cartId);
+    List<CartCustomerAssignment> findAllByCart(UUID cartId);
     List<CartCustomerAssignment> findAllByCustomer(UUID customerId);
     void assign(Cart cart, Customer customer);
 }

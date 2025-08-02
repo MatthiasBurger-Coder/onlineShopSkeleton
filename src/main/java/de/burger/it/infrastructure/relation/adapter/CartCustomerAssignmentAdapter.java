@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,11 +28,11 @@ public class CartCustomerAssignmentAdapter implements CartCustomerAssignmentPort
                 cart.id(),
                 customer.id()
         );
-        store.computeIfAbsent(assignment.customerId(), k -> new ArrayList<>()).add(assignment);
+        store.computeIfAbsent(assignment.customerId(), k -> new CopyOnWriteArrayList<>()).add(assignment);
     }
 
     @Override
-    public List<CartCustomerAssignment> findAllByCard(UUID cartId) {
+    public List<CartCustomerAssignment> findAllByCart(UUID cartId) {
         if (cartId == null) {
             throw new IllegalArgumentException("Cart ID cannot be null");
         }

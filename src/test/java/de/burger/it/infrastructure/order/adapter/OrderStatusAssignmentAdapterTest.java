@@ -81,8 +81,11 @@ class OrderStatusAssignmentAdapterTest {
     }
 
     @Test
-    void findBy_whenOrderIdNotFound_shouldThrowException() {
-        // When/Then
-        assertThrows(NullPointerException.class, () -> adapter.findBy(UUID.randomUUID()));
+    void findBy_whenOrderIdNotFound_shouldReturnNull() {
+        // When
+        OrderStateType state = adapter.findBy(UUID.randomUUID());
+
+        // Then
+        assertNull(state);
     }
 }

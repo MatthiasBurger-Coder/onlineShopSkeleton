@@ -9,6 +9,7 @@ import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerState;
 import de.burger.it.domain.customer.state.CustomerStateType;
+import de.burger.it.domain.customer.state.NullCustomerState;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,7 @@ public class CustomerService {
         if (customer.isNull()) {
             return;
         }
+        customerStatusAssignmentPort.assign((Customer) customer, CustomerStateType.SUSPENDED);
         publisher.publishEvent(new CustomerSuspendEvent((Customer) customer));
         List<CartLike> cartList = cartService.findAllCartByCustomer(customer);
         cartList.forEach(cart -> cartService.close(cart, customer));
@@ -46,8 +48,9 @@ public class CustomerService {
 
     public CustomerState getState(CustomerLike customer) {
         if (customer.isNull()) {
-            return null; // Return null or a default state for NullCustomer
+            return NullCustomerState.getInstance();
         }
-        return customerStatusAssignmentPort.findBy(customer.id()).toState();
+        var stateType = customerStatusAssignmentPort.findBy(customer.id());
+        return stateType != null ? stateType.toState() : NullCustomerState.getInstance();
     }
 }

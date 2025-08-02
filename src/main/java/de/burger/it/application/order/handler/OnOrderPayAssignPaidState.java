@@ -15,6 +15,6 @@ public class OnOrderPayAssignPaidState {
     }
 
     public void execute(OrderPayEvent event) {
-        orderStatusAssignmentPort.assign(event.order(), OrderStateType.PAID);
+        orderStatusAssignmentPort.assign(event.getOrder(), OrderStateType.PAID);
     }
 }

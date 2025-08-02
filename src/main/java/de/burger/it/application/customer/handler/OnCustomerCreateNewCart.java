@@ -15,6 +15,6 @@ public class OnCustomerCreateNewCart {
     }
 
     public void execute(CustomerCreateEvent event) {
-        cartService.create(event.customer());
+        cartService.create(event.getCustomer());
     }
 }

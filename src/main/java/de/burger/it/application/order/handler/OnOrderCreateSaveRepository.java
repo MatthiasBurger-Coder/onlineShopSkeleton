@@ -14,6 +14,6 @@ public class OnOrderCreateSaveRepository {
     }
 
     public void execute(OrderCreateEvent event) {
-        orderRepository.save(event.order());
+        orderRepository.save(event.getOrder());
     }
 }
