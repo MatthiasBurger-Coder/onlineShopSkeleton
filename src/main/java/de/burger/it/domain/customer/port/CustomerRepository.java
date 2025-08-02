@@ -1,4 +1,4 @@
-package de.burger.it.infrastructure.customer.port;
+package de.burger.it.domain.customer.port;
 
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.CustomerLike;

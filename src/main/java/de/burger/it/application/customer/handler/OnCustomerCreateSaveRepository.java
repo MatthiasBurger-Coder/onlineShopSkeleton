@@ -1,7 +1,7 @@
 package de.burger.it.application.customer.handler;
 
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
-import de.burger.it.infrastructure.customer.port.CustomerRepository;
+import de.burger.it.domain.customer.port.CustomerRepository;
 import org.springframework.stereotype.Component;
 
 @Component

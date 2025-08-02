@@ -3,7 +3,7 @@ package de.burger.it.infrastructure.customer.model;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.customer.model.NullCustomer;
-import de.burger.it.infrastructure.customer.port.CustomerRepository;
+import de.burger.it.domain.customer.port.CustomerRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;

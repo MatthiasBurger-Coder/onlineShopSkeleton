@@ -1,4 +1,4 @@
-package de.burger.it.infrastructure.order;
+package de.burger.it.infrastructure.order.model;
 
 import de.burger.it.domain.order.model.NullOrder;
 import de.burger.it.domain.order.model.Order;
