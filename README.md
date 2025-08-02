@@ -2,6 +2,8 @@
 
 A sophisticated state management system for e-commerce applications, demonstrating advanced design patterns and event-driven architecture. This project showcases how to implement complex state transitions for shopping carts, customers, and orders using domain-driven design principles.
 
+**Version:** 2.0-SNAPSHOT
+
 ## Features
 
 - **State Management**: Robust state machine implementation for carts, customers, and orders
@@ -215,22 +217,29 @@ src/
 │                   │   │   ├── handler/
 │                   │   │   ├── listener/
 │                   │   │   └── service/
-│                   │   ├── dispatcher/
+│                   │   ├── event/
 │                   │   ├── order/
+│                   │   │   ├── handler/
+│                   │   │   ├── listener/
 │                   │   │   └── service/
-│                   │   └── process/
+│                   │   ├── process/
+│                   │   └── state/
 │                   ├── domain/
 │                   │   ├── cart/
 │                   │   │   ├── event/
 │                   │   │   ├── model/
 │                   │   │   ├── port/
 │                   │   │   └── state/
+│                   │   ├── common/
+│                   │   │   ├── event/
+│                   │   │   └── model/
 │                   │   ├── customer/
 │                   │   │   ├── event/
 │                   │   │   ├── model/
 │                   │   │   ├── port/
 │                   │   │   └── state/
 │                   │   ├── order/
+│                   │   │   ├── event/
 │                   │   │   ├── model/
 │                   │   │   ├── port/
 │                   │   │   └── state/
