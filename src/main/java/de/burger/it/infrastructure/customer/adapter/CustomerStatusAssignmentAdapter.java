@@ -7,6 +7,7 @@ import de.burger.it.domain.customer.state.CustomerStateType;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,24 +18,22 @@ public class CustomerStatusAssignmentAdapter implements CustomerStatusAssignment
 
     @Override
     public CustomerStateType findBy(UUID customerId) {
-        if (customerId == null) {
-            throw new IllegalArgumentException("Customer ID cannot be null");
-        }
-        CustomerStatusAssignment assignment = store.get(customerId);
-        return assignment != null ? assignment.state() : null;
+        UUID id = Optional.ofNullable(customerId)
+                .orElseThrow(() -> new IllegalArgumentException("Customer ID cannot be null"));
+        return Optional.ofNullable(store.get(id))
+                .map(CustomerStatusAssignment::state)
+                .orElse(null);
     }
 
     @Override
     public void assign(Customer customer, CustomerStateType newState) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
-        }
-        if (newState == null) {
-            throw new IllegalArgumentException("State cannot be null");
-        }
+        Customer nonNullCustomer = Optional.ofNullable(customer)
+                .orElseThrow(() -> new IllegalArgumentException("Customer cannot be null"));
+        CustomerStateType state = Optional.ofNullable(newState)
+                .orElseThrow(() -> new IllegalArgumentException("State cannot be null"));
         var assignment = new CustomerStatusAssignment(
-                customer.id(),
-                newState
+                nonNullCustomer.id(),
+                state
         );
         store.put(assignment.customerId(), assignment);
     }

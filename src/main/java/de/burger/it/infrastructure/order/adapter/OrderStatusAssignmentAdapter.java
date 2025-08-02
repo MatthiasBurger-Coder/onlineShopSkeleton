@@ -7,6 +7,7 @@ import de.burger.it.domain.order.state.OrderStateType;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,24 +18,22 @@ public class OrderStatusAssignmentAdapter implements OrderStatusAssignmentPort {
 
     @Override
     public OrderStateType findBy(UUID orderId) {
-        if (orderId == null) {
-            throw new IllegalArgumentException("Order ID cannot be null");
-        }
-        OrderStatusAssignment assignment = store.get(orderId);
-        return assignment != null ? assignment.state() : null;
+        UUID id = Optional.ofNullable(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order ID cannot be null"));
+        return Optional.ofNullable(store.get(id))
+                .map(OrderStatusAssignment::state)
+                .orElse(null);
     }
 
     @Override
     public void assign(Order order, OrderStateType newState) {
-        if (order == null) {
-            throw new IllegalArgumentException("Order cannot be null");
-        }
-        if (newState == null) {
-            throw new IllegalArgumentException("State cannot be null");
-        }
+        Order nonNullOrder = Optional.ofNullable(order)
+                .orElseThrow(() -> new IllegalArgumentException("Order cannot be null"));
+        OrderStateType state = Optional.ofNullable(newState)
+                .orElseThrow(() -> new IllegalArgumentException("State cannot be null"));
         var assignment = new OrderStatusAssignment(
-                order.id(),
-                newState
+                nonNullOrder.id(),
+                state
         );
         store.put(assignment.orderId(), assignment);
     }

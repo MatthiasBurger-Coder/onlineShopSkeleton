@@ -9,6 +9,7 @@ import de.burger.it.domain.cart.model.NullCart;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
+import de.burger.it.domain.cart.state.CartStateType;
 import de.burger.it.domain.cart.state.NullCartState;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.CustomerLike;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,70 +44,71 @@ public class CartService {
     }
 
     public void create(CustomerLike customer) {
-        if (customer.isNull()) {
-            return;
-        }
-        var cart = new Cart(UUID.randomUUID());
-        var cartCreateEvent = new CartCreateEvent(cart, (Customer) customer);
-        publisher.publishEvent(cartCreateEvent);
+        Optional.ofNullable(customer)
+                .filter(c -> !c.isNull())
+                .ifPresent(c -> {
+                    var cart = new Cart(UUID.randomUUID());
+                    var cartCreateEvent = new CartCreateEvent(cart, (Customer) c);
+                    publisher.publishEvent(cartCreateEvent);
+                });
     }
 
     public void close(CartLike cart, CustomerLike customer) {
-        if (cart.isNull() || customer.isNull()) {
-            return;
-        }
-        var cartCloseEvent = new CartCloseEvent((Cart) cart, (Customer) customer);
-        publisher.publishEvent(cartCloseEvent);
+        Optional.ofNullable(cart)
+                .filter(c -> !c.isNull())
+                .ifPresent(c -> Optional.ofNullable(customer)
+                        .filter(cu -> !cu.isNull())
+                        .ifPresent(cu -> {
+                            var cartCloseEvent = new CartCloseEvent((Cart) c, (Customer) cu);
+                            publisher.publishEvent(cartCloseEvent);
+                        }));
     }
 
     public void activate(CartLike cart, CustomerLike customer) {
-        if (cart.isNull() || customer.isNull()) {
-            return;
-        }
-        var cartActiveEvent = new CartActiveEvent((Cart) cart, (Customer) customer);
-        publisher.publishEvent(cartActiveEvent);
+        Optional.ofNullable(cart)
+                .filter(c -> !c.isNull())
+                .ifPresent(c -> Optional.ofNullable(customer)
+                        .filter(cu -> !cu.isNull())
+                        .ifPresent(cu -> {
+                            var cartActiveEvent = new CartActiveEvent((Cart) c, (Customer) cu);
+                            publisher.publishEvent(cartActiveEvent);
+                        }));
     }
 
     public CartLike findById(UUID cartId) {
-        if (cartId == null) {
-            return NullCart.getInstance();
-        }
-        CartLike cart = cartRepository.findById(cartId);
-        return cart != null ? cart : NullCart.getInstance();
+        return Optional.ofNullable(cartId)
+                .map(cartRepository::findById)
+                .orElse(NullCart.getInstance());
     }
 
     public List<CartLike> findAllCartByCustomer(CustomerLike customer) {
-        if (customer.isNull()) {
-            return Collections.emptyList();
-        }
-        var cartCustomerAssignments = cartCustomerAssignmentPort.findAllByCustomer(customer.id());
-        return cartCustomerAssignments.stream()
-                .map(cartCustomerAssignment -> {
-                    CartLike cart = cartRepository.findById(cartCustomerAssignment.cartId());
-                    return cart != null ? cart : NullCart.getInstance();
-                })
+        return Optional.ofNullable(customer)
+                .filter(c -> !c.isNull())
+                .map(c -> cartCustomerAssignmentPort.findAllByCustomer(c.id()))
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(cartCustomerAssignment -> Optional.ofNullable(cartRepository.findById(cartCustomerAssignment.cartId()))
+                        .orElse(NullCart.getInstance()))
                 .toList();
     }
 
     public List<CartLike> findAllCartsByCart(CartLike cart) {
-        if (cart.isNull()) {
-            return Collections.emptyList();
-        }
-        var cartCustomerAssignments = cartCustomerAssignmentPort.findAllByCart(cart.id());
-        return cartCustomerAssignments.stream()
-                .map(cartCustomerAssignment -> {
-                    CartLike foundCart = cartRepository.findById(cartCustomerAssignment.cartId());
-                    return foundCart != null ? foundCart : NullCart.getInstance();
-                })
+        return Optional.ofNullable(cart)
+                .filter(c -> !c.isNull())
+                .map(c -> cartCustomerAssignmentPort.findAllByCart(c.id()))
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(cartCustomerAssignment -> Optional.ofNullable(cartRepository.findById(cartCustomerAssignment.cartId()))
+                        .orElse(NullCart.getInstance()))
                 .toList();
     }
 
     public CartState getState(CartLike cart) {
-        if (cart.isNull()) {
-            return NullCartState.getInstance();
-        }
-        var stateType = cartStatusAssignmentPort.findBy(cart.id());
-        return stateType != null ? stateType.toState() : NullCartState.getInstance();
+        return Optional.ofNullable(cart)
+                .filter(c -> !c.isNull())
+                .map(c -> cartStatusAssignmentPort.findBy(c.id()))
+                .map(CartStateType::toState)
+                .orElse(NullCartState.getInstance());
     }
 
 }

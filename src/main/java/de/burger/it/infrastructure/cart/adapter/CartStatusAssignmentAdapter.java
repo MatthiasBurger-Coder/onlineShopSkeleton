@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,15 +18,13 @@ public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
 
     @Override
     public void assign(Cart cart, CartStateType newState) {
-        if (cart == null) {
-            throw new IllegalArgumentException("Cart cannot be null");
-        }
-        if (newState == null) {
-            throw new IllegalArgumentException("State cannot be null");
-        }
+        Cart nonNullCart = Optional.ofNullable(cart)
+                .orElseThrow(() -> new IllegalArgumentException("Cart cannot be null"));
+        CartStateType state = Optional.ofNullable(newState)
+                .orElseThrow(() -> new IllegalArgumentException("State cannot be null"));
         var assignment = new CartStatusAssignment(
-                cart.id(),
-                newState,
+                nonNullCart.id(),
+                state,
                 LocalDateTime.now(),
                 null
         );
@@ -34,10 +33,10 @@ public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
 
     @Override
     public CartStateType findBy(UUID cartId) {
-        if (cartId == null) {
-            throw new IllegalArgumentException("Cart ID cannot be null");
-        }
-        CartStatusAssignment assignment = store.get(cartId);
-        return assignment != null ? assignment.state() : null;
+        UUID id = Optional.ofNullable(cartId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart ID cannot be null"));
+        return Optional.ofNullable(store.get(id))
+                .map(CartStatusAssignment::state)
+                .orElse(null);
     }
 }

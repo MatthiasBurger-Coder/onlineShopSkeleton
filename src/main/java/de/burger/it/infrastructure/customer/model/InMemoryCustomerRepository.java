@@ -7,6 +7,7 @@ import de.burger.it.infrastructure.customer.port.CustomerRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,8 +18,9 @@ public class InMemoryCustomerRepository implements CustomerRepository {
 
     @Override
     public CustomerLike findById(UUID customerId) {
-        Customer customer = store.get(customerId);
-        return customer != null ? customer : NullCustomer.getInstance();
+        return Optional.ofNullable(store.get(customerId))
+                .map(c -> (CustomerLike) c)
+                .orElse(NullCustomer.getInstance());
     }
 
     @Override
