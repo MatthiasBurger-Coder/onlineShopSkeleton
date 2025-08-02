@@ -43,6 +43,18 @@ public enum CartStateType {
         public CartState toState() {
             return new ClosedCartState();
         }
+    },
+
+    /**
+     * Represents a null or uninitialized state of a cart.
+     * This state serves as a placeholder when no real cart state is applicable or available.
+     * Converts to the {@link NullCartState}, which is implemented as a singleton.
+     */
+    NULL_CART_STATE{
+        @Override
+        public CartState toState() {
+            return NullCartState.getInstance();
+        }
     };
 
     /**
