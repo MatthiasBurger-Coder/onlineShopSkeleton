@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,8 +20,9 @@ public class InMemoryCartRepository implements CartRepositoryPort {
 
     @Override
     public CartLike findById(UUID cartId) {
-        Cart cart = store.get(cartId);
-        return cart != null ? cart : NullCart.getInstance();
+        return Optional.ofNullable(store.get(cartId))
+                .map(cart -> (CartLike) cart)
+                .orElse(NullCart.getInstance());
     }
 
     @Override

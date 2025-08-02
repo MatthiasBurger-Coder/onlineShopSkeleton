@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Component
 public class CartCustomerAssignmentAdapter implements CartCustomerAssignmentPort {
@@ -18,35 +19,31 @@ public class CartCustomerAssignmentAdapter implements CartCustomerAssignmentPort
 
     @Override
     public void assign(Cart cart, Customer customer) {
-        if (cart == null) {
-            throw new IllegalArgumentException("Cart cannot be null");
-        }
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
-        }
+        Cart nonNullCart = Optional.ofNullable(cart)
+                .orElseThrow(() -> new IllegalArgumentException("Cart cannot be null"));
+        Customer nonNullCustomer = Optional.ofNullable(customer)
+                .orElseThrow(() -> new IllegalArgumentException("Customer cannot be null"));
         var assignment = new CartCustomerAssignment(
-                cart.id(),
-                customer.id()
+                nonNullCart.id(),
+                nonNullCustomer.id()
         );
         store.computeIfAbsent(assignment.customerId(), k -> new CopyOnWriteArrayList<>()).add(assignment);
     }
 
     @Override
     public List<CartCustomerAssignment> findAllByCart(UUID cartId) {
-        if (cartId == null) {
-            throw new IllegalArgumentException("Cart ID cannot be null");
-        }
+        UUID id = Optional.ofNullable(cartId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart ID cannot be null"));
         return store.values().stream()
                 .flatMap(List::stream)
-                .filter(a -> a.cartId().equals(cartId))
+                .filter(a -> a.cartId().equals(id))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CartCustomerAssignment> findAllByCustomer(UUID customerId) {
-        if (customerId == null) {
-            throw new IllegalArgumentException("Customer ID cannot be null");
-        }
-        return store.getOrDefault(customerId, Collections.emptyList());
+        UUID id = Optional.ofNullable(customerId)
+                .orElseThrow(() -> new IllegalArgumentException("Customer ID cannot be null"));
+        return store.getOrDefault(id, Collections.emptyList());
     }
 }

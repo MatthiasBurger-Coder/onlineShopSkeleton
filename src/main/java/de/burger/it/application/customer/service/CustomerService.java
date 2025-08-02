@@ -13,7 +13,9 @@ import de.burger.it.domain.customer.state.NullCustomerState;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -29,28 +31,32 @@ public class CustomerService {
     }
 
     public void createNewCustomer(CustomerLike customer) {
-        if (customer.isNull()) {
-            return;
-        }
-        customerStatusAssignmentPort.assign((Customer) customer, CustomerStateType.CREATE);
-        publisher.publishEvent(new CustomerCreateEvent((Customer) customer));
+        Optional.ofNullable(customer)
+                .filter(c -> !c.isNull())
+                .ifPresent(c -> {
+                    customerStatusAssignmentPort.assign((Customer) c, CustomerStateType.CREATE);
+                    publisher.publishEvent(new CustomerCreateEvent((Customer) c));
+                });
     }
 
     public void suspendCustomer(CustomerLike customer) {
-        if (customer.isNull()) {
-            return;
-        }
-        customerStatusAssignmentPort.assign((Customer) customer, CustomerStateType.SUSPENDED);
-        publisher.publishEvent(new CustomerSuspendEvent((Customer) customer));
-        List<CartLike> cartList = cartService.findAllCartByCustomer(customer);
-        cartList.forEach(cart -> cartService.close(cart, customer));
+        Optional.ofNullable(customer)
+                .filter(c -> !c.isNull())
+                .ifPresent(c -> {
+                    customerStatusAssignmentPort.assign((Customer) c, CustomerStateType.SUSPENDED);
+                    publisher.publishEvent(new CustomerSuspendEvent((Customer) c));
+                    Optional.ofNullable(cartService.findAllCartByCustomer(c))
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .forEach(cart -> cartService.close(cart, c));
+                });
     }
 
     public CustomerState getState(CustomerLike customer) {
-        if (customer.isNull()) {
-            return NullCustomerState.getInstance();
-        }
-        var stateType = customerStatusAssignmentPort.findBy(customer.id());
-        return stateType != null ? stateType.toState() : NullCustomerState.getInstance();
+        return Optional.ofNullable(customer)
+                .filter(c -> !c.isNull())
+                .map(c -> customerStatusAssignmentPort.findBy(c.id()))
+                .map(CustomerStateType::toState)
+                .orElse(NullCustomerState.getInstance());
     }
 }

@@ -4,6 +4,8 @@ import de.burger.it.domain.common.event.DomainEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * A centralized event dispatcher that handles publishing events and routing them to processors.
  * This class decouples event publishing from event processing.
@@ -26,9 +28,7 @@ public class EventDispatcher {
      * @param <E> the type of the event
      */
     public <E extends DomainEvent> void dispatch(E event) {
-        if (event == null) {
-            return;
-        }
-        publisher.publishEvent(event);
+        Optional.ofNullable(event)
+                .ifPresent(publisher::publishEvent);
     }
 }

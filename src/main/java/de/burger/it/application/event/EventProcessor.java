@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A generic event processor that manages event handlers for different event types.
@@ -37,20 +38,18 @@ public class EventProcessor<E> {
      */
     @SuppressWarnings("unchecked")
     public <T extends E> T process(T event) {
-        if (event == null) {
-            return null;
-        }
-        
-        List<EventHandler<? extends E>> eventHandlers = handlers.entrySet().stream()
-                .filter(entry -> entry.getKey().isAssignableFrom(event.getClass()))
-                .flatMap(entry -> entry.getValue().stream())
-                .toList();
-        T result = event;
-        
-        for (EventHandler<? extends E> handler : eventHandlers) {
-            result = ((EventHandler<T>) handler).handle(result);
-        }
-        
-        return result;
+        return Optional.ofNullable(event)
+                .map(e -> {
+                    List<EventHandler<? extends E>> eventHandlers = handlers.entrySet().stream()
+                            .filter(entry -> entry.getKey().isAssignableFrom(e.getClass()))
+                            .flatMap(entry -> entry.getValue().stream())
+                            .toList();
+                    T result = e;
+                    for (EventHandler<? extends E> handler : eventHandlers) {
+                        result = ((EventHandler<T>) handler).handle(result);
+                    }
+                    return result;
+                })
+                .orElse(null);
     }
 }

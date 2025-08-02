@@ -7,6 +7,7 @@ import de.burger.it.domain.order.port.OrderRepositoryPort;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,8 +18,9 @@ public class InMemoryOrderRepository implements OrderRepositoryPort {
 
     @Override
     public OrderLike findById(UUID orderId) {
-        Order order = store.get(orderId);
-        return order != null ? order : NullOrder.getInstance();
+        return Optional.ofNullable(store.get(orderId))
+                .map(o -> (OrderLike) o)
+                .orElse(NullOrder.getInstance());
     }
 
     @Override
