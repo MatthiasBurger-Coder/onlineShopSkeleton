@@ -1,13 +1,18 @@
 package de.burger.it.domain.cart.model;
 
+import de.burger.it.domain.common.model.NullObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public record NullCart(@NotNull UUID id) implements CartLike {
+public final class NullCart extends NullObject<CartLike> implements CartLike {
     
-    private static final NullCart INSTANCE = new NullCart(
-            UUID.fromString("00000000-0000-0000-0000-000000000000"));
+    private static final NullCart INSTANCE = new NullCart();
+    private final UUID id;
+    
+    private NullCart() {
+        this.id = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    }
     
     @NotNull
     public static NullCart getInstance() {
@@ -15,13 +20,8 @@ public record NullCart(@NotNull UUID id) implements CartLike {
     }
     
     @Override
-    public boolean isNull() {
-        return true;
-    }
-    
-    @Override
     @NotNull
-    public String toString() {
-        return "NullCart";
+    public UUID id() {
+        return id;
     }
 }

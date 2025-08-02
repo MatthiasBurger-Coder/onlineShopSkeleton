@@ -1,11 +1,12 @@
 package de.burger.it.domain.customer.model;
 
+import de.burger.it.domain.common.model.Nullable;
 import java.util.UUID;
 
 /**
  * Common interface for Customer and NullCustomer.
  */
-public interface CustomerLike {
+public interface CustomerLike extends Nullable {
     /**
      * Returns the customer ID.
      */
@@ -20,9 +21,4 @@ public interface CustomerLike {
      * Returns the customer email.
      */
     String email();
-    
-    /**
-     * Checks if this is a null customer.
-     */
-    boolean isNull();
 }

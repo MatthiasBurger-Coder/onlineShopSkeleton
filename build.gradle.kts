@@ -19,6 +19,7 @@ dependencies {
     implementation("org.springframework:spring-context:6.2.8")
     implementation("org.springframework:spring-core:6.2.8")
     implementation("org.springframework:spring-beans:6.2.8")
+    implementation("org.jetbrains:annotations:24.1.0")
 
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")

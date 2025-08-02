@@ -1,26 +1,38 @@
 package de.burger.it.domain.customer.model;
 
-import org.jetbrains.annotations.NotNull;
+import de.burger.it.domain.common.model.NullObject;
 
 import java.util.UUID;
 
-public record NullCustomer(UUID id, String name, String email) implements CustomerLike {
-    
-    private static final NullCustomer INSTANCE = new NullCustomer(
-            UUID.fromString("00000000-0000-0000-0000-000000000000"), "", "");
-    
-   public static NullCustomer getInstance() {
+public final class NullCustomer extends NullObject<CustomerLike> implements CustomerLike {
+
+    private static final NullCustomer INSTANCE = new NullCustomer();
+    private final UUID id;
+    private final String name;
+    private final String email;
+
+    private NullCustomer() {
+        this.id = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        this.name = "";
+        this.email = "";
+    }
+
+    public static NullCustomer getInstance() {
         return INSTANCE;
     }
     
     @Override
-    public boolean isNull() {
-        return true;
+    public UUID id() {
+        return id;
     }
     
     @Override
-    @NotNull
-    public String toString() {
-        return "NullCustomer";
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public String email() {
+        return email;
     }
 }
