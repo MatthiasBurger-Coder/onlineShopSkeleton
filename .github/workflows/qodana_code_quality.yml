@@ -55,20 +55,6 @@ jobs:
           # Ensure the XML exists (fail fast if missing)
           test -f build/reports/jacoco/test/jacocoTestReport.xml
           cp build/reports/jacoco/test/jacocoTestReport.xml .qodana/code-coverage/
-
-      - name: Qodana Scan
-        uses: JetBrains/qodana-action@v2025.1
-        with:
-          pr-mode: false
-          use-caches: true
-          cache-default-branch-only: false
-          upload-result: true
-          use-annotations: true
-          # Pass coverage dir explicitly; pin linter image to 2025.1
-          args: "--coverage-dir,.qodana/code-coverage --image,jetbrains/qodana-jvm:2025.1"
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2116466718 }}
-          QODANA_ENDPOINT: https://qodana.cloud
       # Install + run lizard to compute cyclomatic complexity for Java
       - name: Install lizard (complexity)
         run: pipx install lizard
@@ -101,3 +87,18 @@ jobs:
             echo ""
             echo "_Full report in artifact **complexity-report** (lizard.json)._"
           } >> $GITHUB_STEP_SUMMARY
+
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2025.1
+        with:
+          pr-mode: false
+          use-caches: true
+          cache-default-branch-only: false
+          upload-result: true
+          use-annotations: true
+          # Pass coverage dir explicitly; pin linter image to 2025.1
+          args: "--coverage-dir,.qodana/code-coverage --image,jetbrains/qodana-jvm:2025.1"
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2116466718 }}
+          QODANA_ENDPOINT: https://qodana.cloud
+
