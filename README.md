@@ -87,13 +87,13 @@ The application demonstrates 9 key workflows:
 - **JUnit Jupiter 5.10.1**: Testing framework
 - **Mockito 5.10.0**: Mocking framework for testing
 - **Jetbrains Annotations 24.1.0**: Annotations for better code analysis
-- **Gradle 8.x**: Build automation
+- **Gradle 9.0.0**: Build automation
 
 ## Setup Instructions
 
 ### Prerequisites
 - Java Development Kit (JDK) 21 (strictly Java 21, as Mockito's Byte Buddy dependency only supports up to Java 21)
-- Gradle 8.x or later
+- Gradle 9.0.0
 
 ### Building the Project
 ```bash
@@ -268,8 +268,49 @@ src/
 - **Dependency Injection**: For loose coupling between components using Spring Framework
 - **Ports and Adapters Pattern**: Core of the hexagonal architecture, with ports defined in the domain and implemented by adapters in the infrastructure layer
 - **Factory Method**: For creating state objects and handling state transitions
-- **Null Object Pattern**: For eliminating null checks by providing special "null" implementations (NullCart, NullCustomer, NullOrder) that implement common interfaces (CartLike, CustomerLike, OrderLike)
+- **Null Object Pattern**: For eliminating null checks by providing special "null" implementations (CartNullObject, CustomerNullObject, OrderNullObject) that implement the domain interfaces (Cart, Customer, OrderLike)
 - **Pipeline Pattern**: For building and executing processing pipelines with a fluent API
+
+## New Implementations
+
+The following implementations were recently added and integrated into the system:
+
+- Relation Management
+  - Domain
+    - CartCustomerAssignment (model), CartOrderAssignment (model)
+    - Ports: CartCustomerAssignmentPort, CartOrderAssignmentPort, CartOrderAssignmentRepositoryPort
+  - Infrastructure
+    - Adapters: CartCustomerAssignmentAdapter, CartOrderAssignmentAdapter
+    - Repository: InMemoryCartOrderAssignmentRepository
+  - Purpose: Manage relationships between carts/customers and carts/orders in memory, with thread-safe collections.
+
+- Status Assignment Adapters
+  - CartStatusAssignmentAdapter: Assigns and reads CartStateType for a Cart
+  - CustomerStatusAssignmentAdapter: Assigns and reads CustomerStateType for a Customer
+  - OrderStatusAssignmentAdapter: Assigns and reads OrderStateType for an Order
+
+- Process Configuration (Spring Beans)
+  - CartProcessConfig: Pipelines for CartCreateEvent, CartActiveEvent, CartCloseEvent
+  - CustomerProcessConfig: Pipelines for CustomerCreateEvent and CustomerSuspendEvent
+  - OrderProcessConfig: Pipelines for OrderCreateEvent, OrderPayEvent, OrderDeliverEvent, OrderCancelEvent
+  - Each bean wires the corresponding handlers using the fluent ProcessPipeline API (append, appendIf, andThen).
+
+- In-memory Repositories
+  - InMemoryCartRepository, InMemoryCustomerRepository, InMemoryOrderRepository
+  - Used by services to persist aggregates during tests/demo without external DB.
+
+- Event Handlers (selection)
+  - Cart: OnCartCreateAssignCartStatus, OnCartCreateAssignCustomer, OnCartCreateSaveRepository, OnCartActiveAssignCartStatus, OnCartCloseAssignCartStatus
+  - Customer: OnCustomerCreateAssignActive, OnCustomerCreateSaveRepository, OnCustomerCreateNewCart, OnCustomerSuspendAssignSuspend, OnCustomerSuspendSaveRepository
+  - Order: OnOrderCreateAssignNewState, OnOrderCreateSaveRepository, OnOrderPayAssignPaidState, OnOrderDeliverAssignDeliveredState, OnOrderCancelAssignCanceledState
+
+## Code Quality and CI
+
+- Qodana: Static analysis configured via qodana.yaml and GitHub Actions workflow .github/workflows/qodana_code_quality.yml
+- Complexity Analysis: Lizard reports converted to SARIF using scripts/lizard_to_sarif.py (see build/complexity/lizard.json for sample output)
+- How to run locally
+  - Generate reports with Gradle build and tests: `./gradlew build test`
+  - Qodana can be run via Docker or GitHub Actions; see qodana.yaml for profile and thresholds.
 
 ## Contributing
 
