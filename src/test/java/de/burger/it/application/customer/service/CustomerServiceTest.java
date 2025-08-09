@@ -6,7 +6,7 @@ import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
 import de.burger.it.domain.customer.event.CustomerSuspendEvent;
 import de.burger.it.domain.customer.model.CustomerDefault;
-import de.burger.it.domain.customer.model.NullCustomer;
+import de.burger.it.domain.customer.model.CustomerNullObject;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerState;
 import de.burger.it.domain.customer.state.CustomerStateType;
@@ -99,7 +99,7 @@ class CustomerServiceTest {
     @Test
     void createNewCustomer_whenCustomerIsNull_shouldReturnWithoutException() {
         // When
-        customerService.createNewCustomer(NullCustomer.getInstance());
+        customerService.createNewCustomer(CustomerNullObject.getInstance());
 
         // Then
         // Verify that no event is published and no assignment is made
@@ -110,7 +110,7 @@ class CustomerServiceTest {
     @Test
     void suspendCustomer_whenCustomerIsNull_shouldReturnWithoutException() {
         // When
-        customerService.suspendCustomer(NullCustomer.getInstance());
+        customerService.suspendCustomer(CustomerNullObject.getInstance());
 
         // Then
         // Verify that no event is published and no cart service interactions
@@ -122,7 +122,7 @@ class CustomerServiceTest {
     @Test
     void getState_whenCustomerIsNull_shouldReturnNullState() {
         // When
-        CustomerState result = customerService.getState(NullCustomer.getInstance());
+        CustomerState result = customerService.getState(CustomerNullObject.getInstance());
 
         // Then
         assertEquals(NullCustomerState.getInstance(), result);

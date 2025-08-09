@@ -1,6 +1,6 @@
 package de.burger.it.infrastructure.order.model;
 
-import de.burger.it.domain.order.model.NullOrder;
+import de.burger.it.domain.order.model.OrderNullObject;
 import de.burger.it.domain.order.model.Order;
 import de.burger.it.domain.order.model.OrderLike;
 import de.burger.it.domain.order.port.OrderRepositoryPort;
@@ -20,7 +20,7 @@ public class InMemoryOrderRepository implements OrderRepositoryPort {
     public OrderLike findById(UUID orderId) {
         return Optional.ofNullable(store.get(orderId))
                 .map(o -> (OrderLike) o)
-                .orElse(NullOrder.getInstance());
+                .orElse(OrderNullObject.getInstance());
     }
 
     @Override

@@ -9,7 +9,7 @@ import de.burger.it.domain.order.event.OrderDeliverEvent;
 import de.burger.it.domain.order.event.OrderPayEvent;
 import de.burger.it.domain.order.model.Order;
 import de.burger.it.domain.order.model.OrderLike;
-import de.burger.it.domain.order.model.NullOrder;
+import de.burger.it.domain.order.model.OrderNullObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -91,14 +91,14 @@ class OrderServiceTest {
         // Then
         // Verify that a NullOrder is returned and no event is published
         assertTrue(result.isNull());
-        assertEquals(NullOrder.getInstance(), result);
+        assertEquals(OrderNullObject.getInstance(), result);
         verifyNoInteractions(eventPublisher);
     }
 
     @Test
     void payOrder_whenOrderIsNull_shouldReturnWithoutException() {
         // When
-        orderService.payOrder(NullOrder.getInstance());
+        orderService.payOrder(OrderNullObject.getInstance());
         
         // Then
         // Verify that no event is published
@@ -108,7 +108,7 @@ class OrderServiceTest {
     @Test
     void cancelOrder_whenOrderIsNull_shouldReturnWithoutException() {
         // When
-        orderService.cancelOrder(NullOrder.getInstance());
+        orderService.cancelOrder(OrderNullObject.getInstance());
         
         // Then
         // Verify that no event is published
@@ -118,7 +118,7 @@ class OrderServiceTest {
     @Test
     void deliverOrder_whenOrderIsNull_shouldReturnWithoutException() {
         // When
-        orderService.deliverOrder(NullOrder.getInstance());
+        orderService.deliverOrder(OrderNullObject.getInstance());
         
         // Then
         // Verify that no event is published

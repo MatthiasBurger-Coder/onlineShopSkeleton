@@ -5,7 +5,7 @@ import de.burger.it.domain.order.event.OrderCancelEvent;
 import de.burger.it.domain.order.event.OrderCreateEvent;
 import de.burger.it.domain.order.event.OrderDeliverEvent;
 import de.burger.it.domain.order.event.OrderPayEvent;
-import de.burger.it.domain.order.model.NullOrder;
+import de.burger.it.domain.order.model.OrderNullObject;
 import de.burger.it.domain.order.model.Order;
 import de.burger.it.domain.order.model.OrderLike;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,7 +25,7 @@ public class OrderService {
 
     public OrderLike createNewOrder(Cart cart) {
         if (cart == null || cart.isNull()) {
-            return NullOrder.getInstance();
+            return OrderNullObject.getInstance();
         }
         var order = new Order(UUID.randomUUID());
         eventPublisher.publishEvent(new OrderCreateEvent(order));

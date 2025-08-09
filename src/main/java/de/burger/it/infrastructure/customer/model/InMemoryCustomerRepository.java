@@ -2,7 +2,7 @@ package de.burger.it.infrastructure.customer.model;
 
 import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.model.Customer;
-import de.burger.it.domain.customer.model.NullCustomer;
+import de.burger.it.domain.customer.model.CustomerNullObject;
 import de.burger.it.domain.customer.port.CustomerRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +20,7 @@ public class InMemoryCustomerRepository implements CustomerRepository {
     public Customer findById(UUID customerId) {
         return Optional.ofNullable(store.get(customerId))
                 .map(c -> (Customer) c)
-                .orElse(NullCustomer.getInstance());
+                .orElse(CustomerNullObject.getInstance());
     }
 
     @Override

@@ -10,8 +10,9 @@ import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
 import de.burger.it.domain.cart.state.CartStateType;
+import de.burger.it.domain.cart.state.NullCartState;
 import de.burger.it.domain.customer.model.CustomerDefault;
-import de.burger.it.domain.customer.model.NullCustomer;
+import de.burger.it.domain.customer.model.CustomerNullObject;
 import de.burger.it.domain.relation.model.CartCustomerAssignment;
 import de.burger.it.domain.relation.port.CartCustomerAssignmentPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -157,7 +158,7 @@ class CartServiceTest {
     @Test
     void create_whenCustomerIsNull_shouldReturnWithoutException() {
         // When
-        cartService.create(NullCustomer.getInstance());
+        cartService.create(CustomerNullObject.getInstance());
 
         // Then
         // Verify that no event is published
@@ -177,7 +178,7 @@ class CartServiceTest {
     @Test
     void close_whenCustomerIsNull_shouldReturnWithoutException() {
         // When
-        cartService.close(cart, NullCustomer.getInstance());
+        cartService.close(cart, CustomerNullObject.getInstance());
 
         // Then
         // Verify that no event is published
@@ -197,7 +198,7 @@ class CartServiceTest {
     @Test
     void activate_whenCustomerIsNull_shouldReturnWithoutException() {
         // When
-        cartService.activate(cart, NullCustomer.getInstance());
+        cartService.activate(cart, CustomerNullObject.getInstance());
 
         // Then
         // Verify that no event is published
@@ -217,7 +218,7 @@ class CartServiceTest {
     @Test
     void findAllCartByCustomer_whenCustomerIsNull_shouldReturnEmptyList() {
         // When
-        List<Cart> result = cartService.findAllCartByCustomer(NullCustomer.getInstance());
+        List<Cart> result = cartService.findAllCartByCustomer(CustomerNullObject.getInstance());
 
         // Then
         assertTrue(result.isEmpty());
@@ -237,11 +238,10 @@ class CartServiceTest {
     @Test
     void getState_whenCartIsNull_shouldReturnNullState() {
         // When
-        var nullChart = new CartNullObject();
         CartState result = cartService.getState(CartNullObject.getInstance());
 
         // Then
-        assertEquals(nullChart, result.notDefined());
+        assertInstanceOf(NullCartState.class, result);
         verifyNoInteractions(cartStatusAssignmentPort);
     }
 

@@ -2,20 +2,20 @@ package de.burger.it.domain.customer.model;
 
 import java.util.UUID;
 
-public final class NullCustomer implements Customer {
+public final class CustomerNullObject implements Customer {
 
-    private static final NullCustomer INSTANCE = new NullCustomer();
+    private static final CustomerNullObject INSTANCE = new CustomerNullObject();
     private final UUID id;
     private final String name;
     private final String email;
 
-    private NullCustomer() {
+    private CustomerNullObject() {
         this.id = UUID.fromString("00000000-0000-0000-0000-000000000000");
         this.name = "";
         this.email = "";
     }
 
-    public static NullCustomer getInstance() {
+    public static CustomerNullObject getInstance() {
         return INSTANCE;
     }
     
