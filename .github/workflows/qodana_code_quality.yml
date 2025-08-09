@@ -80,10 +80,8 @@ jobs:
           pr-mode: false
           use-caches: true
           upload-result: true
-          args: >-
-            --config=qodana.yaml
-            --coverage-dir=.qodana/code-coverage
-            --image=jetbrains/qodana-jvm:2025.1
+          args: --config,qodana.yaml
+          image: jetbrains/qodana-jvm:2025.1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2116466718 }}
           QODANA_ENDPOINT: https://qodana.cloud
