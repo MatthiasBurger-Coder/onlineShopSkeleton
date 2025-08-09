@@ -15,7 +15,7 @@ def run_lizard():
     cmd = [
         "lizard", "-l", "java",
         "-x", "**/build/**", "-x", "**/out/**", "-x", "**/generated/**",
-        "-C", "0", "-CSV"  # disable threshold filtering, request CSV output
+        "-C", "0", "--csv"  # disable threshold filtering, request CSV output
     ]
     proc = subprocess.Popen(cmd, cwd=BASE_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     reader = csv.DictReader(proc.stdout)
