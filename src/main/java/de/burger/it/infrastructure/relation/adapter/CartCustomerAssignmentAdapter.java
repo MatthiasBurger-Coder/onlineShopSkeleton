@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
-import java.util.Optional;
 
 @Component
 public class CartCustomerAssignmentAdapter implements CartCustomerAssignmentPort {

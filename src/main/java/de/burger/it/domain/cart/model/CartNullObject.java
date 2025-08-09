@@ -35,13 +35,12 @@ public final class CartNullObject implements Cart {
     public boolean equals(Object o) {
         if (this == o) return true;
         return switch (o) {
-            case null -> false;
             // Consider any NullCart equal if their id is the zero UUID
             case CartNullObject other -> Objects.equals(this.id, other.id);
 
             // Consider equal to a NullCartState (for tests comparing state.notDefined())
-            case NullCartState nullCartState -> true;
-            default -> false;
+            case NullCartState ignored -> true;
+            case null, default -> false;
         };
     }
 
