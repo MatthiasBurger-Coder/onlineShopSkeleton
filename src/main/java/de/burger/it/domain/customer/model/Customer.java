@@ -15,9 +15,4 @@ public record Customer(UUID id, String name, String email) implements CustomerLi
                 .filter(e -> !e.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("email cannot be null or blank"));
     }
-    
-    @Override
-    public boolean isNull() {
-        return false;
-    }
 }

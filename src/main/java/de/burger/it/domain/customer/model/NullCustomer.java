@@ -1,10 +1,8 @@
 package de.burger.it.domain.customer.model;
 
-import de.burger.it.domain.common.model.NullObject;
-
 import java.util.UUID;
 
-public final class NullCustomer extends NullObject<CustomerLike> implements CustomerLike {
+public final class NullCustomer implements CustomerLike {
 
     private static final NullCustomer INSTANCE = new NullCustomer();
     private final UUID id;
@@ -34,5 +32,10 @@ public final class NullCustomer extends NullObject<CustomerLike> implements Cust
     @Override
     public String email() {
         return email;
+    }
+
+    @Override
+    public boolean isNull() {
+        return true;
     }
 }

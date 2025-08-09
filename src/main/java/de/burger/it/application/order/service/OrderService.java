@@ -24,7 +24,7 @@ public class OrderService {
     }
 
     public OrderLike createNewOrder(CartLike cart) {
-        if (cart.isNull()) {
+        if (cart == null || cart.isNull()) {
             return NullOrder.getInstance();
         }
         var order = new Order(UUID.randomUUID());
@@ -33,21 +33,21 @@ public class OrderService {
     }
 
     public void payOrder(OrderLike order) {
-        if (order.isNull()) {
+        if (order == null || order.isNull()) {
             return;
         }
         eventPublisher.publishEvent(new OrderPayEvent((Order) order));
     }
 
     public void cancelOrder(OrderLike order) {
-        if (order.isNull()) {
+        if (order == null || order.isNull()) {
             return;
         }
         eventPublisher.publishEvent(new OrderCancelEvent((Order) order));
     }
 
     public void deliverOrder(OrderLike order) {
-        if (order.isNull()) {
+        if (order == null || order.isNull()) {
             return;
         }
         eventPublisher.publishEvent(new OrderDeliverEvent((Order) order));

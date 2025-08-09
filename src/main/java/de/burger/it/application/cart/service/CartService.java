@@ -108,7 +108,7 @@ public class CartService {
                 .filter(c -> !c.isNull())
                 .map(c -> cartStatusAssignmentPort.findBy(c.id()))
                 .map(CartStateType::toState)
-                .orElse(NullCartState.getInstance());
+                .orElse(new NullCartState());
     }
 
 }

@@ -9,9 +9,4 @@ public record Cart(UUID id) implements CartLike {
         id = Optional.ofNullable(id)
                 .orElseThrow(() -> new IllegalArgumentException("id cannot be null"));
     }
-    
-    @Override
-    public boolean isNull() {
-        return false;
-    }
 }

@@ -1,7 +1,6 @@
 package de.burger.it.application.customer.service;
 
 import de.burger.it.application.cart.service.CartService;
-import de.burger.it.domain.cart.model.CartLike;
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
 import de.burger.it.domain.customer.event.CustomerSuspendEvent;
 import de.burger.it.domain.customer.model.Customer;
@@ -14,7 +13,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,7 +45,6 @@ public class CustomerService {
                     publisher.publishEvent(new CustomerSuspendEvent((Customer) c));
                     Optional.ofNullable(cartService.findAllCartByCustomer(c))
                             .orElse(Collections.emptyList())
-                            .stream()
                             .forEach(cart -> cartService.close(cart, c));
                 });
     }

@@ -1,14 +1,20 @@
 package de.burger.it.domain.order.model;
 
-import de.burger.it.domain.common.model.Nullable;
 import java.util.UUID;
 
 /**
  * Common interface for Order and NullOrder.
  */
-public interface OrderLike extends Nullable {
+public interface OrderLike {
     /**
      * Returns the order ID.
      */
     UUID id();
+
+    /**
+     * Indicates whether this is a Null Object instance.
+     */
+    default boolean isNull() {
+        return false;
+    }
 }

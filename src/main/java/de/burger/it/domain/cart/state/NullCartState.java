@@ -1,19 +1,15 @@
 package de.burger.it.domain.cart.state;
 
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 /**
  * Null object implementation for {@link CartState}.
  * Used when no real cart state is available.
  */
+@ToString
+@NoArgsConstructor
 public final class NullCartState implements CartState {
-
-    private static final NullCartState INSTANCE = new NullCartState();
-
-    private NullCartState() {
-    }
-
-    public static NullCartState getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public CartState create() {
@@ -38,5 +34,10 @@ public final class NullCartState implements CartState {
     @Override
     public CartStateType code() {
         return CartStateType.CREATED;
+    }
+
+    @Override
+    public CartState notDefined()  {
+        return this;
     }
 }

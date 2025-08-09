@@ -35,4 +35,9 @@ public class CreatedCartState implements CartState {
     public CartStateType code() {
         return CartStateType.CREATED;
     }
+
+    @Override
+    public CartState notDefined() {
+        throw new IllegalStateException("Cart is null");
+    }
 }

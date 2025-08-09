@@ -53,7 +53,7 @@ public enum CartStateType {
     NULL_CART_STATE{
         @Override
         public CartState toState() {
-            return NullCartState.getInstance();
+            return new NullCartState();
         }
     };
 

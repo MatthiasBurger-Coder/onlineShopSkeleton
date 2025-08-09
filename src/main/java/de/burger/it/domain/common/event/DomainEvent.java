@@ -22,6 +22,4 @@ public abstract class DomainEvent {
         this.eventId = UUID.randomUUID();
         this.timestamp = Instant.now();
     }
-    
-
 }

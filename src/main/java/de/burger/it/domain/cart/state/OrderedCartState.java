@@ -35,4 +35,9 @@ public class OrderedCartState implements CartState {
     public CartStateType code() {
         return CartStateType.ORDERED;
     }
+
+    @Override
+    public CartState notDefined() {
+        throw new IllegalStateException("Cart is null");
+    }
 }

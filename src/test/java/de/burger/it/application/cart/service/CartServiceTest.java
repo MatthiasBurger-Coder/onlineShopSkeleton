@@ -10,7 +10,6 @@ import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
 import de.burger.it.domain.cart.state.CartStateType;
-import de.burger.it.domain.cart.state.NullCartState;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.NullCustomer;
 import de.burger.it.domain.relation.model.CartCustomerAssignment;
@@ -238,10 +237,11 @@ class CartServiceTest {
     @Test
     void getState_whenCartIsNull_shouldReturnNullState() {
         // When
+        var nullChart = new NullCart();
         CartState result = cartService.getState(NullCart.getInstance());
 
         // Then
-        assertEquals(NullCartState.getInstance(), result);
+        assertEquals(nullChart, result.notDefined());
         verifyNoInteractions(cartStatusAssignmentPort);
     }
 

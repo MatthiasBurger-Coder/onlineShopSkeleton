@@ -32,7 +32,13 @@ public class ActiveCartState implements CartState {
     }
 
     @Override
+    public CartState notDefined() {
+        throw new IllegalStateException("Cart is null");
+    }
+
+    @Override
     public CartStateType code() {
         return CartStateType.ACTIVE;
     }
+
 }

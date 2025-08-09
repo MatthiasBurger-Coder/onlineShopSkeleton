@@ -29,4 +29,9 @@ public class ClosedCartState implements CartState {
     public CartStateType code() {
         return CartStateType.CLOSED;
     }
+
+    @Override
+    public CartState notDefined() {
+        throw new IllegalStateException("Cart is null");
+    }
 }

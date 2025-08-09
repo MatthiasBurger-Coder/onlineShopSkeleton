@@ -4,8 +4,5 @@ import java.util.UUID;
 
 public record Order(UUID id) implements OrderLike {
     
-    @Override
-    public boolean isNull() {
-        return false;
-    }
+
 }

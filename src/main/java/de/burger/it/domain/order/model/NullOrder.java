@@ -1,11 +1,10 @@
 package de.burger.it.domain.order.model;
 
-import de.burger.it.domain.common.model.NullObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public final class NullOrder extends NullObject<OrderLike> implements OrderLike {
+public final class NullOrder implements OrderLike {
     
     private static final NullOrder INSTANCE = new NullOrder();
     private final UUID id;
@@ -23,5 +22,10 @@ public final class NullOrder extends NullObject<OrderLike> implements OrderLike 
     @NotNull
     public UUID id() {
         return id;
+    }
+
+    @Override
+    public boolean isNull() {
+        return true;
     }
 }

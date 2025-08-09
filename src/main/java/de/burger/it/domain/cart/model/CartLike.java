@@ -1,14 +1,20 @@
 package de.burger.it.domain.cart.model;
 
-import de.burger.it.domain.common.model.Nullable;
 import java.util.UUID;
 
 /**
  * Common interface for Cart and NullCart.
  */
-public interface CartLike extends Nullable {
+public interface CartLike {
     /**
      * Returns the cart ID.
      */
     UUID id();
+
+    /**
+     * Indicates whether this is a Null Object instance.
+     */
+    default boolean isNull() {
+        return false;
+    }
 }
