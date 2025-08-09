@@ -6,3 +6,59 @@ include:
   - name: CheckDependencyLicenses
 coverage:
   reportProblems: true
+
+
+version: "1.0"
+linter: jetbrains/qodana-jvm:2025.1
+profile:
+  name: Qodana Recommended
+
+# Complexity and metrics inspections
+inspections:
+  # Cyclomatic complexity per method, class, and package
+  - id: JavaCyclomaticComplexity
+    enabled: true
+    severity: ERROR
+    options:
+      m_limit: 10     # maximum per method
+      c_limit: 80     # maximum per class
+      p_limit: 400    # maximum per package
+
+  # N-Path complexity for methods
+  - id: JavaNPathComplexityInspection
+    enabled: true
+    severity: ERROR
+    options:
+      NPathLimit: 200 # maximum allowed N-Path complexity
+
+  # Method metrics: length, parameter count, thrown exceptions
+  - id: JavaMethodMetrics
+    enabled: true
+    severity: WARNING
+    options:
+      methodLimit: 50          # maximum lines per method
+      parameterLimit: 5        # maximum number of parameters per method
+      throwsStatementsLimit: 2 # maximum number of thrown exceptions per method
+
+  # Class metrics: size, number of methods, number of fields
+  - id: JavaClassMetrics
+    enabled: true
+    severity: WARNING
+    options:
+      classLimit: 1000         # maximum lines per class
+      methodCountLimit: 30     # maximum methods per class
+      fieldCountLimit: 20      # maximum fields per class
+
+  # Maximum allowed nesting depth for code blocks
+  - id: JavaOverlyNestedBlock
+    enabled: true
+    severity: WARNING
+    options:
+      limit: 3                 # maximum nesting depth
+
+  # Maximum allowed complexity for boolean expressions
+  - id: JavaOverlyComplexBooleanExpression
+    enabled: true
+    severity: WARNING
+    options:
+      limit: 4                 # maximum boolean operators in a single expression
