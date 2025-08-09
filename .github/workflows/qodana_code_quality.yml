@@ -79,9 +79,7 @@ jobs:
         with:
           pr-mode: false
           use-caches: true
-          cache-default-branch-only: false
           upload-result: true
-          use-annotations: true
           args: >-
             --config,qodana.yaml
             --coverage-dir,.qodana/code-coverage

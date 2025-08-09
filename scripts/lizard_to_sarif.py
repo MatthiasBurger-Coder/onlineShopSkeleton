@@ -13,13 +13,17 @@ def run_lizard():
     os.makedirs(BUILD_DIR, exist_ok=True)
     # Run lizard with CSV output
     cmd = [
-        "lizard", "-l", "java", "-x", "**/build/**", "-x", "**/out/**", "-x", "**/generated/**",
-        "-C", "0", "-w"  # disable threshold filtering, wide output
+        "lizard", "-l", "java",
+        "-x", "**/build/**", "-x", "**/out/**", "-x", "**/generated/**",
+        "-C", "0", "-CSV"  # disable threshold filtering, request CSV output
     ]
-    proc = subprocess.Popen(cmd, cwd=BASE_DIR, stdout=subprocess.PIPE, text=True)
+    proc = subprocess.Popen(cmd, cwd=BASE_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     reader = csv.DictReader(proc.stdout)
     rows = list(reader)
-    proc.wait()
+    ret = proc.wait()
+    if ret != 0:
+        stderr = proc.stderr.read() if proc.stderr else ""
+        raise RuntimeError(f"lizard exited with code {ret}. stderr:\n{stderr}")
     with open(JSON_FILE, "w", encoding="utf-8") as f:
         json.dump({"function_list": rows}, f, indent=2)
 
@@ -29,13 +33,38 @@ def json_to_sarif():
     funcs = data.get("function_list", [])
     results = []
     for fn in funcs:
-        file = fn.get("filename") or fn.get("file") or "unknown"
-        line = int(fn.get("start", 1))
+        # Extract file and line robustly
+        file = fn.get("filename") or fn.get("file") or ""
+        line_val = fn.get("start") or fn.get("line")
+        if (not file or not line_val):
+            loc = fn.get("location") or fn.get("Location")
+            if loc:
+                # Expect something like "path:line"; split from right to be safe
+                if isinstance(loc, str) and ":" in loc:
+                    parts = loc.rsplit(":", 1)
+                    if len(parts) == 2:
+                        file = file or parts[0]
+                        line_val = line_val or parts[1]
+        # Defaults if still missing
+        file = file or "unknown"
+        try:
+            line = int(str(line_val)) if line_val is not None and str(line_val).strip() != "" else 1
+        except ValueError:
+            line = 1
+        # Extract metrics
         ccn = fn.get("CCN") or fn.get("ccn")
         nloc = fn.get("NLOC") or fn.get("nloc")
         if not ccn:
             continue
-        msg = f"Cyclomatic complexity = {ccn}" + (f" (NLOC {nloc})" if nloc else "")
+        try:
+            ccn_num = int(str(ccn).strip())
+        except ValueError:
+            ccn_num = None
+        try:
+            nloc_num = int(str(nloc).strip()) if nloc is not None else None
+        except ValueError:
+            nloc_num = None
+        msg = f"Cyclomatic complexity = {ccn_num if ccn_num is not None else ccn}" + (f" (NLOC {nloc_num})" if nloc_num is not None else (f" (NLOC {nloc})" if nloc else ""))
         results.append({
             "ruleId": "lizard.ccn",
             "level": "note",
