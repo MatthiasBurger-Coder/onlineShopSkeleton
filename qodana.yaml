@@ -7,12 +7,6 @@ include:
 coverage:
   reportProblems: true
 
-
-version: "1.0"
-linter: jetbrains/qodana-jvm:2025.1
-profile:
-  name: Qodana Recommended
-
 # Complexity and metrics inspections
 inspections:
   # Cyclomatic complexity per method, class, and package
