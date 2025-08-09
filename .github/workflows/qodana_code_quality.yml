@@ -17,9 +17,10 @@ jobs:
   qodana:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      checks: write
-      pull-requests: write
+        contents: read              # required for checkout
+        security-events: write      # REQUIRED for upload-sarif
+        checks: write               # (optional) annotations in PR checks
+        pull-requests: write        # (optional) PR UI niceties
 
     steps:
       - name: Checkout
