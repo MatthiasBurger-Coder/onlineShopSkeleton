@@ -4,3 +4,6 @@ profile:
   name: qodana.recommended
 include:
   - name: CheckDependencyLicenses
+coverage:
+  reportPaths:
+    - build/reports/jacoco/test/jacocoTestReport.xm
