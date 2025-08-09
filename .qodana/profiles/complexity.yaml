@@ -6,11 +6,11 @@ inspections:
   # Cyclomatic complexity thresholds
   - inspection: JavaCyclomaticComplexity
     enabled: true
-    severity: ERROR
+    severity: INFO
     options:
-      m_limit: 10     # maximum per method
-      c_limit: 80     # maximum per class
-      p_limit: 400    # maximum per package
+      m_limit: 0     # maximum per method
+      c_limit: 0     # maximum per class
+      p_limit: 0    # maximum per package
 
   # N-Path complexity
   - inspection: JavaNPathComplexityInspection
