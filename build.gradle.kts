@@ -1,3 +1,5 @@
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+
 plugins {
     id("java")
 }
@@ -7,7 +9,7 @@ version = "2.0-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -41,4 +43,7 @@ tasks.test {
     useJUnitPlatform()
     // Suppress JDK warning about dynamic Java agent loading (e.g., Byte Buddy used by Mockito)
     jvmArgs("-XX:+EnableDynamicAgentLoading")
+    // Suppress CDS warning: "Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
+    // by disabling Class Data Sharing for the test JVM, since Mockito's Byte Buddy agent appends to the bootstrap classpath
+    jvmArgs("-Xshare:off")
 }
