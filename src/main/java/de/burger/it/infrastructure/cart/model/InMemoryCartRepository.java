@@ -1,6 +1,6 @@
 package de.burger.it.infrastructure.cart.model;
 
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.cart.model.CartLike;
 import de.burger.it.domain.cart.model.NullCart;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class InMemoryCartRepository implements CartRepositoryPort {
 
-    private final Map<UUID, Cart> store = new ConcurrentHashMap<>();
+    private final Map<UUID, CartDefault> store = new ConcurrentHashMap<>();
 
     @Override
     public CartLike findById(UUID cartId) {
@@ -26,7 +26,7 @@ public class InMemoryCartRepository implements CartRepositoryPort {
     }
 
     @Override
-    public void save(Cart cart) {
+    public void save(CartDefault cart) {
         store.put(cart.id(), cart);
     }
 

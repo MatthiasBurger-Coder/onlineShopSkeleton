@@ -1,6 +1,6 @@
 package de.burger.it.domain.cart.event;
 
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.common.event.DomainEvent;
 
@@ -9,15 +9,15 @@ import de.burger.it.domain.common.event.DomainEvent;
  */
 public class CartCreateEvent extends DomainEvent {
 
-    private final Cart cart;
+    private final CartDefault cart;
     private final Customer customer;
 
-    public CartCreateEvent(Cart cart, Customer customer) {
+    public CartCreateEvent(CartDefault cart, Customer customer) {
         this.cart = cart;
         this.customer = customer;
     }
 
-    public Cart getCart() {
+    public CartDefault getCart() {
         return cart;
     }
 

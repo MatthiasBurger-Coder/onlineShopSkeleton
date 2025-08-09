@@ -1,6 +1,6 @@
 package de.burger.it.infrastructure.relation.adapter;
 
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.relation.model.CartCustomerAssignment;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CartCustomerAssignmentAdapterTest {
 
     private CartCustomerAssignmentAdapter adapter;
-    private Cart cart;
+    private CartDefault cart;
     private Customer customer;
     private UUID cartId;
     private UUID customerId;
@@ -24,7 +24,7 @@ class CartCustomerAssignmentAdapterTest {
         adapter = new CartCustomerAssignmentAdapter();
         cartId = UUID.randomUUID();
         customerId = UUID.randomUUID();
-        cart = new Cart(cartId);
+        cart = new CartDefault(cartId);
         customer = new Customer(customerId, "Test Customer", "test@example.com");
     }
 
@@ -73,7 +73,7 @@ class CartCustomerAssignmentAdapterTest {
     @Test
     void assign_multipleAssignments_shouldStoreAllAssignments() {
         // Given
-        Cart cart2 = new Cart(UUID.randomUUID());
+        CartDefault cart2 = new CartDefault(UUID.randomUUID());
         
         // When
         adapter.assign(cart, customer);

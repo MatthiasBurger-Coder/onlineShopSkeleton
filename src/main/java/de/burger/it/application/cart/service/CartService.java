@@ -3,7 +3,7 @@ package de.burger.it.application.cart.service;
 import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.cart.model.CartLike;
 import de.burger.it.domain.cart.model.NullCart;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
@@ -47,7 +47,7 @@ public class CartService {
         Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> {
-                    var cart = new Cart(UUID.randomUUID());
+                    var cart = new CartDefault(UUID.randomUUID());
                     var cartCreateEvent = new CartCreateEvent(cart, (Customer) c);
                     publisher.publishEvent(cartCreateEvent);
                 });
@@ -59,7 +59,7 @@ public class CartService {
                 .ifPresent(c -> Optional.ofNullable(customer)
                         .filter(cu -> !cu.isNull())
                         .ifPresent(cu -> {
-                            var cartCloseEvent = new CartCloseEvent((Cart) c, (Customer) cu);
+                            var cartCloseEvent = new CartCloseEvent((CartDefault) c, (Customer) cu);
                             publisher.publishEvent(cartCloseEvent);
                         }));
     }
@@ -70,7 +70,7 @@ public class CartService {
                 .ifPresent(c -> Optional.ofNullable(customer)
                         .filter(cu -> !cu.isNull())
                         .ifPresent(cu -> {
-                            var cartActiveEvent = new CartActiveEvent((Cart) c, (Customer) cu);
+                            var cartActiveEvent = new CartActiveEvent((CartDefault) c, (Customer) cu);
                             publisher.publishEvent(cartActiveEvent);
                         }));
     }

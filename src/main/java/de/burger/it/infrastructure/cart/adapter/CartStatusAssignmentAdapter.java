@@ -1,6 +1,6 @@
 package de.burger.it.infrastructure.cart.adapter;
 
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.cart.model.CartStatusAssignment;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartStateType;
@@ -17,8 +17,8 @@ public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
     private final Map<UUID, CartStatusAssignment> store = new ConcurrentHashMap<>();
 
     @Override
-    public void assign(Cart cart, CartStateType newState) {
-        Cart nonNullCart = Optional.ofNullable(cart)
+    public void assign(CartDefault cart, CartStateType newState) {
+        CartDefault nonNullCart = Optional.ofNullable(cart)
                 .orElseThrow(() -> new IllegalArgumentException("Cart cannot be null"));
         CartStateType state = Optional.ofNullable(newState)
                 .orElseThrow(() -> new IllegalArgumentException("State cannot be null"));

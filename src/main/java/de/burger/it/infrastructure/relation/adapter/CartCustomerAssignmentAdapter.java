@@ -1,6 +1,6 @@
 package de.burger.it.infrastructure.relation.adapter;
 
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.relation.model.CartCustomerAssignment;
 import de.burger.it.domain.relation.port.CartCustomerAssignmentPort;
@@ -18,8 +18,8 @@ public class CartCustomerAssignmentAdapter implements CartCustomerAssignmentPort
     private final Map<UUID, List<CartCustomerAssignment>> store = new ConcurrentHashMap<>();
 
     @Override
-    public void assign(Cart cart, Customer customer) {
-        Cart nonNullCart = Optional.ofNullable(cart)
+    public void assign(CartDefault cart, Customer customer) {
+        CartDefault nonNullCart = Optional.ofNullable(cart)
                 .orElseThrow(() -> new IllegalArgumentException("Cart cannot be null"));
         Customer nonNullCustomer = Optional.ofNullable(customer)
                 .orElseThrow(() -> new IllegalArgumentException("Customer cannot be null"));

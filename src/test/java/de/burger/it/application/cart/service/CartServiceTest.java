@@ -3,7 +3,7 @@ package de.burger.it.application.cart.service;
 import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
-import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.cart.model.CartLike;
 import de.burger.it.domain.cart.model.NullCart;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
@@ -45,13 +45,13 @@ class CartServiceTest {
     private CartCustomerAssignmentPort cartCustomerAssignmentPort;
 
     private CartService cartService;
-    private Cart cart;
+    private CartDefault cart;
     private Customer customer;
 
     @BeforeEach
     void setUp() {
         cartService = new CartService(publisher, cartRepository, cartStatusAssignmentPort, cartCustomerAssignmentPort);
-        cart = new Cart(UUID.randomUUID());
+        cart = new de.burger.it.domain.cart.model.CartDefault(UUID.randomUUID());
         customer = new Customer(UUID.randomUUID(), "Test Customer", "test@example.com");
     }
 
