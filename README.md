@@ -96,31 +96,59 @@ The application demonstrates 9 key workflows:
 - Gradle 9.0.0
 
 ### Building the Project
-```bash
-./gradlew build
-```
+- Windows (PowerShell/CMD):
+  ```powershell
+  .\gradlew.bat build
+  ```
+
+- macOS/Linux:
+  ```bash
+  ./gradlew build
+  ```
 
 ### Running the Application
-```bash
-./gradlew run
-```
+This project does not apply the Gradle 'application' plugin. You can run the demo Main class in your IDE, or from the command line after building:
+
+- Windows (PowerShell/CMD):
+  1) .\gradlew.bat build
+  2) java -cp build\classes\java\main;build\resources\main de.burger.it.Main
+
+- macOS/Linux:
+  1) ./gradlew build
+  2) java -cp build/classes/java/main:build/resources/main de.burger.it.Main
 
 ### Running Tests
-```bash
-./gradlew test
-```
+- Windows (PowerShell/CMD):
+  ```powershell
+  .\gradlew.bat test
+  ```
+
+- macOS/Linux:
+  ```bash
+  ./gradlew test
+  ```
 
 This will execute all unit tests in the project. The test results will be available in the `build/reports/tests/test` directory.
 
 You can also run specific test classes:
-```bash
-./gradlew test --tests "de.burger.it.application.cart.service.CartServiceTest"
-```
+- Windows (PowerShell/CMD):
+  ```powershell
+  .\gradlew.bat test --tests "de.burger.it.application.cart.service.CartServiceTest"
+  ```
+- macOS/Linux:
+  ```bash
+  ./gradlew test --tests "de.burger.it.application.cart.service.CartServiceTest"
+  ```
 
 Or specific test methods:
-```bash
-./gradlew test --tests "de.burger.it.application.order.service.OrderServiceTest.testCreateNewOrder"
-```
+- Windows (PowerShell/CMD):
+  ```powershell
+  .\gradlew.bat test --tests "de.burger.it.application.order.service.OrderServiceTest.testCreateNewOrder"
+  ```
+- macOS/Linux:
+  ```bash
+  ./gradlew test --tests "de.burger.it.application.order.service.OrderServiceTest.testCreateNewOrder"
+  ```
 
 ## Usage Examples
 
