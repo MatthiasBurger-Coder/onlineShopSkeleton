@@ -2,6 +2,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
     id("java")
+    id("jacoco")
 }
 
 group = "de.burger.it"
@@ -49,4 +50,17 @@ tasks.test {
     // Suppress CDS warning: "Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
     // by disabling Class Data Sharing for the test JVM, since Mockito's Byte Buddy agent appends to the bootstrap classpath
     jvmArgs("-Xshare:off")
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
+    }
 }
