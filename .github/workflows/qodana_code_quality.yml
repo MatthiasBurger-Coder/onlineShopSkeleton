@@ -37,6 +37,14 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+      - name: Fix gradlew permissions and line endings
+        run: |
+          if [ -f gradlew ]; then
+            sed -i 's/\r$//' gradlew
+            chmod +x gradlew
+          else
+            echo "gradlew not found in repo root" && exit 1
+          fi
 
       - name: Run tests with coverage (JaCoCo)
         run: ./gradlew --no-daemon test jacocoTestReport
