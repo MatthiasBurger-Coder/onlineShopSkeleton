@@ -1,12 +1,20 @@
 package de.burger.it.domain.cart.model;
 
-import java.util.Optional;
 import java.util.UUID;
 
-public record Cart(UUID id) implements CartLike {
+/**
+ * Common interface for Cart and NullCart.
+ */
+public interface Cart {
+    /**
+     * Returns the cart ID.
+     */
+    UUID id();
 
-    public Cart {
-        id = Optional.ofNullable(id)
-                .orElseThrow(() -> new IllegalArgumentException("id cannot be null"));
+    /**
+     * Indicates whether this is a Null Object instance.
+     */
+    default boolean isNull() {
+        return false;
     }
 }

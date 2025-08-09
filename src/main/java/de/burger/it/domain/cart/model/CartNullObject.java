@@ -1,21 +1,22 @@
 package de.burger.it.domain.cart.model;
 
+import de.burger.it.domain.cart.state.NullCartState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public final class NullCart implements CartLike {
+public final class CartNullObject implements Cart {
     
-    private static final NullCart INSTANCE = new NullCart();
+    private static final CartNullObject INSTANCE = new CartNullObject();
     private final UUID id;
     
-    public NullCart() {
+    public CartNullObject() {
         this.id = UUID.fromString("00000000-0000-0000-0000-000000000000");
     }
     
     @NotNull
-    public static NullCart getInstance() {
+    public static CartNullObject getInstance() {
         return INSTANCE;
     }
     
@@ -36,10 +37,10 @@ public final class NullCart implements CartLike {
         return switch (o) {
             case null -> false;
             // Consider any NullCart equal if their id is the zero UUID
-            case NullCart other -> Objects.equals(this.id, other.id);
+            case CartNullObject other -> Objects.equals(this.id, other.id);
 
             // Consider equal to a NullCartState (for tests comparing state.notDefined())
-            case de.burger.it.domain.cart.state.NullCartState nullCartState -> true;
+            case NullCartState nullCartState -> true;
             default -> false;
         };
     }

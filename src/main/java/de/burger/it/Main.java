@@ -4,7 +4,7 @@ import de.burger.it.application.cart.service.CartService;
 import de.burger.it.application.config.AppConfig;
 import de.burger.it.application.customer.service.CustomerService;
 import de.burger.it.application.order.service.OrderService;
-import de.burger.it.domain.cart.model.CartLike;
+import de.burger.it.domain.cart.model.Cart;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.order.model.OrderLike;
@@ -40,7 +40,7 @@ public class Main {
         
         // 3. Cart Creation Workflow
         System.out.println("\n--- 3. CART CREATION WORKFLOW ---");
-        CartLike cart = runCartCreationWorkflow(customerService, cartService);
+        Cart cart = runCartCreationWorkflow(customerService, cartService);
         
         // 4. Cart Activation Workflow
         System.out.println("\n--- 4. CART ACTIVATION WORKFLOW ---");
@@ -115,7 +115,7 @@ public class Main {
     /**
      * Demonstrates the cart creation workflow
      */
-    private static CartLike runCartCreationWorkflow(CustomerService customerService, CartService cartService) {
+    private static Cart runCartCreationWorkflow(CustomerService customerService, CartService cartService) {
         // Create a new customer for this workflow
         var customer = new Customer(UUID.randomUUID(), "John", "john@example.com");
         customerService.createNewCustomer(customer);
@@ -139,7 +139,7 @@ public class Main {
     /**
      * Demonstrates the cart activation workflow
      */
-    private static void runCartActivationWorkflow(CustomerService customerService, CartService cartService, CartLike cart) {
+    private static void runCartActivationWorkflow(CustomerService customerService, CartService cartService, Cart cart) {
         // Get the customer for this cart
         var customer = new Customer(UUID.randomUUID(), "Jane", "jane@example.com");
         customerService.createNewCustomer(customer);
@@ -164,7 +164,7 @@ public class Main {
     /**
      * Demonstrates the cart closure workflow
      */
-    private static void runCartClosureWorkflow(CustomerService customerService, CartService cartService, CartLike cart) {
+    private static void runCartClosureWorkflow(CustomerService customerService, CartService cartService, Cart cart) {
         // Get the customer for this cart
         var customer = new Customer(UUID.randomUUID(), "Bob", "bob@example.com");
         customerService.createNewCustomer(customer);

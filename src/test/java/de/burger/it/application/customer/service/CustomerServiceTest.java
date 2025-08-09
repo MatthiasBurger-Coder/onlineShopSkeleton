@@ -2,7 +2,7 @@ package de.burger.it.application.customer.service;
 
 import de.burger.it.application.cart.service.CartService;
 import de.burger.it.domain.cart.model.Cart;
-import de.burger.it.domain.cart.model.CartLike;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
 import de.burger.it.domain.customer.event.CustomerSuspendEvent;
 import de.burger.it.domain.customer.model.Customer;
@@ -60,9 +60,9 @@ class CustomerServiceTest {
     @Test
     void suspendCustomer_shouldPublishEventAndCloseAllCarts() {
         // Given
-        CartLike cart1 = new Cart(UUID.randomUUID());
-        CartLike cart2 = new Cart(UUID.randomUUID());
-        List<CartLike> carts = List.of(cart1, cart2);
+        Cart cart1 = new CartDefault(UUID.randomUUID());
+        Cart cart2 = new CartDefault(UUID.randomUUID());
+        List<Cart> carts = List.of(cart1, cart2);
         
         when(cartService.findAllCartByCustomer(customer)).thenReturn(carts);
 

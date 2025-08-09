@@ -1,6 +1,6 @@
 package de.burger.it.application.order.service;
 
-import de.burger.it.domain.cart.model.CartLike;
+import de.burger.it.domain.cart.model.Cart;
 import de.burger.it.domain.order.event.OrderCancelEvent;
 import de.burger.it.domain.order.event.OrderCreateEvent;
 import de.burger.it.domain.order.event.OrderDeliverEvent;
@@ -23,7 +23,7 @@ public class OrderService {
         this.eventPublisher = eventPublisher;
     }
 
-    public OrderLike createNewOrder(CartLike cart) {
+    public OrderLike createNewOrder(Cart cart) {
         if (cart == null || cart.isNull()) {
             return NullOrder.getInstance();
         }

@@ -1,8 +1,8 @@
 package de.burger.it.application.order.service;
 
 import de.burger.it.domain.cart.model.Cart;
-import de.burger.it.domain.cart.model.CartLike;
-import de.burger.it.domain.cart.model.NullCart;
+import de.burger.it.domain.cart.model.CartDefault;
+import de.burger.it.domain.cart.model.CartNullObject;
 import de.burger.it.domain.order.event.OrderCancelEvent;
 import de.burger.it.domain.order.event.OrderCreateEvent;
 import de.burger.it.domain.order.event.OrderDeliverEvent;
@@ -31,13 +31,13 @@ class OrderServiceTest {
     private ApplicationEventPublisher eventPublisher;
 
     private OrderService orderService;
-    private CartLike cart;
+    private Cart cart;
     private OrderLike order;
 
     @BeforeEach
     void setUp() {
         orderService = new OrderService(eventPublisher);
-        cart = new Cart(UUID.randomUUID());
+        cart = new CartDefault(UUID.randomUUID());
         order = new Order(UUID.randomUUID());
     }
 
@@ -86,7 +86,7 @@ class OrderServiceTest {
     @Test
     void createNewOrder_whenCartIsNull_shouldReturnNullOrder() {
         // When
-        OrderLike result = orderService.createNewOrder(NullCart.getInstance());
+        OrderLike result = orderService.createNewOrder(CartNullObject.getInstance());
         
         // Then
         // Verify that a NullOrder is returned and no event is published

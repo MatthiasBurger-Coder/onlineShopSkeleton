@@ -4,8 +4,8 @@ import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
 import de.burger.it.domain.cart.model.CartDefault;
-import de.burger.it.domain.cart.model.CartLike;
-import de.burger.it.domain.cart.model.NullCart;
+import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartNullObject;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
@@ -90,7 +90,7 @@ class CartServiceTest {
         when(cartRepository.findById(cart.id())).thenReturn(cart);
 
         // When
-        CartLike result = cartService.findById(cart.id());
+        Cart result = cartService.findById(cart.id());
 
         // Then
         assertEquals(cart, result);
@@ -108,7 +108,7 @@ class CartServiceTest {
         when(cartRepository.findById(cartId)).thenReturn(cart);
 
         // When
-        List<CartLike> result = cartService.findAllCartByCustomer(customer);
+        List<Cart> result = cartService.findAllCartByCustomer(customer);
 
         // Then
         assertEquals(1, result.size());
@@ -127,7 +127,7 @@ class CartServiceTest {
         when(cartRepository.findById(cartId)).thenReturn(cart);
 
         // When
-        List<CartLike> result = cartService.findAllCartsByCart(cart);
+        List<Cart> result = cartService.findAllCartsByCart(cart);
 
         // Then
         assertEquals(1, result.size());
@@ -167,7 +167,7 @@ class CartServiceTest {
     @Test
     void close_whenCartIsNull_shouldReturnWithoutException() {
         // When
-        cartService.close(NullCart.getInstance(), customer);
+        cartService.close(CartNullObject.getInstance(), customer);
 
         // Then
         // Verify that no event is published
@@ -187,7 +187,7 @@ class CartServiceTest {
     @Test
     void activate_whenCartIsNull_shouldReturnWithoutException() {
         // When
-        cartService.activate(NullCart.getInstance(), customer);
+        cartService.activate(CartNullObject.getInstance(), customer);
 
         // Then
         // Verify that no event is published
@@ -207,17 +207,17 @@ class CartServiceTest {
     @Test
     void findById_whenIdIsNull_shouldReturnNullCart() {
         // When
-        CartLike result = cartService.findById(null);
+        Cart result = cartService.findById(null);
 
         // Then
         assertTrue(result.isNull());
-        assertEquals(NullCart.getInstance(), result);
+        assertEquals(CartNullObject.getInstance(), result);
     }
 
     @Test
     void findAllCartByCustomer_whenCustomerIsNull_shouldReturnEmptyList() {
         // When
-        List<CartLike> result = cartService.findAllCartByCustomer(NullCustomer.getInstance());
+        List<Cart> result = cartService.findAllCartByCustomer(NullCustomer.getInstance());
 
         // Then
         assertTrue(result.isEmpty());
@@ -227,7 +227,7 @@ class CartServiceTest {
     @Test
     void findAllCartsByCart_whenCartIsNull_shouldReturnEmptyList() {
         // When
-        List<CartLike> result = cartService.findAllCartsByCart(NullCart.getInstance());
+        List<Cart> result = cartService.findAllCartsByCart(CartNullObject.getInstance());
 
         // Then
         assertTrue(result.isEmpty());
@@ -237,8 +237,8 @@ class CartServiceTest {
     @Test
     void getState_whenCartIsNull_shouldReturnNullState() {
         // When
-        var nullChart = new NullCart();
-        CartState result = cartService.getState(NullCart.getInstance());
+        var nullChart = new CartNullObject();
+        CartState result = cartService.getState(CartNullObject.getInstance());
 
         // Then
         assertEquals(nullChart, result.notDefined());
@@ -251,7 +251,7 @@ class CartServiceTest {
         when(cartCustomerAssignmentPort.findAllByCustomer(customer.id())).thenReturn(Collections.emptyList());
 
         // When
-        List<CartLike> result = cartService.findAllCartByCustomer(customer);
+        List<Cart> result = cartService.findAllCartByCustomer(customer);
 
         // Then
         assertTrue(result.isEmpty());

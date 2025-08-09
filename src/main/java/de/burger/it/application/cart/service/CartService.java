@@ -4,8 +4,8 @@ import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
 import de.burger.it.domain.cart.model.CartDefault;
-import de.burger.it.domain.cart.model.CartLike;
-import de.burger.it.domain.cart.model.NullCart;
+import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartNullObject;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
@@ -53,7 +53,7 @@ public class CartService {
                 });
     }
 
-    public void close(CartLike cart, CustomerLike customer) {
+    public void close(Cart cart, CustomerLike customer) {
         Optional.ofNullable(cart)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> Optional.ofNullable(customer)
@@ -64,7 +64,7 @@ public class CartService {
                         }));
     }
 
-    public void activate(CartLike cart, CustomerLike customer) {
+    public void activate(Cart cart, CustomerLike customer) {
         Optional.ofNullable(cart)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> Optional.ofNullable(customer)
@@ -75,35 +75,35 @@ public class CartService {
                         }));
     }
 
-    public CartLike findById(UUID cartId) {
+    public Cart findById(UUID cartId) {
         return Optional.ofNullable(cartId)
                 .map(cartRepository::findById)
-                .orElse(NullCart.getInstance());
+                .orElse(CartNullObject.getInstance());
     }
 
-    public List<CartLike> findAllCartByCustomer(CustomerLike customer) {
+    public List<Cart> findAllCartByCustomer(CustomerLike customer) {
         return Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .map(c -> cartCustomerAssignmentPort.findAllByCustomer(c.id()))
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(cartCustomerAssignment -> Optional.ofNullable(cartRepository.findById(cartCustomerAssignment.cartId()))
-                        .orElse(NullCart.getInstance()))
+                        .orElse(CartNullObject.getInstance()))
                 .toList();
     }
 
-    public List<CartLike> findAllCartsByCart(CartLike cart) {
+    public List<Cart> findAllCartsByCart(Cart cart) {
         return Optional.ofNullable(cart)
                 .filter(c -> !c.isNull())
                 .map(c -> cartCustomerAssignmentPort.findAllByCart(c.id()))
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(cartCustomerAssignment -> Optional.ofNullable(cartRepository.findById(cartCustomerAssignment.cartId()))
-                        .orElse(NullCart.getInstance()))
+                        .orElse(CartNullObject.getInstance()))
                 .toList();
     }
 
-    public CartState getState(CartLike cart) {
+    public CartState getState(Cart cart) {
         return Optional.ofNullable(cart)
                 .filter(c -> !c.isNull())
                 .map(c -> cartStatusAssignmentPort.findBy(c.id()))

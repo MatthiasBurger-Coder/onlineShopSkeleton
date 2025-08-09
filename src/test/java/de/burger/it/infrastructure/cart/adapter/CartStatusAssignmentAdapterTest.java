@@ -1,6 +1,7 @@
 package de.burger.it.infrastructure.cart.adapter;
 
 import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.cart.state.CartStateType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ class CartStatusAssignmentAdapterTest {
     void setUp() {
         adapter = new CartStatusAssignmentAdapter();
         cartId = UUID.randomUUID();
-        cart = new Cart(cartId);
+        cart = new CartDefault(cartId);
     }
 
     // GreenPath Tests
