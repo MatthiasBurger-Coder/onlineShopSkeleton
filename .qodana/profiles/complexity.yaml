@@ -1,0 +1,52 @@
+name: "Complexity profile"
+baseProfile: qodana.recommended
+
+# Enable and configure complexity-related inspections
+inspections:
+  # Cyclomatic complexity thresholds
+  - inspection: JavaCyclomaticComplexity
+    enabled: true
+    severity: ERROR
+    options:
+      m_limit: 10     # maximum per method
+      c_limit: 80     # maximum per class
+      p_limit: 400    # maximum per package
+
+  # N-Path complexity
+  - inspection: JavaNPathComplexityInspection
+    enabled: true
+    severity: ERROR
+    options:
+      NPathLimit: 200 # maximum allowed N-Path complexity
+
+  # Method metrics
+  - inspection: JavaMethodMetrics
+    enabled: true
+    severity: WARNING
+    options:
+      methodLimit: 50          # maximum lines per method
+      parameterLimit: 5        # maximum parameters per method
+      throwsStatementsLimit: 2 # maximum thrown exceptions per method
+
+  # Class metrics
+  - inspection: JavaClassMetrics
+    enabled: true
+    severity: WARNING
+    options:
+      classLimit: 1000         # maximum lines per class
+      methodCountLimit: 30     # maximum methods per class
+      fieldCountLimit: 20      # maximum fields per class
+
+  # Nesting depth
+  - inspection: JavaOverlyNestedBlock
+    enabled: true
+    severity: WARNING
+    options:
+      limit: 3                 # maximum nesting depth
+
+  # Boolean expression complexity
+  - inspection: JavaOverlyComplexBooleanExpression
+    enabled: true
+    severity: WARNING
+    options:
+      limit: 4                 # maximum boolean operators in a single expression
