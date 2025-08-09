@@ -1,6 +1,6 @@
 package de.burger.it.infrastructure.customer.adapter;
 
-import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.state.CustomerStateType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class CustomerStatusAssignmentAdapterTest {
 
     private CustomerStatusAssignmentAdapter adapter;
-    private Customer customer;
+    private CustomerDefault customer;
     private UUID customerId;
 
     @BeforeEach
     void setUp() {
         adapter = new CustomerStatusAssignmentAdapter();
         customerId = UUID.randomUUID();
-        customer = new Customer(customerId, "Test Customer", "test@example.com");
+        customer = new CustomerDefault(customerId, "Test Customer", "test@example.com");
     }
 
     // GreenPath Tests

@@ -2,7 +2,7 @@ package de.burger.it.domain.customer.model;
 
 import java.util.UUID;
 
-public final class NullCustomer implements CustomerLike {
+public final class NullCustomer implements Customer {
 
     private static final NullCustomer INSTANCE = new NullCustomer();
     private final UUID id;

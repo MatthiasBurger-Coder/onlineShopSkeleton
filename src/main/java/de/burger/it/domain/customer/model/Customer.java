@@ -1,18 +1,30 @@
 package de.burger.it.domain.customer.model;
 
-import java.util.Optional;
 import java.util.UUID;
 
-public record Customer(UUID id, String name, String email) implements CustomerLike {
+/**
+ * Common interface for Customer and NullCustomer.
+ */
+public interface Customer {
+    /**
+     * Returns the customer ID.
+     */
+    UUID id();
+    
+    /**
+     * Returns the customer name.
+     */
+    String name();
+    
+    /**
+     * Returns the customer email.
+     */
+    String email();
 
-    public Customer {
-        id = Optional.ofNullable(id)
-                .orElseThrow(() -> new IllegalArgumentException("id cannot be null"));
-        name = Optional.ofNullable(name)
-                .filter(n -> !n.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("name cannot be null or blank"));
-        email = Optional.ofNullable(email)
-                .filter(e -> !e.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("email cannot be null or blank"));
+    /**
+     * Indicates whether this is a Null Object instance.
+     */
+    default boolean isNull() {
+        return false;
     }
 }

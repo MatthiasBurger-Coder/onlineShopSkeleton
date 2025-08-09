@@ -10,7 +10,7 @@ import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
 import de.burger.it.domain.cart.state.CartState;
 import de.burger.it.domain.cart.state.CartStateType;
-import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.model.NullCustomer;
 import de.burger.it.domain.relation.model.CartCustomerAssignment;
 import de.burger.it.domain.relation.port.CartCustomerAssignmentPort;
@@ -46,13 +46,13 @@ class CartServiceTest {
 
     private CartService cartService;
     private CartDefault cart;
-    private Customer customer;
+    private CustomerDefault customer;
 
     @BeforeEach
     void setUp() {
         cartService = new CartService(publisher, cartRepository, cartStatusAssignmentPort, cartCustomerAssignmentPort);
         cart = new de.burger.it.domain.cart.model.CartDefault(UUID.randomUUID());
-        customer = new Customer(UUID.randomUUID(), "Test Customer", "test@example.com");
+        customer = new CustomerDefault(UUID.randomUUID(), "Test Customer", "test@example.com");
     }
 
     // GreenPath Tests

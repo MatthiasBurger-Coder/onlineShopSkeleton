@@ -3,8 +3,8 @@ package de.burger.it.application.cart.service;
 import de.burger.it.domain.cart.event.CartActiveEvent;
 import de.burger.it.domain.cart.event.CartCloseEvent;
 import de.burger.it.domain.cart.event.CartCreateEvent;
-import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.cart.model.CartNullObject;
 import de.burger.it.domain.cart.port.CartRepositoryPort;
 import de.burger.it.domain.cart.port.CartStatusAssignmentPort;
@@ -12,7 +12,6 @@ import de.burger.it.domain.cart.state.CartState;
 import de.burger.it.domain.cart.state.CartStateType;
 import de.burger.it.domain.cart.state.NullCartState;
 import de.burger.it.domain.customer.model.Customer;
-import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.relation.port.CartCustomerAssignmentPort;
 import lombok.ToString;
 import org.springframework.context.ApplicationEventPublisher;
@@ -43,34 +42,34 @@ public class CartService {
 
     }
 
-    public void create(CustomerLike customer) {
+    public void create(Customer customer) {
         Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> {
                     var cart = new CartDefault(UUID.randomUUID());
-                    var cartCreateEvent = new CartCreateEvent(cart, (Customer) c);
+                    var cartCreateEvent = new CartCreateEvent(cart, c);
                     publisher.publishEvent(cartCreateEvent);
                 });
     }
 
-    public void close(Cart cart, CustomerLike customer) {
+    public void close(Cart cart, Customer customer) {
         Optional.ofNullable(cart)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> Optional.ofNullable(customer)
                         .filter(cu -> !cu.isNull())
                         .ifPresent(cu -> {
-                            var cartCloseEvent = new CartCloseEvent((CartDefault) c, (Customer) cu);
+                            var cartCloseEvent = new CartCloseEvent((CartDefault) c, cu);
                             publisher.publishEvent(cartCloseEvent);
                         }));
     }
 
-    public void activate(Cart cart, CustomerLike customer) {
+    public void activate(Cart cart, Customer customer) {
         Optional.ofNullable(cart)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> Optional.ofNullable(customer)
                         .filter(cu -> !cu.isNull())
                         .ifPresent(cu -> {
-                            var cartActiveEvent = new CartActiveEvent((CartDefault) c, (Customer) cu);
+                            var cartActiveEvent = new CartActiveEvent((CartDefault) c, cu);
                             publisher.publishEvent(cartActiveEvent);
                         }));
     }
@@ -81,7 +80,7 @@ public class CartService {
                 .orElse(CartNullObject.getInstance());
     }
 
-    public List<Cart> findAllCartByCustomer(CustomerLike customer) {
+    public List<Cart> findAllCartByCustomer(Customer customer) {
         return Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .map(c -> cartCustomerAssignmentPort.findAllByCustomer(c.id()))

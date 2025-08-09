@@ -1,7 +1,7 @@
 package de.burger.it.infrastructure.customer.model;
 
+import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.model.Customer;
-import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.customer.model.NullCustomer;
 import de.burger.it.domain.customer.port.CustomerRepository;
 import org.springframework.stereotype.Repository;
@@ -14,17 +14,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class InMemoryCustomerRepository implements CustomerRepository {
 
-    private final Map<UUID, Customer> store = new ConcurrentHashMap<>();
+    private final Map<UUID, CustomerDefault> store = new ConcurrentHashMap<>();
 
     @Override
-    public CustomerLike findById(UUID customerId) {
+    public Customer findById(UUID customerId) {
         return Optional.ofNullable(store.get(customerId))
-                .map(c -> (CustomerLike) c)
+                .map(c -> (Customer) c)
                 .orElse(NullCustomer.getInstance());
     }
 
     @Override
-    public void save(Customer customer) {
+    public void save(CustomerDefault customer) {
         store.put(customer.id(), customer);
     }
 

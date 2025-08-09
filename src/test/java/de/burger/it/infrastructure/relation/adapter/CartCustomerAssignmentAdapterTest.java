@@ -1,7 +1,7 @@
 package de.burger.it.infrastructure.relation.adapter;
 
 import de.burger.it.domain.cart.model.CartDefault;
-import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.relation.model.CartCustomerAssignment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ class CartCustomerAssignmentAdapterTest {
 
     private CartCustomerAssignmentAdapter adapter;
     private CartDefault cart;
-    private Customer customer;
+    private CustomerDefault customer;
     private UUID cartId;
     private UUID customerId;
 
@@ -25,7 +25,7 @@ class CartCustomerAssignmentAdapterTest {
         cartId = UUID.randomUUID();
         customerId = UUID.randomUUID();
         cart = new CartDefault(cartId);
-        customer = new Customer(customerId, "Test Customer", "test@example.com");
+        customer = new CustomerDefault(customerId, "Test Customer", "test@example.com");
     }
 
     // GreenPath Tests

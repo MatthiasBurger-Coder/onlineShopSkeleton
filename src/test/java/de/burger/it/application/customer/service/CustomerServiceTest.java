@@ -5,7 +5,7 @@ import de.burger.it.domain.cart.model.Cart;
 import de.burger.it.domain.cart.model.CartDefault;
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
 import de.burger.it.domain.customer.event.CustomerSuspendEvent;
-import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.model.NullCustomer;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerState;
@@ -37,12 +37,12 @@ class CustomerServiceTest {
     private CartService cartService;
 
     private CustomerService customerService;
-    private Customer customer;
+    private CustomerDefault customer;
 
     @BeforeEach
     void setUp() {
         customerService = new CustomerService(customerStatusAssignmentPort, publisher, cartService);
-        customer = new Customer(UUID.randomUUID(), "Test Customer", "test@example.com");
+        customer = new CustomerDefault(UUID.randomUUID(), "Test Customer", "test@example.com");
     }
 
     // GreenPath Tests

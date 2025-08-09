@@ -3,8 +3,8 @@ package de.burger.it.application.customer.service;
 import de.burger.it.application.cart.service.CartService;
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
 import de.burger.it.domain.customer.event.CustomerSuspendEvent;
+import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.model.Customer;
-import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerState;
 import de.burger.it.domain.customer.state.CustomerStateType;
@@ -28,28 +28,28 @@ public class CustomerService {
         this.cartService = cartService;
     }
 
-    public void createNewCustomer(CustomerLike customer) {
+    public void createNewCustomer(Customer customer) {
         Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> {
-                    customerStatusAssignmentPort.assign((Customer) c, CustomerStateType.CREATE);
-                    publisher.publishEvent(new CustomerCreateEvent((Customer) c));
+                    customerStatusAssignmentPort.assign((CustomerDefault) c, CustomerStateType.CREATE);
+                    publisher.publishEvent(new CustomerCreateEvent((CustomerDefault) c));
                 });
     }
 
-    public void suspendCustomer(CustomerLike customer) {
+    public void suspendCustomer(Customer customer) {
         Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> {
-                    customerStatusAssignmentPort.assign((Customer) c, CustomerStateType.SUSPENDED);
-                    publisher.publishEvent(new CustomerSuspendEvent((Customer) c));
+                    customerStatusAssignmentPort.assign((CustomerDefault) c, CustomerStateType.SUSPENDED);
+                    publisher.publishEvent(new CustomerSuspendEvent((CustomerDefault) c));
                     Optional.ofNullable(cartService.findAllCartByCustomer(c))
                             .orElse(Collections.emptyList())
                             .forEach(cart -> cartService.close(cart, c));
                 });
     }
 
-    public CustomerState getState(CustomerLike customer) {
+    public CustomerState getState(Customer customer) {
         return Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .map(c -> customerStatusAssignmentPort.findBy(c.id()))

@@ -1,6 +1,6 @@
 package de.burger.it.domain.customer.event;
 
-import de.burger.it.domain.customer.model.Customer;
+import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.common.event.DomainEvent;
 import lombok.Getter;
 
@@ -10,9 +10,9 @@ import lombok.Getter;
 @Getter
 public class CustomerCreateEvent extends DomainEvent {
 
-    private final Customer customer;
+    private final CustomerDefault customer;
 
-    public CustomerCreateEvent(Customer customer) {
+    public CustomerCreateEvent(CustomerDefault customer) {
         this.customer = customer;
     }
 

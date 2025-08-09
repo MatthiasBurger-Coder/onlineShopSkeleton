@@ -5,8 +5,8 @@ import de.burger.it.application.config.AppConfig;
 import de.burger.it.application.customer.service.CustomerService;
 import de.burger.it.application.order.service.OrderService;
 import de.burger.it.domain.cart.model.Cart;
+import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.model.Customer;
-import de.burger.it.domain.customer.model.CustomerLike;
 import de.burger.it.domain.order.model.OrderLike;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -28,7 +28,7 @@ public class Main {
         
         // 1. Customer Creation Workflow
         System.out.println("\n--- 1. CUSTOMER CREATION WORKFLOW ---");
-        CustomerLike customer1 = runCustomerCreationWorkflow(customerService, cartService);
+        Customer customer1 = runCustomerCreationWorkflow(customerService, cartService);
         
         // 2. Customer Suspension Workflow
         System.out.println("\n--- 2. CUSTOMER SUSPENSION WORKFLOW ---");
@@ -74,9 +74,9 @@ public class Main {
     /**
      * Demonstrates the customer creation workflow
      */
-    private static CustomerLike runCustomerCreationWorkflow(CustomerService customerService, CartService cartService) {
+    private static Customer runCustomerCreationWorkflow(CustomerService customerService, CartService cartService) {
         // Create a new customer
-        var customer = new Customer(UUID.randomUUID(), "Matthias", "customer@example.com");
+        var customer = new CustomerDefault(UUID.randomUUID(), "Matthias", "customer@example.com");
         customerService.createNewCustomer(customer);
         var customerState = customerService.getState(customer);
         
@@ -96,7 +96,7 @@ public class Main {
     /**
      * Demonstrates the customer suspension workflow
      */
-    private static void runCustomerSuspensionWorkflow(CustomerService customerService, CartService cartService, CustomerLike customer) {
+    private static void runCustomerSuspensionWorkflow(CustomerService customerService, CartService cartService, Customer customer) {
         // Suspend the customer
         customerService.suspendCustomer(customer);
         var customerState = customerService.getState(customer);
@@ -117,7 +117,7 @@ public class Main {
      */
     private static Cart runCartCreationWorkflow(CustomerService customerService, CartService cartService) {
         // Create a new customer for this workflow
-        var customer = new Customer(UUID.randomUUID(), "John", "john@example.com");
+        var customer = new CustomerDefault(UUID.randomUUID(), "John", "john@example.com");
         customerService.createNewCustomer(customer);
         
         // Create a cart for the customer
@@ -141,7 +141,7 @@ public class Main {
      */
     private static void runCartActivationWorkflow(CustomerService customerService, CartService cartService, Cart cart) {
         // Get the customer for this cart
-        var customer = new Customer(UUID.randomUUID(), "Jane", "jane@example.com");
+        var customer = new CustomerDefault(UUID.randomUUID(), "Jane", "jane@example.com");
         customerService.createNewCustomer(customer);
         
         // Create a cart for the customer
@@ -166,7 +166,7 @@ public class Main {
      */
     private static void runCartClosureWorkflow(CustomerService customerService, CartService cartService, Cart cart) {
         // Get the customer for this cart
-        var customer = new Customer(UUID.randomUUID(), "Bob", "bob@example.com");
+        var customer = new CustomerDefault(UUID.randomUUID(), "Bob", "bob@example.com");
         customerService.createNewCustomer(customer);
         
         // Create a cart for the customer
@@ -191,7 +191,7 @@ public class Main {
      */
     private static OrderLike runOrderCreationWorkflow(CustomerService customerService, CartService cartService, OrderService orderService) {
         // Create a new customer for this workflow
-        var customer = new Customer(UUID.randomUUID(), "Alice", "alice@example.com");
+        var customer = new CustomerDefault(UUID.randomUUID(), "Alice", "alice@example.com");
         customerService.createNewCustomer(customer);
         
         // Create a cart for the customer
@@ -246,7 +246,7 @@ public class Main {
      */
     private static OrderLike runOrderCancellationWorkflow(CustomerService customerService, CartService cartService, OrderService orderService) {
         // Create a new customer for this workflow
-        var customer = new Customer(UUID.randomUUID(), "Charlie", "charlie@example.com");
+        var customer = new CustomerDefault(UUID.randomUUID(), "Charlie", "charlie@example.com");
         customerService.createNewCustomer(customer);
         
         // Create a cart for the customer
