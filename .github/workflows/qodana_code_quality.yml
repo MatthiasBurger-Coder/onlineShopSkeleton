@@ -60,11 +60,7 @@ jobs:
         run: pipx install lizard
 
       - name: Compute complexity with lizard
-        run: |
-          mkdir -p build/complexity
-          # exclude common build/test dirs as needed
-          lizard -l java -x "**/build/**" -x "**/out/**" -x "**/generated/**" \
-            -o json > build/complexity/lizard.json
+        run: python3 scripts/lizard_to_sarif.py
 
       - name: Upload complexity artifact
         uses: actions/upload-artifact@v4
@@ -72,21 +68,10 @@ jobs:
           name: complexity-report
           path: build/complexity/lizard.json
 
-      - name: Complexity summary
-        run: |
-          # simple jq-based summary (requires jq)
-          sudo apt-get update && sudo apt-get install -y jq
-          TOP=$(jq -r '[.function_list[] | {n:.nloc, c:.cyclomatic_complexity, f:(.filename+":"+(.start_line|tostring))}] 
-                       | sort_by(-.c) | .[:10]' build/complexity/lizard.json)
-          {
-            echo "### Cyclomatic Complexity (Top 10 by function)"
-            echo ""
-            echo "| Complexity | NLOC | Location |"
-            echo "|-----------:|-----:|----------|"
-            echo "$TOP" | jq -r '.[] | "| \(.c) | \(.n) | \(.f) |"'
-            echo ""
-            echo "_Full report in artifact **complexity-report** (lizard.json)._"
-          } >> $GITHUB_STEP_SUMMARY
+      - name: Upload SARIF (complexity)
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: build/complexity/lizard.sarif.json
 
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2025.1
