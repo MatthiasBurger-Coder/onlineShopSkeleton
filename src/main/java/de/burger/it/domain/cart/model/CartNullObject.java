@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public final class CartNullObject implements Cart {
     
-    private static final CartNullObject INSTANCE = new CartNullObject();
+    private static final Cart INSTANCE = new CartNullObject();
     private final UUID id;
     
     public CartNullObject() {
@@ -16,7 +16,7 @@ public final class CartNullObject implements Cart {
     }
     
     @NotNull
-    public static CartNullObject getInstance() {
+    public static Cart getInstance() {
         return INSTANCE;
     }
     

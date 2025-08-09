@@ -7,8 +7,8 @@ import de.burger.it.domain.order.event.OrderCancelEvent;
 import de.burger.it.domain.order.event.OrderCreateEvent;
 import de.burger.it.domain.order.event.OrderDeliverEvent;
 import de.burger.it.domain.order.event.OrderPayEvent;
+import de.burger.it.domain.order.model.OrderDefault;
 import de.burger.it.domain.order.model.Order;
-import de.burger.it.domain.order.model.OrderLike;
 import de.burger.it.domain.order.model.OrderNullObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,13 +32,13 @@ class OrderServiceTest {
 
     private OrderService orderService;
     private Cart cart;
-    private OrderLike order;
+    private Order order;
 
     @BeforeEach
     void setUp() {
         orderService = new OrderService(eventPublisher);
         cart = new CartDefault(UUID.randomUUID());
-        order = new Order(UUID.randomUUID());
+        order = new OrderDefault(UUID.randomUUID());
     }
 
     // GreenPath Tests
@@ -46,7 +46,7 @@ class OrderServiceTest {
     @Test
     void createNewOrder_shouldCreateOrderAndPublishEvent() {
         // When
-        OrderLike result = orderService.createNewOrder(cart);
+        Order result = orderService.createNewOrder(cart);
 
         // Then
         assertNotNull(result);
@@ -86,7 +86,7 @@ class OrderServiceTest {
     @Test
     void createNewOrder_whenCartIsNull_shouldReturnNullOrder() {
         // When
-        OrderLike result = orderService.createNewOrder(CartNullObject.getInstance());
+        Order result = orderService.createNewOrder(CartNullObject.getInstance());
         
         // Then
         // Verify that a NullOrder is returned and no event is published

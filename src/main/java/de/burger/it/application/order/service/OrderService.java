@@ -5,9 +5,9 @@ import de.burger.it.domain.order.event.OrderCancelEvent;
 import de.burger.it.domain.order.event.OrderCreateEvent;
 import de.burger.it.domain.order.event.OrderDeliverEvent;
 import de.burger.it.domain.order.event.OrderPayEvent;
-import de.burger.it.domain.order.model.OrderNullObject;
 import de.burger.it.domain.order.model.Order;
-import de.burger.it.domain.order.model.OrderLike;
+import de.burger.it.domain.order.model.OrderDefault;
+import de.burger.it.domain.order.model.OrderNullObject;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -23,33 +23,33 @@ public class OrderService {
         this.eventPublisher = eventPublisher;
     }
 
-    public OrderLike createNewOrder(Cart cart) {
+    public Order createNewOrder(Cart cart) {
         if (cart == null || cart.isNull()) {
             return OrderNullObject.getInstance();
         }
-        var order = new Order(UUID.randomUUID());
+        var order = new OrderDefault(UUID.randomUUID());
         eventPublisher.publishEvent(new OrderCreateEvent(order));
         return order;
     }
 
-    public void payOrder(OrderLike order) {
+    public void payOrder(Order order) {
         if (order == null || order.isNull()) {
             return;
         }
-        eventPublisher.publishEvent(new OrderPayEvent((Order) order));
+        eventPublisher.publishEvent(new OrderPayEvent(order));
     }
 
-    public void cancelOrder(OrderLike order) {
+    public void cancelOrder(Order order) {
         if (order == null || order.isNull()) {
             return;
         }
-        eventPublisher.publishEvent(new OrderCancelEvent((Order) order));
+        eventPublisher.publishEvent(new OrderCancelEvent(order));
     }
 
-    public void deliverOrder(OrderLike order) {
+    public void deliverOrder(Order order) {
         if (order == null || order.isNull()) {
             return;
         }
-        eventPublisher.publishEvent(new OrderDeliverEvent((Order) order));
+        eventPublisher.publishEvent(new OrderDeliverEvent(order));
     }
 }

@@ -1,6 +1,6 @@
 package de.burger.it.infrastructure.customer.adapter;
 
-import de.burger.it.domain.customer.model.CustomerDefault;
+import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.CustomerStatusAssignment;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerStateType;
@@ -26,10 +26,10 @@ public class CustomerStatusAssignmentAdapter implements CustomerStatusAssignment
     }
 
     @Override
-    public void assign(CustomerDefault customer, CustomerStateType newState) {
-        CustomerDefault nonNullCustomer = Optional.ofNullable(customer)
+    public void assign(Customer customer, CustomerStateType newState) {
+        var nonNullCustomer = Optional.ofNullable(customer)
                 .orElseThrow(() -> new IllegalArgumentException("Customer cannot be null"));
-        CustomerStateType state = Optional.ofNullable(newState)
+        var state = Optional.ofNullable(newState)
                 .orElseThrow(() -> new IllegalArgumentException("State cannot be null"));
         var assignment = new CustomerStatusAssignment(
                 nonNullCustomer.id(),

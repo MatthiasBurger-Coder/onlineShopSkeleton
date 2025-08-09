@@ -4,9 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public final class OrderNullObject implements OrderLike {
+public final class OrderNullObject implements Order {
     
-    private static final OrderNullObject INSTANCE = new OrderNullObject();
+    private static final Order INSTANCE = new OrderNullObject();
     private final UUID id;
     
     private OrderNullObject() {
@@ -14,7 +14,7 @@ public final class OrderNullObject implements OrderLike {
     }
     
     @NotNull
-    public static OrderNullObject getInstance() {
+    public static Order getInstance() {
         return INSTANCE;
     }
     

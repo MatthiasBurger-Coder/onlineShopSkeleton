@@ -23,7 +23,7 @@ public class NewState implements OrderState {
 
     @Override
     public OrderState deliver() {
-        throw new IllegalStateException("Order not paid");
+        throw new IllegalStateException("OrderDefault not paid");
     }
 
     @Override

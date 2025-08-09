@@ -18,8 +18,8 @@ public class OrderStatusAssignmentAdapter implements OrderStatusAssignmentPort {
 
     @Override
     public OrderStateType findBy(UUID orderId) {
-        UUID id = Optional.ofNullable(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order ID cannot be null"));
+        var id = Optional.ofNullable(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderDefault ID cannot be null"));
         return Optional.ofNullable(store.get(id))
                 .map(OrderStatusAssignment::state)
                 .orElse(null);
@@ -27,9 +27,9 @@ public class OrderStatusAssignmentAdapter implements OrderStatusAssignmentPort {
 
     @Override
     public void assign(Order order, OrderStateType newState) {
-        Order nonNullOrder = Optional.ofNullable(order)
-                .orElseThrow(() -> new IllegalArgumentException("Order cannot be null"));
-        OrderStateType state = Optional.ofNullable(newState)
+        var nonNullOrder = Optional.ofNullable(order)
+                .orElseThrow(() -> new IllegalArgumentException("OrderDefault cannot be null"));
+        var state = Optional.ofNullable(newState)
                 .orElseThrow(() -> new IllegalArgumentException("State cannot be null"));
         var assignment = new OrderStatusAssignment(
                 nonNullOrder.id(),

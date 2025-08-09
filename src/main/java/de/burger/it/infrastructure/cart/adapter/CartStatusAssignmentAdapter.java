@@ -18,9 +18,9 @@ public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
 
     @Override
     public void assign(Cart cart, CartStateType newState) {
-        Cart nonNullCart = Optional.ofNullable(cart)
+        var nonNullCart = Optional.ofNullable(cart)
                 .orElseThrow(() -> new IllegalArgumentException("Cart cannot be null"));
-        CartStateType state = Optional.ofNullable(newState)
+        var state = Optional.ofNullable(newState)
                 .orElseThrow(() -> new IllegalArgumentException("State cannot be null"));
         var assignment = new CartStatusAssignment(
                 nonNullCart.id(),
@@ -33,7 +33,7 @@ public class CartStatusAssignmentAdapter implements CartStatusAssignmentPort {
 
     @Override
     public CartStateType findBy(UUID cartId) {
-        UUID id = Optional.ofNullable(cartId)
+        var id = Optional.ofNullable(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart ID cannot be null"));
         return Optional.ofNullable(store.get(id))
                 .map(CartStatusAssignment::state)

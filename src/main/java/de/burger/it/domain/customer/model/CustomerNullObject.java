@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public final class CustomerNullObject implements Customer {
 
-    private static final CustomerNullObject INSTANCE = new CustomerNullObject();
+    private static final Customer INSTANCE = new CustomerNullObject();
     private final UUID id;
     private final String name;
     private final String email;
@@ -15,7 +15,7 @@ public final class CustomerNullObject implements Customer {
         this.email = "";
     }
 
-    public static CustomerNullObject getInstance() {
+    public static Customer getInstance() {
         return INSTANCE;
     }
     

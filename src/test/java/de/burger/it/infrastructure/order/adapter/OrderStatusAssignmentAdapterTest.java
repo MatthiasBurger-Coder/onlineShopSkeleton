@@ -1,6 +1,6 @@
 package de.burger.it.infrastructure.order.adapter;
 
-import de.burger.it.domain.order.model.Order;
+import de.burger.it.domain.order.model.OrderDefault;
 import de.burger.it.domain.order.state.OrderStateType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderStatusAssignmentAdapterTest {
 
     private OrderStatusAssignmentAdapter adapter;
-    private Order order;
+    private OrderDefault order;
     private UUID orderId;
 
     @BeforeEach
     void setUp() {
         adapter = new OrderStatusAssignmentAdapter();
         orderId = UUID.randomUUID();
-        order = new Order(orderId);
+        order = new OrderDefault(orderId);
     }
 
     // GreenPath Tests
