@@ -15,6 +15,6 @@ public class OnOrderCancelAssignCanceledState {
     }
 
     public void execute(OrderCancelEvent event) {
-        orderStatusAssignmentPort.assign(event.getOrder(), OrderStateType.CANCELLED);
+        orderStatusAssignmentPort.assign(event.order(), OrderStateType.CANCELLED);
     }
 }

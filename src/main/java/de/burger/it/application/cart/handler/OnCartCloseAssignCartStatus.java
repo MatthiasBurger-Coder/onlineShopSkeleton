@@ -15,6 +15,6 @@ public class OnCartCloseAssignCartStatus {
     }
 
     public void execute(CartCloseEvent event) {
-        cartStatusAssignmentPort.assign(event.getCart(), CartStateType.CLOSED);
+        cartStatusAssignmentPort.assign(event.cart(), CartStateType.CLOSED);
     }
 }

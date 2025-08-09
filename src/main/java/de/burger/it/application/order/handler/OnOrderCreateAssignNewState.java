@@ -15,6 +15,6 @@ public class OnOrderCreateAssignNewState {
     }
 
     public void execute(OrderCreateEvent event) {
-        orderStatusAssignmentPort.assign(event.getOrder(), OrderStateType.NEW);
+        orderStatusAssignmentPort.assign(event.order(), OrderStateType.NEW);
     }
 }

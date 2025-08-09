@@ -13,6 +13,6 @@ public class OnCartCreateSaveRepository {
     }
 
     public void execute(CartCreateEvent event) {
-        cartRepository.save(event.getCart());
+        cartRepository.save(event.cart());
     }
 }

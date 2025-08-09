@@ -1,4 +1,4 @@
-package de.burger.it.application.config;
+package de.burger.it.application.cart.process;
 
 import de.burger.it.application.cart.handler.OnCartActiveAssignCartStatus;
 import de.burger.it.application.cart.handler.OnCartCloseAssignCartStatus;

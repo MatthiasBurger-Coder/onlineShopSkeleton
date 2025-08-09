@@ -15,6 +15,6 @@ public class OnCustomerSuspendAssignSuspend {
     }
 
     public void execute(CustomerSuspendEvent event) {
-        customerStatusAssignmentPort.assign(event.getCustomer(), CustomerStateType.SUSPENDED);
+        customerStatusAssignmentPort.assign(event.customer(), CustomerStateType.SUSPENDED);
     }
 }

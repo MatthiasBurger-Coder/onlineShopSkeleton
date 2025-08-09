@@ -1,4 +1,4 @@
-package de.burger.it.application.config;
+package de.burger.it.application.order.process;
 
 import de.burger.it.application.order.handler.OnOrderCancelAssignCanceledState;
 import de.burger.it.application.order.handler.OnOrderCreateAssignNewState;

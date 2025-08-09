@@ -1,4 +1,4 @@
-package de.burger.it.application.config;
+package de.burger.it.application.customer.process;
 
 import de.burger.it.application.customer.handler.*;
 import de.burger.it.application.process.ProcessPipeline;

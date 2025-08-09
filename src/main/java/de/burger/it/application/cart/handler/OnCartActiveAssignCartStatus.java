@@ -15,6 +15,6 @@ public class OnCartActiveAssignCartStatus {
     }
 
     public void execute(CartActiveEvent event) {
-        cartStatusAssignmentPort.assign(event.getCart(), CartStateType.ACTIVE);
+        cartStatusAssignmentPort.assign(event.cart(), CartStateType.ACTIVE);
     }
 }

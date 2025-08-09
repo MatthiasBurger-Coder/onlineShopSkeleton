@@ -13,6 +13,6 @@ public class OnCustomerSuspendSaveRepository {
     }
 
     public void execute(CustomerSuspendEvent event) {
-        customerRepository.save(event.getCustomer());
+        customerRepository.save(event.customer());
     }
 }
