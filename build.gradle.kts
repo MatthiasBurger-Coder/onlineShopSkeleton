@@ -39,4 +39,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    // Suppress JDK warning about dynamic Java agent loading (e.g., Byte Buddy used by Mockito)
+    jvmArgs("-XX:+EnableDynamicAgentLoading")
 }
