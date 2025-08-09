@@ -3,7 +3,6 @@ package de.burger.it.application.customer.service;
 import de.burger.it.application.cart.service.CartService;
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
 import de.burger.it.domain.customer.event.CustomerSuspendEvent;
-import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort;
 import de.burger.it.domain.customer.state.CustomerState;
@@ -32,8 +31,8 @@ public class CustomerService {
         Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> {
-                    customerStatusAssignmentPort.assign((CustomerDefault) c, CustomerStateType.CREATE);
-                    publisher.publishEvent(new CustomerCreateEvent((CustomerDefault) c));
+                    customerStatusAssignmentPort.assign(c, CustomerStateType.CREATE);
+                    publisher.publishEvent(new CustomerCreateEvent(c));
                 });
     }
 
@@ -41,8 +40,8 @@ public class CustomerService {
         Optional.ofNullable(customer)
                 .filter(c -> !c.isNull())
                 .ifPresent(c -> {
-                    customerStatusAssignmentPort.assign((CustomerDefault) c, CustomerStateType.SUSPENDED);
-                    publisher.publishEvent(new CustomerSuspendEvent((CustomerDefault) c));
+                    customerStatusAssignmentPort.assign(c, CustomerStateType.SUSPENDED);
+                    publisher.publishEvent(new CustomerSuspendEvent(c));
                     Optional.ofNullable(cartService.findAllCartByCustomer(c))
                             .orElse(Collections.emptyList())
                             .forEach(cart -> cartService.close(cart, c));

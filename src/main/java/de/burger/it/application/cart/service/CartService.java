@@ -58,7 +58,7 @@ public class CartService {
                 .ifPresent(c -> Optional.ofNullable(customer)
                         .filter(cu -> !cu.isNull())
                         .ifPresent(cu -> {
-                            var cartCloseEvent = new CartCloseEvent((CartDefault) c, cu);
+                            var cartCloseEvent = new CartCloseEvent(c, cu);
                             publisher.publishEvent(cartCloseEvent);
                         }));
     }
@@ -69,7 +69,7 @@ public class CartService {
                 .ifPresent(c -> Optional.ofNullable(customer)
                         .filter(cu -> !cu.isNull())
                         .ifPresent(cu -> {
-                            var cartActiveEvent = new CartActiveEvent((CartDefault) c, cu);
+                            var cartActiveEvent = new CartActiveEvent(c, cu);
                             publisher.publishEvent(cartActiveEvent);
                         }));
     }
