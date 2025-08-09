@@ -83,7 +83,6 @@ jobs:
           upload-result: true
           use-annotations: true
           args: >-
-            --project-dir
             --config,qodana.yaml
             --coverage-dir,.qodana/code-coverage
             --image,jetbrains/qodana-jvm:2025.1
