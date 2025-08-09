@@ -82,8 +82,11 @@ jobs:
           cache-default-branch-only: false
           upload-result: true
           use-annotations: true
-          # Pass coverage dir explicitly; pin linter image to 2025.1
-          args: "--coverage-dir,.qodana/code-coverage --image,jetbrains/qodana-jvm:2025.1"
+          args: >-
+            --project-dir
+            --config,qodana.yaml
+            --coverage-dir,.qodana/code-coverage
+            --image,jetbrains/qodana-jvm:2025.1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2116466718 }}
           QODANA_ENDPOINT: https://qodana.cloud
