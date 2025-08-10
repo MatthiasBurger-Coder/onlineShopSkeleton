@@ -3,6 +3,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 plugins {
     id("java")
     id("jacoco")
+    id("info.solidsoft.pitest") version "1.19.0-rc.1"
 }
 
 group = "de.burger.it"
@@ -20,6 +21,8 @@ jacoco {
 
 repositories {
     mavenCentral()
+    google()
+    gradlePluginPortal()
 }
 
 dependencies {
@@ -45,6 +48,12 @@ dependencies {
 
     testCompileOnly("org.projectlombok:lombok:1.18.38")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
+
+    // PIT dependencies
+    implementation("org.pitest:pitest:1.20.1")
+    implementation("org.pitest:pitest-junit5-plugin:1.2.3")
+    implementation("info.solidsoft.pitest:info.solidsoft.pitest.gradle.plugin:1.19.0-rc.1")
+
 }
 
 tasks.test {
