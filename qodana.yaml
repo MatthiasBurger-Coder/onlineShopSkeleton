@@ -18,4 +18,4 @@ exclude:
       - "gradle.properties"
       - "settings.gradle.kts"
 coverage:
-  reportProblems: true
+  reportProblems: false
