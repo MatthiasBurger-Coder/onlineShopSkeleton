@@ -2,8 +2,19 @@ name: "QodanaConfiguration"
 baseProfile: empty
 
 inspections:
-  - group: Typos
+  - group: XML
     enabled: false
+    ignore:
+      - src/test/**
+      - build/reports/**
+      - .qodana/**
+      - gradle/**
+      - out/**
+      - gradlew
+      - gradlew.bat
+      - gradle.properties
+      - settings.gradle.kts
+
     inspections:
       - id: SpellCheckingInspection
         enabled: false
