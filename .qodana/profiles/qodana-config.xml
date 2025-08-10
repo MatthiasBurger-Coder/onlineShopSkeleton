@@ -1,11 +1,21 @@
 <component name="InspectionProjectProfileManager">
     <profile version="1.0">
-        <option name="myName" value="QodanaMergedProfile" />
+        <option name="myName" value="QodanaConfigProfile" />
 
+        <!-- disable spell checking -->
+        <inspection_tool class="SpellCheckingInspection" enabled="false" enabled_by_default="false" level="TYPO"/>
+        <!-- disable XML highlighting -->
+        <inspection_tool class="XmlHighlightingInspection" enabled="false" enabled_by_default="false" level="ERROR"/>
         <!-- Coverage Inspection -->
         <inspection_tool class="JavaTestCoverageInspection" enabled="true" level="ERROR" enabled_by_default="true">
             <scope name="Production" level="ERROR" enabled="true" />
-            <option name="minimumLineCoverage" value="0.86" />
+            <option name="minimumLineCoverage" value="86" />
+        </inspection_tool>
+
+        <inspection_tool class="JvmCoverageInspection" enabled="true" level="WARNING" enabled_by_default="true">
+            <option name="classThreshold" value="86" />
+            <option name="methodThreshold" value="86" />
+            <option name="warnMissingCoverage" value="true" />
         </inspection_tool>
 
         <!-- Cyclomatic complexity -->

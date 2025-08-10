@@ -1,5 +1,6 @@
 version: "1.0"
 linter: jetbrains/qodana-jvm:2025.1
+
 profile:
   path: .qodana/profiles/qodana-config.xml
 
@@ -18,9 +19,3 @@ exclude:
 
 coverage:
   reportProblems: true
-
-inspections:
-  exclude:
-    - CheckDependencyLicenses
-    - SpellCheckingInspection       # „Typo“
-    - XmlHighlightingInspection     # „XML highlighting“
