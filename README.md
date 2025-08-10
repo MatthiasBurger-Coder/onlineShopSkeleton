@@ -335,10 +335,15 @@ The following implementations were recently added and integrated into the system
 ## Code Quality and CI
 
 - Qodana: Static analysis configured via qodana.yaml and GitHub Actions workflow .github/workflows/qodana_code_quality.yml
-- Complexity Analysis: Lizard reports converted to SARIF using scripts/lizard_to_sarif.py (see build/complexity/lizard.json for sample output)
+- Qodana Complexity: Cyclomatic and other complexity metrics are enforced via the Qodana profile at .qodana/profiles/qodana-config.xml
+  - Enabled inspections include: JavaCyclomaticComplexity, JavaNPathComplexityInspection, JavaMethodMetrics, JavaClassMetrics, JavaOverlyNestedBlock, and JavaOverlyComplexBooleanExpression.
+  - Thresholds (e.g., method cyclomatic complexity m_limit=10) can be adjusted in .qodana/profiles/qodana-config.xml to tune sensitivity.
+  - Results appear in the Qodana Cloud report (from the GitHub Action) and locally in qodana.sarif.json; flagged methods/classes indicate higher complexity.
+- Additional Complexity Analysis (optional): Lizard reports converted to SARIF using scripts/lizard_to_sarif.py (see build/complexity/lizard.json for sample output)
 - How to run locally
   - Generate reports with Gradle build and tests: `./gradlew build test`
-  - Qodana can be run via Docker or GitHub Actions; see qodana.yaml for profile and thresholds.
+  - Run Qodana locally with Docker (example): `docker run --rm -it -v "${PWD}":/data -v "${PWD}/.qodana":/data/.qodana jetbrains/qodana-jvm:2025.1 --config,qodana.yaml`
+  - Or rely on GitHub Actions; see qodana.yaml for profile and thresholds.
 
 ## Contributing
 
