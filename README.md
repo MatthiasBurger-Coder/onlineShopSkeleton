@@ -88,6 +88,7 @@ The application demonstrates 9 key workflows:
 - **Mockito 5.10.0**: Mocking framework for testing
 - **Jetbrains Annotations 24.1.0**: Annotations for better code analysis
 - **Gradle 9.0.0**: Build automation
+- **PIT Mutation Testing 1.20.1**: Mutation testing engine (configured via Gradle)
 
 ## Setup Instructions
 
@@ -150,6 +151,19 @@ Or specific test methods:
   ./gradlew test --tests "de.burger.it.application.order.service.OrderServiceTest.testCreateNewOrder"
   ```
 
+### Running PIT- Tests
+- Windows (PowerShell/CMD):
+  ```powershell
+  .\gradlew.bat pitest
+  ```
+
+- macOS/Linux:
+  ```bash
+  ./gradlew pitest
+  ```
+
+This will execute PIT mutation testing across the configured target classes and tests. The HTML report will be available under `build\reports\pitest\<timestamp>\index.html` (for example, `build\reports\pitest\202508101624\index.html`). The build is configured to fail if the mutation score drops below 80%.
+
 ## Usage Examples
 
 The `Main.java` file demonstrates basic usage of the system:
@@ -174,7 +188,7 @@ customerService.suspendCustomer(customer);
 
 ### Null Object Pattern Usage
 
-The system uses the Null Object pattern to eliminate null checks:
+The system uses the Null Object pattern to eliminate null checks. The `CartNullObject` uses a zero UUID and implements equality so that it also compares equal to `NullCartState` in tests:
 
 ```java
 // Example from OrderService
@@ -326,6 +340,7 @@ The following implementations were recently added and integrated into the system
 - In-memory Repositories
   - InMemoryCartRepository, InMemoryCustomerRepository, InMemoryOrderRepository
   - Used by services to persist aggregates during tests/demo without external DB.
+  - InMemoryCartRepository returns `CartNullObject.getInstance()` for unknown IDs and uses `ConcurrentHashMap` for thread safety.
 
 - Event Handlers (selection)
   - Cart: OnCartCreateAssignCartStatus, OnCartCreateAssignCustomer, OnCartCreateSaveRepository, OnCartActiveAssignCartStatus, OnCartCloseAssignCartStatus
@@ -334,16 +349,29 @@ The following implementations were recently added and integrated into the system
 
 ## Code Quality and CI
 
-- Qodana: Static analysis configured via qodana.yaml and GitHub Actions workflow .github/workflows/qodana_code_quality.yml
-- Qodana Complexity: Cyclomatic and other complexity metrics are enforced via the Qodana profile at .qodana/profiles/qodana-config.xml
+- Qodana: Static analysis configured via qodana.yaml with the YAML profile at .qodana/profiles/qodana-config.yaml.
+- Qodana Complexity: Cyclomatic and other complexity metrics are enforced via the YAML profile at .qodana/profiles/qodana-config.yaml.
   - Enabled inspections include: JavaCyclomaticComplexity, JavaNPathComplexityInspection, JavaMethodMetrics, JavaClassMetrics, JavaOverlyNestedBlock, and JavaOverlyComplexBooleanExpression.
-  - Thresholds (e.g., method cyclomatic complexity m_limit=10) can be adjusted in .qodana/profiles/qodana-config.xml to tune sensitivity.
-  - Results appear in the Qodana Cloud report (from the GitHub Action) and locally in qodana.sarif.json; flagged methods/classes indicate higher complexity.
+  - Thresholds (e.g., method cyclomatic complexity m_limit=10) can be adjusted in .qodana/profiles/qodana-config.yaml to tune sensitivity.
+  - Results are available locally in qodana.sarif.json. You can also integrate Qodana in CI if desired.
+
+- Mutation Testing (PIT): Ensures test suite quality by killing mutations.
+  - Version: PIT core 1.20.1 (configured via Gradle plugin info.solidsoft.pitest)
+  - Run: Windows `.\u0067radlew.bat pitest`, macOS/Linux `./gradlew pitest`
+  - Report: `build\reports\pitest\<timestamp>\index.html` (e.g., `build\reports\pitest\202508101624\index.html`)
+  - Threshold: mutation score threshold set to 80%
+  - Notes: JDK 21 `--add-opens` flags and `useClasspathFile` are configured to support Mockito/Byte Buddy and long classpaths on Windows.
+
+- Test Coverage (JaCoCo): Enforces minimum coverage and produces reports.
+  - Minimum line coverage: 86% (build fails if below)
+  - Reports: HTML and XML (`build\reports\jacoco\test\jacocoTestReport.xml`)
+  - Run: Windows `.\u0067radlew.bat test jacocoTestReport`, macOS/Linux `./gradlew test jacocoTestReport`
+
 - Additional Complexity Analysis (optional): Lizard reports converted to SARIF using scripts/lizard_to_sarif.py (see build/complexity/lizard.json for sample output)
 - How to run locally
   - Generate reports with Gradle build and tests: `./gradlew build test`
   - Run Qodana locally with Docker (example): `docker run --rm -it -v "${PWD}":/data -v "${PWD}/.qodana":/data/.qodana jetbrains/qodana-jvm:2025.1 --config,qodana.yaml`
-  - Or rely on GitHub Actions; see qodana.yaml for profile and thresholds.
+  - You may also set up a CI workflow; use qodana.yaml for the profile and thresholds.
 
 ## Contributing
 
@@ -363,3 +391,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Thanks to all contributors who have helped shape this project
 - Inspired by Domain-Driven Design principles and best practices
+
+
