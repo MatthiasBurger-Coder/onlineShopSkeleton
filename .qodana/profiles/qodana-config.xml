@@ -1,0 +1,50 @@
+<component name="InspectionProjectProfileManager">
+    <profile version="1.0">
+        <option name="myName" value="QodanaMergedProfile" />
+
+        <!-- Coverage Inspection -->
+        <inspection_tool class="JavaTestCoverageInspection" enabled="true" level="ERROR" enabled_by_default="true">
+            <option name="minimumLineCoverage" value="0.86" />
+        </inspection_tool>
+
+        <!-- Cyclomatic complexity -->
+        <inspection_tool class="JavaCyclomaticComplexity" enabled="true" level="ERROR" enabled_by_default="true">
+            <!-- Method limit -->
+            <option name="m_limit" value="10" />
+            <!-- Class limit -->
+            <option name="c_limit" value="80" />
+            <!-- Package/project limit -->
+            <option name="p_limit" value="400" />
+        </inspection_tool>
+
+        <!-- N-Path complexity -->
+        <inspection_tool class="JavaNPathComplexityInspection" enabled="true" level="ERROR" enabled_by_default="true">
+            <option name="NPathLimit" value="200" />
+        </inspection_tool>
+
+        <!-- Method metrics -->
+        <inspection_tool class="JavaMethodMetrics" enabled="true" level="ERROR" enabled_by_default="true">
+            <option name="methodLimit" value="50" /> <!-- max 50 lines -->
+            <option name="parameterLimit" value="5" />
+            <option name="throwsStatementsLimit" value="2" />
+        </inspection_tool>
+
+        <!-- Class metrics -->
+        <inspection_tool class="JavaClassMetrics" enabled="true" level="ERROR" enabled_by_default="true">
+            <option name="classLimit" value="800" /> <!-- max lines in class -->
+            <option name="methodCountLimit" value="30" />
+            <option name="fieldCountLimit" value="20" />
+        </inspection_tool>
+
+        <!-- Nesting depth -->
+        <inspection_tool class="JavaOverlyNestedBlock" enabled="true" level="ERROR" enabled_by_default="true">
+            <option name="limit" value="4" /> <!-- max 4 nested blocks -->
+        </inspection_tool>
+
+        <!-- Boolean expression complexity -->
+        <inspection_tool class="JavaOverlyComplexBooleanExpression" enabled="true" level="ERROR" enabled_by_default="true">
+            <option name="limit" value="4" /> <!-- max 4 terms -->
+        </inspection_tool>
+
+    </profile>
+</component>

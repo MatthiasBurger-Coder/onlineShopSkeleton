@@ -1,7 +1,8 @@
 version: "1.0"
 linter: jetbrains/qodana-jvm:2025.1
 profile:
-  path: .qodana/profiles/complexity.yaml
+  path: .qodana/profiles/qodana-config.xml
+
 include:
   - name: All
 coverage:
