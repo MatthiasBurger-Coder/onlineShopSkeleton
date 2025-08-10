@@ -4,8 +4,12 @@ profile:
   path: .qodana/profiles/qodana-config.xml
 
 include:
-  - name: All
+  - name: Java
+  - name: Code
+  - name: Code Coverage
+  - name: Dependency analysis
 exclude:
+  - name: XML highlighting
   - name: Typo
   - name: "Exclude test sources"
     paths:
