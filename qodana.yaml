@@ -12,6 +12,7 @@ exclude:
   - name: "Exclude build reports"
     paths:
       - "build/reports/**"
+      - ".qudana/**"
   - name: "Exclude gradle directory"
     paths:
       - "gradle/**"
