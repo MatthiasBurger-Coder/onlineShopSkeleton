@@ -2,6 +2,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
     id("java")
+    id("groovy")
     id("jacoco")
     id("info.solidsoft.pitest") version  "1.19.0-rc.1"
 }
@@ -42,6 +43,11 @@ dependencies {
     // The Jupiter engine provides test runtime support
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
     
+    // Spock (BDD testing with Groovy 4)
+    testImplementation(platform("org.apache.groovy:groovy-bom:4.0.22"))
+    testImplementation("org.apache.groovy:groovy")
+    testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
+
     // Mockito dependencies
     testImplementation("org.mockito:mockito-core:5.18.0")
     testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
@@ -77,6 +83,16 @@ tasks.jacocoTestReport {
         csv.required.set(false)
         html.required.set(true)
     }
+    // Exclude the application entry point from coverage reports
+    classDirectories.setFrom(
+        files(
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude("de/burger/it/Main*")
+                }
+            }
+        )
+    )
 }
 tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
     // Fail the build if coverage is below 86%
@@ -90,6 +106,16 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
             }
         }
     }
+    // Exclude the application entry point from coverage verification
+    classDirectories.setFrom(
+        files(
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude("de/burger/it/Main*")
+                }
+            }
+        )
+    )
     dependsOn(tasks.test)
 }
 
