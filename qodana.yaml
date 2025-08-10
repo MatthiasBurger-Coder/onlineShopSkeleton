@@ -16,6 +16,7 @@ exclude:
       - gradlew.bat
       - gradle.properties
       - settings.gradle.kts
+      - src/main/java/de/burger/it/Main.java
 
 coverage:
   reportProblems: true

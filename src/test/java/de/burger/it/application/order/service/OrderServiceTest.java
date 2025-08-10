@@ -96,12 +96,32 @@ class OrderServiceTest {
     }
 
     @Test
+    void createNewOrder_whenCartReferenceIsNull_shouldReturnNullOrder() {
+        // When
+        Order result = orderService.createNewOrder(null);
+
+        // Then
+        assertTrue(result.isNull());
+        assertEquals(OrderNullObject.getInstance(), result);
+        verifyNoInteractions(eventPublisher);
+    }
+
+    @Test
     void payOrder_whenOrderIsNull_shouldReturnWithoutException() {
         // When
         orderService.payOrder(OrderNullObject.getInstance());
         
         // Then
         // Verify that no event is published
+        verifyNoInteractions(eventPublisher);
+    }
+
+    @Test
+    void payOrder_whenOrderReferenceIsNull_shouldReturnWithoutException() {
+        // When
+        orderService.payOrder(null);
+
+        // Then
         verifyNoInteractions(eventPublisher);
     }
 
@@ -116,12 +136,30 @@ class OrderServiceTest {
     }
 
     @Test
+    void cancelOrder_whenOrderReferenceIsNull_shouldReturnWithoutException() {
+        // When
+        orderService.cancelOrder(null);
+
+        // Then
+        verifyNoInteractions(eventPublisher);
+    }
+
+    @Test
     void deliverOrder_whenOrderIsNull_shouldReturnWithoutException() {
         // When
         orderService.deliverOrder(OrderNullObject.getInstance());
         
         // Then
         // Verify that no event is published
+        verifyNoInteractions(eventPublisher);
+    }
+
+    @Test
+    void deliverOrder_whenOrderReferenceIsNull_shouldReturnWithoutException() {
+        // When
+        orderService.deliverOrder(null);
+
+        // Then
         verifyNoInteractions(eventPublisher);
     }
 }
