@@ -6,7 +6,6 @@ profile:
   path: .qodana/profiles/qodana-config.yaml
 
 exclude:
-  - name: CheckDependencyLicenses
   - name: All
     paths:
       - src/test/**

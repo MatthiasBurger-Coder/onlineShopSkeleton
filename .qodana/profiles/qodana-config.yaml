@@ -5,6 +5,9 @@ inspections:
   - group: "XML"
     enabled: false
 
+  - group: "Dependency analysis"
+    enabled: false
+
   - group: "Java"
     enabled: true
 
