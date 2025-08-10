@@ -1,5 +1,5 @@
 name: "QodanaConfiguration"
-baseProfile: empty
+baseProfile: qodana.recommended
 
 inspections:
   - group: "XML"
