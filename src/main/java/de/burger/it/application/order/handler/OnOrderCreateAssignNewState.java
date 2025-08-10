@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class OnOrderCreateAssignNewState {
 
-    private final OrderStatusAssignmentPort orderStatusAssignmentPort;
+    private final OrderStatusAssignmentPort orderStatusAssignment;
 
-    public OnOrderCreateAssignNewState(OrderStatusAssignmentPort orderStatusAssignmentPort) {
-        this.orderStatusAssignmentPort = orderStatusAssignmentPort;
+    public OnOrderCreateAssignNewState(OrderStatusAssignmentPort orderStatusAssignment) {
+        this.orderStatusAssignment = orderStatusAssignment;
     }
 
     public void execute(OrderCreateEvent event) {
-        orderStatusAssignmentPort.assign(event.order(), OrderStateType.NEW);
+        orderStatusAssignment.assign(event.order(), OrderStateType.NEW);
     }
 }

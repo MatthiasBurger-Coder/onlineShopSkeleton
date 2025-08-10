@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class OnOrderCancelAssignCanceledState {
 
-    private final OrderStatusAssignmentPort orderStatusAssignmentPort;
+    private final OrderStatusAssignmentPort orderStatusAssignment;
 
-    public OnOrderCancelAssignCanceledState(OrderStatusAssignmentPort orderStatusAssignmentPort) {
-        this.orderStatusAssignmentPort = orderStatusAssignmentPort;
+    public OnOrderCancelAssignCanceledState(OrderStatusAssignmentPort orderStatusAssignment) {
+        this.orderStatusAssignment = orderStatusAssignment;
     }
 
     public void execute(OrderCancelEvent event) {
-        orderStatusAssignmentPort.assign(event.order(), OrderStateType.CANCELLED);
+        orderStatusAssignment.assign(event.order(), OrderStateType.CANCELLED);
     }
 }
