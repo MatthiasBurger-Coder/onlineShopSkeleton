@@ -9,18 +9,10 @@ exclude:
   - name: "Exclude test sources"
     paths:
       - "src/test/**"
-  - name: "Exclude build reports"
-    paths:
       - "build/reports/**"
-      - ".qudana/**"
-  - name: "Exclude gradle directory"
-    paths:
+      - ".qodana/**"
       - "gradle/**"
-  - name: "Exclude out directory"
-    paths:
       - "out/**"
-  - name: "Exclude files"
-    paths:
       - "gradlew"
       - "gradlew.bat"
       - "gradle.properties"

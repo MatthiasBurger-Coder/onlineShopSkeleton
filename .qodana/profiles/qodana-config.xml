@@ -4,6 +4,7 @@
 
         <!-- Coverage Inspection -->
         <inspection_tool class="JavaTestCoverageInspection" enabled="true" level="ERROR" enabled_by_default="true">
+            <scope name="Production" level="ERROR" enabled="true" />
             <option name="minimumLineCoverage" value="0.86" />
         </inspection_tool>
 
