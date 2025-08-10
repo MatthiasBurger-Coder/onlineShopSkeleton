@@ -66,7 +66,7 @@ tasks.jacocoTestReport {
         html.required.set(true)
     }
 }
-tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
     // Fail the build if coverage is below 86%
     violationRules {
         rule {
