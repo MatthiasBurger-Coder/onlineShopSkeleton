@@ -5,5 +5,9 @@ profile:
 
 include:
   - name: All
+exclude:
+  - name: "Exclude test sources"
+    paths:
+      - "src/test/**"
 coverage:
   reportProblems: true
