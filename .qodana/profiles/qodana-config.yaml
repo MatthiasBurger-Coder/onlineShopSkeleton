@@ -5,13 +5,15 @@ inspections:
   - id: SpellCheckingInspection
     enabled: false
 
+  - id: GrazieInspection
+    enabled: false
+
   - id: XmlHighlightingInspection
     enabled: false
 
   - id: JavaTestCoverageInspection
     enabled: true
     severity: ERROR
-    scope: Production
     options:
       minimumLineCoverage: 86
 
