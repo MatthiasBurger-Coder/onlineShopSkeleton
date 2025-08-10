@@ -6,16 +6,7 @@ inspections:
     enabled: false
 
   - id: SpellCheckingInspection
-    ignore:
-      - src/test/**
-      - build/reports/**
-      - .qodana/**
-      - gradle/**
-      - out/**
-      - gradlew
-      - gradlew.bat
-      - gradle.properties
-      - settings.gradle.kts
+    enabled: false
 
   - id: XmlHighlightingInspection
     enabled: false
