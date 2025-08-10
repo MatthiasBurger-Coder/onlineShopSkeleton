@@ -35,16 +35,19 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.38")
 
     // JUnit 5 dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.4")
     // Gradle 9 no longer provides the JUnit Platform launcher; add it explicitly
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
     // The Jupiter engine provides test runtime support
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
     
     // Mockito dependencies
-    testImplementation("org.mockito:mockito-core:5.10.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.10.0")
+    testImplementation("org.mockito:mockito-core:5.18.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
+
+    // Hamcrest for assertThat
+    testImplementation("org.hamcrest:hamcrest:3.0")
 
     testCompileOnly("org.projectlombok:lombok:1.18.38")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.38")

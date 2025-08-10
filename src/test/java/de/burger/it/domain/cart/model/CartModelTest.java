@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 class CartModelTest {
 
@@ -49,7 +51,7 @@ class CartModelTest {
         @Test
         void equals_to_NullCartState_isTrue_GreenPath() {
             Cart a = CartNullObject.getInstance();
-            assertEquals(new NullCartState(), a, "Null cart equals NullCartState per implementation");
+            assertThat("Null cart equals NullCartState per implementation", a, is(new NullCartState()));
         }
     }
 }
