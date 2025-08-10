@@ -2,9 +2,6 @@ name: "QodanaConfiguration"
 baseProfile: empty
 
 inspections:
-  - group: XML
-    enabled: false
-
   - id: SpellCheckingInspection
     enabled: false
 
