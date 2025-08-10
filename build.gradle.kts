@@ -27,26 +27,42 @@ repositories {
 }
 
 dependencies {
+
+    // Development //
+
+    // Spring
     implementation("org.springframework:spring-context:6.2.8")
     implementation("org.springframework:spring-core:6.2.8")
     implementation("org.springframework:spring-beans:6.2.8")
+    testImplementation("org.springframework:spring-test:6.2.8")
+
+
     implementation("org.jetbrains:annotations:24.1.0")
 
+    // Lombok
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
+    testCompileOnly("org.projectlombok:lombok:1.18.38")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
+
+
+    // Testing //
 
     // JUnit 5 dependencies
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.4")
-    // Gradle 9 no longer provides the JUnit Platform launcher; add it explicitly
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
     // The Jupiter engine provides test runtime support
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
-    
+
+    // Gradle 9 no longer provides the JUnit Platform launcher; add it explicitly
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+
     // Spock (BDD testing with Groovy 4)
     testImplementation(platform("org.apache.groovy:groovy-bom:4.0.22"))
     testImplementation("org.apache.groovy:groovy")
     testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
+    testImplementation("org.spockframework:spock-spring:2.3-groovy-4.0")
+    testImplementation("com.athaydes:spock-reports:2.5.1-groovy-4.0")
 
     // Mockito dependencies
     testImplementation("org.mockito:mockito-core:5.18.0")
@@ -55,9 +71,6 @@ dependencies {
     // Hamcrest for assertThat
     testImplementation("org.hamcrest:hamcrest:3.0")
 
-    testCompileOnly("org.projectlombok:lombok:1.18.38")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
-
     // PIT dependencies
     implementation("org.pitest:pitest:1.20.1")
     implementation("org.pitest:pitest-junit5-plugin:1.2.3")
@@ -65,7 +78,7 @@ dependencies {
 
 }
 
-tasks.test {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
     // Suppress JDK warning about dynamic Java agent loading (e.g., Byte Buddy used by Mockito)
     jvmArgs("-XX:+EnableDynamicAgentLoading")
@@ -73,6 +86,22 @@ tasks.test {
     // by disabling Class Data Sharing for the test JVM, since Mockito's Byte Buddy agent appends to the bootstrap classpath
     jvmArgs("-Xshare:off")
     finalizedBy(tasks.jacocoTestReport)
+
+    // Use Provider-based build directory (Gradle 7+; recommended for 8/9+)
+    val reportsDir = layout.buildDirectory.dir("spock-reports")
+
+    // Pass absolute path lazily to the test JVM
+    systemProperty(
+        "com.athaydes.spockframework.report.outputDir",
+        reportsDir.map { it.asFile.absolutePath }.get()
+    )
+
+    // Optional extras
+    systemProperty("com.athaydes.spockframework.report.projectName", "Customer Service Specs")
+    systemProperty("com.athaydes.spockframework.report.projectVersion", "2.0-SNAPSHOT")
+    systemProperty("com.athaydes.spockframework.report.outputFormats", "html")
+    systemProperty("com.athaydes.spockframework.report.showCodeBlocks", "true")
+    // systemProperty("com.athaydes.spockframework.report.template.ReportConfiguration.showSummary", "true")
 }
 
 tasks.jacocoTestReport {
