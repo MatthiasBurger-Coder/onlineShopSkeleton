@@ -2,6 +2,8 @@ package de.burger.it.application.process;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -10,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ProcessPipelineTest {
 
     @Test
