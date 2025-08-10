@@ -18,5 +18,11 @@ exclude:
   - name: "Exclude out directory"
     paths:
       - "out/**"
+  - name: "Exclude files"
+    paths:
+      - "gradlew"
+      - "gradlew.bat"
+      - "gradle.properties"
+      - "settings.gradle.kts"
 coverage:
   reportProblems: true
