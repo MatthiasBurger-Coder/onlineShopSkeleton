@@ -3,15 +3,8 @@ linter: jetbrains/qodana-jvm:2025.1
 profile:
   path: .qodana/profiles/qodana-config.xml
 
-include:
-  - name: Java
-  - name: Code
-  - name: Code Coverage
-  - name: Dependency analysis
 exclude:
-  - name: XML highlighting
-  - name: Typo
-  - name: "Exclude test sources"
+  - name: Ignore meta/build
     paths:
       - "src/test/**"
       - "build/reports/**"
@@ -22,5 +15,11 @@ exclude:
       - "gradlew.bat"
       - "gradle.properties"
       - "settings.gradle.kts"
+
 coverage:
   reportProblems: true
+
+inspections:
+  exclude:
+    - SpellCheckingInspection       # „Typo“
+    - XmlHighlightingInspection     # „XML highlighting“
