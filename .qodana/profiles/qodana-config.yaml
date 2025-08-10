@@ -13,13 +13,13 @@ inspections:
 
   - id: JavaTestCoverageInspection
     enabled: true
-    severity: ERROR
+    level: ERROR
     options:
       minimumLineCoverage: 86
 
   - id: JvmCoverageInspection
     enabled: true
-    severity: WARNING
+    level: WARNING
     options:
       classThreshold: 86
       methodThreshold: 86
@@ -27,7 +27,7 @@ inspections:
 
   - id: JavaCyclomaticComplexity
     enabled: true
-    severity: ERROR
+    level: ERROR
     options:
       m_limit: 10
       c_limit: 80
@@ -35,13 +35,13 @@ inspections:
 
   - id: JavaNPathComplexityInspection
     enabled: true
-    severity: ERROR
+    level: ERROR
     options:
       NPathLimit: 200
 
   - id: JavaMethodMetrics
     enabled: true
-    severity: ERROR
+    level: ERROR
     options:
       methodLimit: 50
       parameterLimit: 5
@@ -49,7 +49,7 @@ inspections:
 
   - id: JavaClassMetrics
     enabled: true
-    severity: ERROR
+    level: ERROR
     options:
       classLimit: 800
       methodCountLimit: 30
@@ -57,12 +57,12 @@ inspections:
 
   - id: JavaOverlyNestedBlock
     enabled: true
-    severity: ERROR
+    level: ERROR
     options:
       limit: 4
 
   - id: JavaOverlyComplexBooleanExpression
     enabled: true
-    severity: ERROR
+    level: ERROR
     options:
       limit: 4
