@@ -2,5 +2,5 @@ name: "QodanaConfiguration"
 baseProfile: qodana.recommended
 
 inspections:
-  - id: SpellCheckingInspection
+  - inspection: SpellCheckingInspection
     enabled: false
