@@ -6,6 +6,7 @@ profile:
 include:
   - name: All
 exclude:
+  - name: Typo
   - name: "Exclude test sources"
     paths:
       - "src/test/**"
@@ -18,4 +19,4 @@ exclude:
       - "gradle.properties"
       - "settings.gradle.kts"
 coverage:
-  reportProblems: false
+  reportProblems: true
