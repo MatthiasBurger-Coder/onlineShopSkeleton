@@ -81,14 +81,18 @@ The application demonstrates 9 key workflows:
 
 ## Technologies Used
 
-- **Java 21**: Latest Java features including records and pattern matching (strictly Java 21 must be used, as Mockito's Byte Buddy dependency only supports up to Java 21)
-- **Spring Framework 6.2.8**: Core, Context, and Beans modules for dependency injection
-- **Lombok 1.18.38**: Reducing boilerplate code
-- **JUnit Jupiter 5.10.1**: Testing framework
-- **Mockito 5.10.0**: Mocking framework for testing
-- **Jetbrains Annotations 24.1.0**: Annotations for better code analysis
-- **Gradle 9.0.0**: Build automation
-- **PIT Mutation Testing 1.20.1**: Mutation testing engine (configured via Gradle)
+- Java 21: Latest Java features including records and pattern matching (strictly Java 21; Mockito/Byte Buddy supports up to Java 21)
+- Spring Framework 6.2.8: Core, Context, and Beans modules for dependency injection
+- Lombok 1.18.38: Reducing boilerplate code
+- JUnit Jupiter 5.13.4: Primary testing framework for Java tests
+- Spock 2.3 (Groovy 4.0): BDD-style testing framework used alongside JUnit (see SanitySpec.groovy)
+- Mockito 5.18.0: Mocking framework for testing
+- Hamcrest 3.0: Fluent assertions with assertThat
+- JetBrains Annotations 24.1.0: Annotations for better code analysis
+- Gradle 9.0.0: Build automation via Gradle Wrapper
+- JaCoCo 0.8.12: Code coverage with report and verification (min 86% line coverage)
+- PIT Mutation Testing 1.20.1: Mutation testing engine (configured via Gradle plugin)
+- Qodana (2025.1): Static analysis in CI via GitHub Actions and local runs via qodana.yaml
 
 ## Setup Instructions
 
@@ -150,6 +154,12 @@ Or specific test methods:
   ```bash
   ./gradlew test --tests "de.burger.it.application.order.service.OrderServiceTest.testCreateNewOrder"
   ```
+
+Note on test frameworks:
+- The project uses both JUnit 5 (Java) and Spock (Groovy). Spock specs are named with the `*Spec.groovy` suffix (e.g., `SanitySpec.groovy`).
+- You can run a specific Spock spec similarly:
+  - Windows: `./gradlew.bat test --tests "de.burger.it.SanitySpec"`
+  - macOS/Linux: `./gradlew test --tests "de.burger.it.SanitySpec"`
 
 ### Running PIT- Tests
 - Windows (PowerShell/CMD):
@@ -313,39 +323,6 @@ src/
 - **Null Object Pattern**: For eliminating null checks by providing special "null" implementations (CartNullObject, CustomerNullObject, OrderNullObject) that implement the domain interfaces (Cart, Customer, OrderLike)
 - **Pipeline Pattern**: For building and executing processing pipelines with a fluent API
 
-## New Implementations
-
-The following implementations were recently added and integrated into the system:
-
-- Relation Management
-  - Domain
-    - CartCustomerAssignment (model), CartOrderAssignment (model)
-    - Ports: CartCustomerAssignmentPort, CartOrderAssignmentPort, CartOrderAssignmentRepositoryPort
-  - Infrastructure
-    - Adapters: CartCustomerAssignmentAdapter, CartOrderAssignmentAdapter
-    - Repository: InMemoryCartOrderAssignmentRepository
-  - Purpose: Manage relationships between carts/customers and carts/orders in memory, with thread-safe collections.
-
-- Status Assignment Adapters
-  - CartStatusAssignmentAdapter: Assigns and reads CartStateType for a Cart
-  - CustomerStatusAssignmentAdapter: Assigns and reads CustomerStateType for a Customer
-  - OrderStatusAssignmentAdapter: Assigns and reads OrderStateType for an Order
-
-- Process Configuration (Spring Beans)
-  - CartProcessConfig: Pipelines for CartCreateEvent, CartActiveEvent, CartCloseEvent
-  - CustomerProcessConfig: Pipelines for CustomerCreateEvent and CustomerSuspendEvent
-  - OrderProcessConfig: Pipelines for OrderCreateEvent, OrderPayEvent, OrderDeliverEvent, OrderCancelEvent
-  - Each bean wires the corresponding handlers using the fluent ProcessPipeline API (append, appendIf, andThen).
-
-- In-memory Repositories
-  - InMemoryCartRepository, InMemoryCustomerRepository, InMemoryOrderRepository
-  - Used by services to persist aggregates during tests/demo without external DB.
-  - InMemoryCartRepository returns `CartNullObject.getInstance()` for unknown IDs and uses `ConcurrentHashMap` for thread safety.
-
-- Event Handlers (selection)
-  - Cart: OnCartCreateAssignCartStatus, OnCartCreateAssignCustomer, OnCartCreateSaveRepository, OnCartActiveAssignCartStatus, OnCartCloseAssignCartStatus
-  - Customer: OnCustomerCreateAssignActive, OnCustomerCreateSaveRepository, OnCustomerCreateNewCart, OnCustomerSuspendAssignSuspend, OnCustomerSuspendSaveRepository
-  - Order: OnOrderCreateAssignNewState, OnOrderCreateSaveRepository, OnOrderPayAssignPaidState, OnOrderDeliverAssignDeliveredState, OnOrderCancelAssignCanceledState
 
 ## Code Quality and CI
 
@@ -367,11 +344,16 @@ The following implementations were recently added and integrated into the system
   - Reports: HTML and XML (`build\reports\jacoco\test\jacocoTestReport.xml`)
   - Run: Windows `.\u0067radlew.bat test jacocoTestReport`, macOS/Linux `./gradlew test jacocoTestReport`
 
-- Additional Complexity Analysis (optional): Lizard reports converted to SARIF using scripts/lizard_to_sarif.py (see build/complexity/lizard.json for sample output)
+- Spock (BDD tests with Groovy): Behavior-driven tests written in Groovy using Spock 2 on JUnit Platform.
+  - Versions: Groovy 4.0.22 (BOM), Spock `spock-core:2.3-groovy-4.0` (see build.gradle.kts)
+  - Location: Specs live under `src\test\groovy` (e.g., `SanitySpec.groovy`)
+  - Run: Included in the standard Gradle test task — Windows `.\u0067radlew.bat test`, macOS/Linux `./gradlew test`
+  - Reports: Standard Gradle test report at `build\reports\tests\test\index.html`
+
 - How to run locally
   - Generate reports with Gradle build and tests: `./gradlew build test`
   - Run Qodana locally with Docker (example): `docker run --rm -it -v "${PWD}":/data -v "${PWD}/.qodana":/data/.qodana jetbrains/qodana-jvm:2025.1 --config,qodana.yaml`
-  - You may also set up a CI workflow; use qodana.yaml for the profile and thresholds.
+  - CI: GitHub Actions workflow .github/workflows/qodana_code_quality.yml runs tests, generates JaCoCo coverage, and executes Qodana using qodana.yaml.
 
 ## Contributing
 
