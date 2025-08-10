@@ -12,5 +12,11 @@ exclude:
   - name: "Exclude build reports"
     paths:
       - "build/reports/**"
+  - name: "Exclude gradle directory"
+    paths:
+      - "gradle/**"
+  - name: "Exclude out directory"
+    paths:
+      - "out/**"
 coverage:
   reportProblems: true
