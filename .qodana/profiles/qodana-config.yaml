@@ -4,6 +4,8 @@ baseProfile: empty
 inspections:
   - group: XML
     enabled: false
+
+  - id: SpellCheckingInspection
     ignore:
       - src/test/**
       - build/reports/**
@@ -14,10 +16,6 @@ inspections:
       - gradlew.bat
       - gradle.properties
       - settings.gradle.kts
-
-    inspections:
-      - id: SpellCheckingInspection
-        enabled: false
 
   - id: XmlHighlightingInspection
     enabled: false
