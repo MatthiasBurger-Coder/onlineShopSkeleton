@@ -51,7 +51,7 @@ tasks.test {
     useJUnitPlatform()
     // Suppress JDK warning about dynamic Java agent loading (e.g., Byte Buddy used by Mockito)
     jvmArgs("-XX:+EnableDynamicAgentLoading")
-    // Suppress CDS warning: "Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
+    // Suppress CDS warning: "Sharing is only supported for bootloader classes because bootstrap classpath has been appended"
     // by disabling Class Data Sharing for the test JVM, since Mockito's Byte Buddy agent appends to the bootstrap classpath
     jvmArgs("-Xshare:off")
     finalizedBy(tasks.jacocoTestReport)

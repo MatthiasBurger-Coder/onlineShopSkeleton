@@ -4,7 +4,7 @@
 
         <!-- Coverage Inspection -->
         <inspection_tool class="JavaTestCoverageInspection" enabled="true" level="ERROR" enabled_by_default="true">
-            <option name="minimumLineCoverage" value="86" />
+            <option name="minimumLineCoverage" value="0.86" />
         </inspection_tool>
 
         <!-- Cyclomatic complexity -->
