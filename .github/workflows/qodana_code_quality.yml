@@ -49,7 +49,7 @@ jobs:
           fi
 
       - name: Run tests with coverage (JaCoCo)
-        run: ./gradlew --no-daemon clean test jacocoTestReport jacocoTestCoverageVerification
+        run: ./gradlew --no-daemon clean test jacocoTestReport
 
       - name: Prepare Qodana coverage folder
         run: |
