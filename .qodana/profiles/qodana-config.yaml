@@ -2,6 +2,11 @@ name: "QodanaConfiguration"
 baseProfile: empty
 
 inspections:
+  - group: "XML"
+    enabled: false
+
+  - group: "Java"
+    enabled: true
 
   - inspection: GrazieInspection
     enabled: false
