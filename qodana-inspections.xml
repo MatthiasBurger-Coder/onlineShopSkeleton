@@ -1,0 +1,9 @@
+<component name="InspectionProjectProfileManager">
+    <profile version="1.0">
+        <option name="myName" value="QodanaCoverageProfile" />
+        <!-- Hier die Coverage-Inspection mit Mindestwert -->
+        <inspection_tool class="JavaTestCoverageInspection" enabled="true" level="ERROR" enabled_by_default="true">
+            <option name="minimumLineCoverage" value="0.86" />
+        </inspection_tool>
+    </profile>
+</component>
