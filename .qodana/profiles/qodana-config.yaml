@@ -8,6 +8,15 @@ inspections:
   - group: "Java"
     enabled: true
 
+  - group: "General"
+    enabled: true
+
+  - group: "Spring"
+    enabled: true
+
+  - group: "Code Coverage"
+    enabled: true
+
   - inspection: GrazieInspection
     enabled: false
 
