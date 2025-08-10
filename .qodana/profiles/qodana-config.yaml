@@ -1,6 +1,66 @@
 name: "QodanaConfiguration"
-baseProfile: qodana.recommended
+baseProfile: empty
 
 inspections:
-  - inspection: SpellCheckingInspection
+
+  - inspection: GrazieInspection
     enabled: false
+
+  - inspection: XmlHighlightingInspection
+    enabled: false
+
+  - inspection: JavaTestCoverageInspection
+    enabled: true
+    severity: ERROR
+    options:
+      minimumLineCoverage: 86
+
+  - inspection: JvmCoverageInspection
+    enabled: true
+    severity: WARNING
+    options:
+      classThreshold: 86
+      methodThreshold: 86
+      warnMissingCoverage: true
+
+  - inspection: JavaCyclomaticComplexity
+    enabled: true
+    severity: ERROR
+    options:
+      m_limit: 10
+      c_limit: 80
+      p_limit: 400
+
+  - inspection: JavaNPathComplexityInspection
+    enabled: true
+    severity: ERROR
+    options:
+      NPathLimit: 200
+
+  - inspection: JavaMethodMetrics
+    enabled: true
+    severity: ERROR
+    options:
+      methodLimit: 50
+      parameterLimit: 5
+      throwsStatementsLimit: 2
+
+  - inspection: JavaClassMetrics
+    enabled: true
+    severity: ERROR
+    options:
+      classLimit: 800
+      methodCountLimit: 30
+      fieldCountLimit: 20
+
+  - inspection: JavaOverlyNestedBlock
+    enabled: true
+    severity: ERROR
+    options:
+      limit: 4
+
+  - inspection: JavaOverlyComplexBooleanExpression
+    enabled: true
+    severity: ERROR
+    options:
+      limit: 4
