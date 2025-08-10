@@ -1,5 +1,6 @@
 package de.burger.it.domain.cart.state;
 
+import de.burger.it.domain.cart.model.CartNullObject;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -39,5 +40,20 @@ public final class NullCartState implements CartState {
     @Override
     public CartState notDefined()  {
         return this;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return switch (obj) {
+            case NullCartState ignored -> true;
+            case CartNullObject ignored -> true;
+            case null, default -> false;
+        };
+    }
+
+    @Override
+    public int hashCode() {
+        // constant hash code as all NullCartState instances are considered equal
+        return 0;
     }
 }
