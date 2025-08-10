@@ -3,7 +3,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 plugins {
     id("java")
     id("jacoco")
-    id("info.solidsoft.pitest") version "1.19.0-rc.1"
+    id("info.solidsoft.pitest") version  "1.19.0-rc.1"
 }
 
 group = "de.burger.it"
@@ -52,7 +52,7 @@ dependencies {
     // PIT dependencies
     implementation("org.pitest:pitest:1.20.1")
     implementation("org.pitest:pitest-junit5-plugin:1.2.3")
-    implementation("info.solidsoft.pitest:info.solidsoft.pitest.gradle.plugin:1.19.0-rc.1")
+    implementation("info.solidsoft.pitest:info.solidsoft.pitest.gradle.plugin:1.15.0")
 
 }
 
@@ -93,3 +93,53 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
 tasks.check {
     dependsOn("jacocoTestCoverageVerification")
 }
+
+// PIT - Tests
+configurations.named("pitest") {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.pitest" && requested.name == "pitest-command-line") {
+            useTarget("org.pitest:pitest-command-line:1.20.1")
+            because("RC artifact is not published to Maven Central; use stable command-line")
+        }
+    }
+}
+pitest {
+    // Align PIT core with the forced command-line above
+    pitestVersion.set("1.20.1")
+
+    // --- JDK 21 module openness fixes (Mockito/ByteBuddy/etc.) ---
+    jvmArgs.set(
+        listOf(
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+            "--add-opens", "java.base/java.util=ALL-UNNAMED",
+            "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+            "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED"
+        )
+    )
+
+    // --- diagnostics ---
+    verbose.set(true)                     // More PIT logs
+    useClasspathFile.set(true)            // Fix long classpath on Windows
+    timestampedReports.set(true)
+
+    // --- Scope of mutation testing (adapt to your packages) ---
+    targetClasses.set(listOf("de.burger.it.*"))
+    targetTests.set(listOf("de.burger.it.*Test", "de.burger.it.*IT"))
+    failWhenNoMutations.set(true)         // fail fast if nothing matched (helps diagnose)
+
+    // --- Runtime / reporting ---
+    threads.set(4)
+    outputFormats.set(listOf("HTML"))
+    timestampedReports.set(true)
+    mutationThreshold.set(80)
+
+    // --- Useful filters (speed + signal) ---
+    excludedClasses.set(
+        listOf(
+            "de.burger.it.domain.*"
+        )
+    )
+    // You can also exclude by test names, methods, or use mutators if needed
+    // mutators.set(listOf("DEFAULTS"))
+}
+
