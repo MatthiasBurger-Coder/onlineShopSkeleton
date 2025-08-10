@@ -88,7 +88,7 @@ tasks.withType<Test>().configureEach {
     finalizedBy(tasks.jacocoTestReport)
 
     // Use Provider-based build directory (Gradle 7+; recommended for 8/9+)
-    val reportsDir = layout.buildDirectory.dir("spock-reports")
+    val reportsDir = layout.buildDirectory.dir("reports/spock")
 
     // Pass absolute path lazily to the test JVM
     systemProperty(

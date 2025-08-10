@@ -3,7 +3,7 @@ linter: jetbrains/qodana-jvm:2025.1
 projectJDK: 21
 
 profile:
-  path: .qodana/profiles/qodana-config.yaml
+  path: .qodana/profiles/qodana-config.yml
 
 exclude:
   - name: All
