@@ -146,10 +146,10 @@ class CartServiceTest {
         CartState result = cartService.getState(cart);
 
         // Then
-        // We can't directly verify the result since we can't mock the enum's toState method
-        // Instead, we verify that the correct method was called on the port
+        // Verify that the state was resolved using the port
         verify(cartStatusAssignmentPort).findBy(cart.id());
-        assertNotNull(result);
+        // And that the concrete state corresponds to the non-null type
+        assertEquals(stateType.toState().getClass(), result.getClass());
     }
 
     // RedPath Tests
@@ -245,6 +245,20 @@ class CartServiceTest {
     }
 
     @Test
+    void getState_whenAssignmentPortReturnsNull_shouldReturnNullCartState() {
+        // Given
+        when(cartStatusAssignmentPort.findBy(cart.id())).thenReturn(null);
+
+        // When
+        CartState result = cartService.getState(cart);
+
+        // Then
+        // Should not throw and should map to NullCartState when port returns null
+        assertInstanceOf(NullCartState.class, result);
+        verify(cartStatusAssignmentPort).findBy(cart.id());
+    }
+
+    @Test
     void findAllCartByCustomer_whenNoAssignmentsFound_shouldReturnEmptyList() {
         // Given
         when(cartCustomerAssignmentPort.findAllByCustomer(customer.id())).thenReturn(Collections.emptyList());
@@ -266,5 +280,19 @@ class CartServiceTest {
         // When/Then
         Exception exception = assertThrows(RuntimeException.class, () -> cartService.findById(cart.id()));
         assertEquals("Repository error", exception.getMessage());
+    }
+    
+    @Test
+    void toString_shouldContainClassNameAndFields() {
+        // When
+        String text = cartService.toString();
+        
+        // Then
+        assertNotNull(text);
+        assertTrue(text.contains("CartService"), "toString should contain class name");
+        assertTrue(text.contains("publisher"), "toString should include field name 'publisher'");
+        assertTrue(text.contains("cartRepository") || text.contains("cartRepositoryPort"), "toString should include repository field");
+        assertTrue(text.contains("cartStatusAssignmentPort"), "toString should include status port field");
+        assertTrue(text.contains("cartCustomerAssignmentPort"), "toString should include customer assignment port field");
     }
 }
