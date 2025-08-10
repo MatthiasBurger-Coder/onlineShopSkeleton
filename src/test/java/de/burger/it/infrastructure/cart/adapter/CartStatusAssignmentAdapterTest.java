@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CartStatusAssignmentAdapterTest {
+public class CartStatusAssignmentAdapterTest {
 
     private CartStatusAssignmentAdapter adapter;
     private Cart cart;
