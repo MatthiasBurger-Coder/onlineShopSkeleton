@@ -2,7 +2,7 @@ package de.burger.it.infrastructure.customer.model;
 
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.customer.model.CustomerNullObject;
-import de.burger.it.domain.customer.port.CustomerRepository;
+import de.burger.it.domain.customer.port.CustomerRepositoryPort;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public class InMemoryCustomerRepository implements CustomerRepository {
+public class InMemoryCustomerRepository implements CustomerRepositoryPort {
 
     private final Map<UUID, Customer> store = new ConcurrentHashMap<>();
 

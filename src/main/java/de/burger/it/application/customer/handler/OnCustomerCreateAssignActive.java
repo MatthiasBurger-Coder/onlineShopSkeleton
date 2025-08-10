@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class OnCustomerCreateAssignActive {
 
-    private final CustomerStatusAssignmentPort customerStatusAssignmentPort;
+    private final CustomerStatusAssignmentPort customerStatusAssignment;
 
-    public OnCustomerCreateAssignActive(CustomerStatusAssignmentPort customerStatusAssignmentPort) {
-        this.customerStatusAssignmentPort = customerStatusAssignmentPort;
+    public OnCustomerCreateAssignActive(CustomerStatusAssignmentPort customerStatusAssignment) {
+        this.customerStatusAssignment = customerStatusAssignment;
     }
 
     public void execute(CustomerCreateEvent event) {
-        customerStatusAssignmentPort.assign(event.customer(), CustomerStateType.ACTIVE);
+        customerStatusAssignment.assign(event.customer(), CustomerStateType.ACTIVE);
     }
 }

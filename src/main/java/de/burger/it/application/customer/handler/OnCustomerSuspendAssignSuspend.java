@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class OnCustomerSuspendAssignSuspend {
 
-    private final CustomerStatusAssignmentPort customerStatusAssignmentPort;
+    private final CustomerStatusAssignmentPort customerStatusAssignment;
 
-    public OnCustomerSuspendAssignSuspend(CustomerStatusAssignmentPort customerStatusAssignmentPort) {
-        this.customerStatusAssignmentPort = customerStatusAssignmentPort;
+    public OnCustomerSuspendAssignSuspend(CustomerStatusAssignmentPort customerStatusAssignment) {
+        this.customerStatusAssignment = customerStatusAssignment;
     }
 
     public void execute(CustomerSuspendEvent event) {
-        customerStatusAssignmentPort.assign(event.customer(), CustomerStateType.SUSPENDED);
+        customerStatusAssignment.assign(event.customer(), CustomerStateType.SUSPENDED);
     }
 }

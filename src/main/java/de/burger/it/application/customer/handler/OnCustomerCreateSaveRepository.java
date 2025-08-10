@@ -1,14 +1,14 @@
 package de.burger.it.application.customer.handler;
 
 import de.burger.it.domain.customer.event.CustomerCreateEvent;
-import de.burger.it.domain.customer.port.CustomerRepository;
+import de.burger.it.domain.customer.port.CustomerRepositoryPort;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OnCustomerCreateSaveRepository {
-    private final CustomerRepository customerRepository;
+    private final CustomerRepositoryPort customerRepository;
 
-    public OnCustomerCreateSaveRepository(CustomerRepository customerRepository) {
+    public OnCustomerCreateSaveRepository(CustomerRepositoryPort customerRepository) {
         this.customerRepository = customerRepository;
     }
 
