@@ -9,5 +9,8 @@ exclude:
   - name: "Exclude test sources"
     paths:
       - "src/test/**"
+  - name: "Exclude build reports"
+    paths:
+      - "build/reports/**"
 coverage:
   reportProblems: true
