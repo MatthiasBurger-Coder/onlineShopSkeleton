@@ -46,14 +46,18 @@ class CartCustomerAssignmentAdapterTest {
     void findAllByCart_shouldReturnAssignmentsForCart() {
         // Given
         adapter.assign(cart, customer);
+        // Add an unrelated assignment to ensure filtering works
+        CartDefault anotherCart = new CartDefault(UUID.randomUUID());
+        adapter.assign(anotherCart, customer);
         
         // When
         List<CartCustomerAssignment> assignments = adapter.findAllByCart(cartId);
         
         // Then
         assertEquals(1, assignments.size());
-        assertEquals(cartId, assignments.getFirst().cartId());
-        assertEquals(customerId, assignments.getFirst().customerId());
+        CartCustomerAssignment only = assignments.getFirst();
+        assertEquals(cartId, only.cartId());
+        assertEquals(customerId, only.customerId());
     }
 
     @Test
@@ -89,29 +93,29 @@ class CartCustomerAssignmentAdapterTest {
     @Test
     void findAllByCart_whenCartIdIsNull_shouldThrowException() {
         // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> adapter.findAllByCart(null));
+        // Verify that IllegalArgumentException is thrown when passing null
+        assertThrows(IllegalArgumentException.class, () -> adapter.findAllByCart(null));
     }
 
     @Test
     void findAllByCustomer_whenCustomerIdIsNull_shouldThrowException() {
         // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> adapter.findAllByCustomer(null));
+        // Verify that IllegalArgumentException is thrown when passing null
+        assertThrows(IllegalArgumentException.class, () -> adapter.findAllByCustomer(null));
     }
 
     @Test
     void assign_whenCartIsNull_shouldThrowException() {
         // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> adapter.assign(null, customer));
+        // Verify that IllegalArgumentException is thrown when passing null
+        assertThrows(IllegalArgumentException.class, () -> adapter.assign(null, customer));
     }
 
     @Test
     void assign_whenCustomerIsNull_shouldThrowException() {
         // When/Then
-        // Verify that some exception is thrown when passing null
-        assertThrows(Exception.class, () -> adapter.assign(cart, null));
+        // Verify that IllegalArgumentException is thrown when passing null
+        assertThrows(IllegalArgumentException.class, () -> adapter.assign(cart, null));
     }
 
     @Test

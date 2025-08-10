@@ -166,7 +166,8 @@ pitest {
     // --- Useful filters (speed + signal) ---
     excludedClasses.set(
         listOf(
-            "de.burger.it.domain.*"
+            "de.burger.it.domain.*",
+            "de.burger.it.Main*"
         )
     )
     // You can also exclude by test names, methods, or use mutators if needed
