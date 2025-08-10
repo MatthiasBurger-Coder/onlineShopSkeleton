@@ -155,11 +155,14 @@ Or specific test methods:
   ./gradlew test --tests "de.burger.it.application.order.service.OrderServiceTest.testCreateNewOrder"
   ```
 
-Note on test frameworks:
-- The project uses both JUnit 5 (Java) and Spock (Groovy). Spock specs are named with the `*Spec.groovy` suffix (e.g., `SanitySpec.groovy`).
-- You can run a specific Spock spec similarly:
-  - Windows: `./gradlew.bat test --tests "de.burger.it.SanitySpec"`
+#### Running Spock Tests
+- Spock specs live under `src/test/groovy` and use the `*Spec.groovy` suffix (e.g., `SanitySpec.groovy`). They are executed automatically when you run `gradlew test`.
+- Run a specific Spock spec:
+  - Windows (PowerShell/CMD): `./gradlew.bat test --tests "de.burger.it.SanitySpec"`
   - macOS/Linux: `./gradlew test --tests "de.burger.it.SanitySpec"`
+- Run a specific Spock feature method (use the exact feature name in quotes; wildcards are supported):
+  - Windows (PowerShell/CMD): `./gradlew.bat test --tests "de.burger.it.SanitySpec.*basic sanity check*"`
+  - macOS/Linux: `./gradlew test --tests "de.burger.it.SanitySpec.*basic sanity check*"`
 
 ### Running PIT- Tests
 - Windows (PowerShell/CMD):
