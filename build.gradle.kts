@@ -14,6 +14,10 @@ java {
     }
 }
 
+jacoco {
+    toolVersion = "0.8.12"
+}
+
 repositories {
     mavenCentral()
 }
@@ -50,10 +54,7 @@ tasks.test {
     // Suppress CDS warning: "Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
     // by disabling Class Data Sharing for the test JVM, since Mockito's Byte Buddy agent appends to the bootstrap classpath
     jvmArgs("-Xshare:off")
-}
-
-jacoco {
-    toolVersion = "0.8.12"
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.jacocoTestReport {
@@ -64,4 +65,22 @@ tasks.jacocoTestReport {
         csv.required.set(false)
         html.required.set(true)
     }
+}
+tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+    // Fail the build if coverage is below 86%
+    violationRules {
+        rule {
+            limit {
+                // enforce 86% line coverage
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.86".toBigDecimal()
+            }
+        }
+    }
+    dependsOn(tasks.test)
+}
+
+tasks.check {
+    dependsOn("jacocoTestCoverageVerification")
 }

@@ -5,4 +5,9 @@ profile:
 include:
   - name: All
 coverage:
-  reportProblems: true
+  engine: jacoco
+  reportPaths:
+    - build/reports/jacoco/test/jacocoTestReport.xml
+  exclusions:
+    - "**/generated/**"
+    - "**/dto/**"

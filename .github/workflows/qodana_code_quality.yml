@@ -48,7 +48,7 @@ jobs:
           fi
 
       - name: Run tests with coverage (JaCoCo)
-        run: ./gradlew --no-daemon test jacocoTestReport
+        run: ./gradlew --no-daemon clean test jacocoTestReport jacocoTestCoverageVerification
 
       - name: Prepare Qodana coverage folder
         run: |
@@ -81,7 +81,6 @@ jobs:
           use-caches: true
           upload-result: true
           args: --config,qodana.yaml
-          image: jetbrains/qodana-jvm:2025.1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2116466718 }}
           QODANA_ENDPOINT: https://qodana.cloud
