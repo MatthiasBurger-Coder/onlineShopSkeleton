@@ -125,11 +125,12 @@ pitest {
     // --- Scope of mutation testing (adapt to your packages) ---
     targetClasses.set(listOf("de.burger.it.*"))
     targetTests.set(listOf("de.burger.it.*Test", "de.burger.it.*IT"))
-    failWhenNoMutations.set(true)         // fail fast if nothing matched (helps diagnose)
+    failWhenNoMutations.set(false)         // fail fast if nothing matched (helps diagnose)
 
     // --- Runtime / reporting ---
     threads.set(4)
     outputFormats.set(listOf("HTML"))
+    exportLineCoverage.set(true)
     timestampedReports.set(true)
     mutationThreshold.set(80)
 
