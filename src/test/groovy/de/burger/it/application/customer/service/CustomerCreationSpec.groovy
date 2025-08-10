@@ -8,11 +8,9 @@ import de.burger.it.domain.customer.model.CustomerNullObject
 import de.burger.it.domain.customer.port.CustomerStatusAssignmentPort
 import de.burger.it.domain.customer.state.CustomerStateType
 import org.springframework.context.ApplicationEventPublisher
+import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
-import spock.lang.Narrative
-
-import java.util.UUID
 
 @Title("Use Case: Create a new customer")
 @Narrative(
