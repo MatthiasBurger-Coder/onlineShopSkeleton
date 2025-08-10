@@ -4,22 +4,23 @@ profile:
   path: .qodana/profiles/qodana-config.xml
 
 exclude:
-  - name: Ignore meta/build
+  - name: All
     paths:
-      - "src/test/**"
-      - "build/reports/**"
-      - ".qodana/**"
-      - "gradle/**"
-      - "out/**"
-      - "gradlew"
-      - "gradlew.bat"
-      - "gradle.properties"
-      - "settings.gradle.kts"
+      - src/test/**
+      - build/reports/**
+      - .qodana/**
+      - gradle/**
+      - out/**
+      - gradlew
+      - gradlew.bat
+      - gradle.properties
+      - settings.gradle.kts
 
 coverage:
   reportProblems: true
 
 inspections:
   exclude:
+    - CheckDependencyLicenses
     - SpellCheckingInspection       # „Typo“
     - XmlHighlightingInspection     # „XML highlighting“
