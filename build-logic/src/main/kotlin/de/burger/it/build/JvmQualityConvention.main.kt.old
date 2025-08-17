@@ -1,0 +1,145 @@
+package de.burger.it.build
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.register
+import org.gradle.testing.jacoco.tasks.JacocoReport
+
+/**
+ * Centralizes JVM build logic for this repo:
+ * - Java + Groovy (Spock)
+ * - JUnit5 (Platform) + Spock reports
+ * - JaCoCo XML for Sonar
+ * - PIT Mutation testing (with JDK21 opens)
+ * - PMD
+ * - Adds a convenience `unittest` task per project
+ *
+ * All versions are pinned to match the current repository setup.
+ */
+class JvmQualityConvention : Plugin<Project> {
+    override fun apply(p: Project) = with(p) {
+        // Core plugins
+        pluginManager.apply("java")
+        pluginManager.apply("groovy")
+        pluginManager.apply("jacoco")
+        pluginManager.apply("pmd")
+        pluginManager.apply("info.solidsoft.pitest") // via Gradle plugin id
+
+        // Java toolchain (matches your project)
+        extensions.configure(org.gradle.api.plugins.JavaPluginExtension::class.java) {
+            toolchain.languageVersion.set(org.gradle.jvm.toolchain.JavaLanguageVersion.of(21))
+        }
+
+        repositories.apply {
+            mavenCentral()
+            google()
+        }
+
+        // ---- Dependencies (pinned to your current build) ----
+        dependencies {
+            // Annotations
+            add("implementation", "org.jetbrains:annotations:24.1.0")
+
+            // Lombok (compile & test)
+            add("compileOnly",       "org.projectlombok:lombok:1.18.38")
+            add("annotationProcessor","org.projectlombok:lombok:1.18.38")
+            add("testCompileOnly",   "org.projectlombok:lombok:1.18.38")
+            add("testAnnotationProcessor","org.projectlombok:lombok:1.18.38")
+
+            // JUnit 5
+            add("testImplementation", "org.junit.jupiter:junit-jupiter-api:5.13.4")
+            add("testImplementation", "org.junit.jupiter:junit-jupiter-params:5.13.4")
+            add("testRuntimeOnly",    "org.junit.jupiter:junit-jupiter-engine:5.13.4")
+            add("testRuntimeOnly",    "org.junit.platform:junit-platform-launcher:1.13.4") // Gradle 9 hint
+
+            // Spock/Groovy
+            add("testImplementation", platform("org.apache.groovy:groovy-bom:4.0.22"))
+            add("testImplementation", "org.apache.groovy:groovy")
+            add("testImplementation", "org.spockframework:spock-core:2.3-groovy-4.0")
+            add("testImplementation", "org.spockframework:spock-spring:2.3-groovy-4.0")
+            add("testImplementation", "com.athaydes:spock-reports:2.5.1-groovy-4.0")
+
+            // Mockito (+ ByteBuddy agent)
+            add("testImplementation", "org.mockito:mockito-core:5.14.2")
+            add("testImplementation", "org.mockito:mockito-junit-jupiter:5.14.2")
+
+            // PIT runtime & plugin alignment (same as your project)
+            add("implementation", "org.pitest:pitest-junit5-plugin:1.2.3")
+            add("implementation", "info.solidsoft.pitest:info.solidsoft.pitest.gradle.plugin:1.15.0")
+        }
+
+        // ---- Tests unified ----
+        tasks.withType(Test::class.java).configureEach {
+            useJUnitPlatform()
+
+            // JDK 21 agent hints (Mockito)
+            jvmArgs("-XX:+EnableDynamicAgentLoading")
+            jvmArgs("-Xshare:off")
+
+            // Spock report path via provider (no early IO)
+            val reportsDir = layout.buildDirectory.dir("reports/spock")
+            systemProperty("com.athaydes.spockframework.report.outputDir", reportsDir.map { it.asFile.absolutePath }.get())
+            systemProperty("com.athaydes.spockframework.report.projectName",    "${rootProject.name} Specs")
+            systemProperty("com.athaydes.spockframework.report.projectVersion", "${project.version}")
+            systemProperty("com.athaydes.spockframework.report.outputFormats",  "html")
+
+            // Always generate JaCoCo report after tests
+            finalizedBy(tasks.named("jacocoTestReport"))
+        }
+
+        // ---- JaCoCo XML for Sonar ----
+        tasks.withType(JacocoReport::class.java).configureEach {
+            reports.xml.required.set(true)
+            reports.html.required.set(false)
+            reports.csv.required.set(false)
+        }
+
+        // ---- PMD sensible defaults ----
+        extensions.configure(org.gradle.api.plugins.quality.PmdExtension::class.java) {
+            toolVersion = "7.4.0"
+            isConsoleOutput = true
+            ruleSets = listOf() // use custom rules if you like
+            // Example: rulesMinimumPriority.set(5)
+        }
+
+        // ---- PIT (Mutation Testing) ----
+        // Configure the plugin extension lazily
+        extensions.configure(info.solidsoft.gradle.pitest.PitestPluginExtension::class.java) {
+            pitestVersion.set("1.20.1")
+            // JDK21 modularity opens
+            jvmArgs.set(
+                listOf(
+                    "--add-opens","java.base/java.lang=ALL-UNNAMED",
+                    "--add-opens","java.base/java.util=ALL-UNNAMED",
+                    "--add-opens","java.base/java.lang.invoke=ALL-UNNAMED",
+                    "--add-opens","java.base/sun.nio.ch=ALL-UNNAMED"
+                )
+            )
+            verbose.set(true)
+            useClasspathFile.set(true)
+            timestampedReports.set(true)
+
+            // Scope – bitte bei Bedarf anpassen
+            targetClasses.set(listOf("de.burger.it.*"))
+            targetTests.set(listOf("de.burger.it.*Test", "de.burger.it.*IT"))
+            failWhenNoMutations.set(false)
+
+            threads.set(4)
+            outputFormats.set(listOf("HTML"))
+            exportLineCoverage.set(true)
+            mutationThreshold.set(80)
+
+            excludedClasses.set(listOf("de.burger.it.domain.*", "de.burger.it.Main*"))
+        }
+
+        // ---- Convenience: unittest task (alias für `test`) ----
+        tasks.register<Test>("unittest") {
+            group = "verification"
+            description = "Runs unit tests (alias for 'test')"
+            shouldRunAfter("compileJava")
+            setDependsOn(listOf("test"))
+        }
+    }
+}

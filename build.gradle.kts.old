@@ -1,27 +1,47 @@
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
-    id("de.burger.it.build.application.spring-app")
-    id("de.burger.it.build.application.lombok-app")
-    id("de.burger.it.build.application.jetbrains-annotations-app")
-    id("de.burger.it.build.infrastructure.spring.spring-test-conventions")
-    application
-
     id("java")
     id("groovy")
     id("jacoco")
     id("info.solidsoft.pitest") version  "1.19.0-rc.1"
     id("pmd")
+    id("de.burger.it.build.domain.platform-conventions")
 }
 
 group = "de.burger.it"
 version = "2.0-SNAPSHOT"
 
-application {
-    // Main entry point for console run
-    mainClass.set("de.burger.it.Main")
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+repositories {
+    mavenCentral()
+    google()
+    gradlePluginPortal()
 }
 
 dependencies {
+    // --- Spring ---
+    implementation(libs.bundles.spring)
+    testImplementation(libs.spring.test)
+
+    // --- JetBrains annotations ---
+    implementation(libs.annotations)
+
+    // --- Lombok (needs specific configurations; do NOT bundle) ---
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
+
     // --- JUnit 5 ---
     testImplementation(libs.bundles.junitApi)
     testRuntimeOnly(libs.bundles.junitRt)
@@ -38,9 +58,6 @@ dependencies {
     implementation(libs.bundles.pitest)
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
@@ -164,3 +181,4 @@ pitest {
         )
     )
 }
+
