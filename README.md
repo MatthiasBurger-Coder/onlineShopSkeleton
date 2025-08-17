@@ -94,6 +94,33 @@ The application demonstrates 9 key workflows:
 - PIT Mutation Testing 1.20.1: Mutation testing engine (configured via Gradle plugin)
 - Qodana (2025.1): Static analysis in CI via GitHub Actions and local runs via qodana.yaml
 
+## Gradle Plugin System (build-logic)
+
+This project uses an embedded Gradle convention plugins system (composite build). It keeps build scripts short and reusable.
+
+- Wiring: In `settings.gradle.kts`, the build logic is included as a composite build:
+  - `includeBuild("build-logic")`
+- Plugin location: `build-logic\src\main\kotlin\de\burger\it\build\...`
+  - The package/path defines the plugin ID. Example:
+    - File: `build-logic/src/main/kotlin/de/burger/it/build/application/spring-app.gradle.kts`
+    - Plugin ID: `de.burger.it.build.application.spring-app`
+- Applying plugins in this project (see `build.gradle.kts`):
+  - `id("de.burger.it.build.application.spring-app")`
+  - `id("de.burger.it.build.application.lombok-app")`
+  - `id("de.burger.it.build.application.jetbrains-annotations-app")`
+  - `id("de.burger.it.build.infrastructure.spring.spring-test-conventions")`
+- Layering of conventions:
+  - Domain/platform base: `de.burger.it.build.domain.platform-conventions` (toolchain, encoding, release target)
+  - Infrastructure: e.g., `...spring.spring-core-conventions`, `...spring.spring-test-conventions`, `...lombok.lombok-conventions`, `...jetbrains.jetbrains-annotations-conventions`
+  - App aggregates: e.g., `de.burger.it.build.application.spring-app`, which bundles infrastructure conventions
+- Versions and libraries are managed centrally via the Version Catalog: `gradle\libs.versions.toml`
+  - Accessed inside plugins via `VersionCatalogsExtension` (e.g., `libs.findBundle("spring")`)
+- How to add a new convention plugin (quick recipe):
+  1. Create a new file at `build-logic/src/main/kotlin/de/burger/it/build/<scope>/<name>.gradle.kts`
+  2. Set the `package` declaration to match the directory structure
+  3. Declare required plugins/dependencies (via the `libs` catalog)
+  4. Apply it in the project with `id("de.burger.it.build.<scope>.<name>")`
+
 ## Setup Instructions
 
 ### Prerequisites
@@ -255,39 +282,54 @@ pipeline.execute(cartCreateEvent);
 ## Project Structure
 
 ```
+build-logic/
+├── src/
+│   └── main/
+│       └── kotlin/
+│           └── de/
+│               └── burger/
+│                   └── it/
+│                       └── build/
+│                           ├── domain/
+│                           ├── application/
+│                           └── infrastructure/
+│                               ├── spring/
+│                               ├── lombok/
+│                               └── jetbrains/
+
+gradle/
+└── wrapper/
+
 src/
 ├── main/
 │   └── java/
 │       └── de/
 │           └── burger/
 │               └── it/
-│                   ├── Main.java
 │                   ├── application/
+│                   │   ├── config/
+│                   │   ├── process/
 │                   │   ├── cart/
 │                   │   │   ├── handler/
 │                   │   │   ├── listener/
+│                   │   │   ├── process/
 │                   │   │   └── service/
-│                   │   ├── config/
 │                   │   ├── customer/
 │                   │   │   ├── handler/
 │                   │   │   ├── listener/
+│                   │   │   ├── process/
 │                   │   │   └── service/
-│                   │   ├── event/
-│                   │   ├── order/
-│                   │   │   ├── handler/
-│                   │   │   ├── listener/
-│                   │   │   └── service/
-│                   │   ├── process/
-│                   │   └── state/
+│                   │   └── order/
+│                   │       ├── handler/
+│                   │       ├── listener/
+│                   │       ├── process/
+│                   │       └── service/
 │                   ├── domain/
 │                   │   ├── cart/
 │                   │   │   ├── event/
 │                   │   │   ├── model/
 │                   │   │   ├── port/
 │                   │   │   └── state/
-│                   │   ├── common/
-│                   │   │   ├── event/
-│                   │   │   └── model/
 │                   │   ├── customer/
 │                   │   │   ├── event/
 │                   │   │   ├── model/
@@ -307,13 +349,75 @@ src/
 │                       │   └── model/
 │                       ├── customer/
 │                       │   ├── adapter/
-│                       │   ├── model/
-│                       │   └── port/
+│                       │   └── model/
 │                       ├── order/
-│                       │   └── adapter/
+│                       │   ├── adapter/
+│                       │   └── model/
 │                       └── relation/
 │                           ├── adapter/
 │                           └── model/
+└── test/
+    ├── generated_tests/
+    ├── java/
+    │   └── de/
+    │       └── burger/
+    │           └── it/
+    │               ├── application/
+    │               │   ├── config/
+    │               │   ├── process/
+    │               │   ├── cart/
+    │               │   │   ├── handler/
+    │               │   │   ├── listener/
+    │               │   │   ├── process/
+    │               │   │   └── service/
+    │               │   ├── customer/
+    │               │   │   ├── handler/
+    │               │   │   ├── listener/
+    │               │   │   ├── process/
+    │               │   │   └── service/
+    │               │   └── order/
+    │               │       ├── handler/
+    │               │       ├── listener/
+    │               │       ├── process/
+    │               │       └── service/
+    │               ├── domain/
+    │               │   ├── cart/
+    │               │   │   ├── event/
+    │               │   │   ├── model/
+    │               │   │   ├── port/
+    │               │   │   └── state/
+    │               │   ├── customer/
+    │               │   │   ├── event/
+    │               │   │   ├── model/
+    │               │   │   ├── port/
+    │               │   │   └── state/
+    │               │   ├── order/
+    │               │   │   ├── event/
+    │               │   │   ├── model/
+    │               │   │   ├── port/
+    │               │   │   └── state/
+    │               │   └── relation/
+    │               │       └── model/
+    │               └── infrastructure/
+    │                   ├── cart/
+    │                   │   ├── adapter/
+    │                   │   └── model/
+    │                   ├── customer/
+    │                   │   ├── adapter/
+    │                   │   └── model/
+    │                   ├── order/
+    │                   │   ├── adapter/
+    │                   │   └── model/
+    │                   └── relation/
+    │                       ├── adapter/
+    │                       └── model/
+    └── groovy/
+        └── de/
+            └── burger/
+                └── it/
+                    └── application/
+                        └── customer/
+                            └── service/
 ```
 
 ## Design Patterns Used
