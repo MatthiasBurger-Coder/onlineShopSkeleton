@@ -1,16 +1,14 @@
-
 plugins {
+    application
     id("de.burger.it.build.application.spring-app")
     id("de.burger.it.build.application.lombok-app")
     id("de.burger.it.build.application.jetbrains-annotations-app")
     id("de.burger.it.build.infrastructure.spring.spring-test-conventions")
-    application
-
     id("java")
     id("groovy")
     id("jacoco")
-    id("info.solidsoft.pitest") version  "1.19.0-rc.1"
     id("pmd")
+    alias(libs.plugins.pitest)
 }
 
 group = "de.burger.it"
@@ -34,24 +32,37 @@ dependencies {
     testImplementation(libs.bundles.mockito)
     testImplementation(libs.hamcrest)
 
-    // --- PIT (if you consume libs directly; plugin config separat) ---
-    implementation(libs.bundles.pitest)
+    // --- Logging (SLF4J API + binding) ---
+    // Provided via version catalog bundle (SLF4J 2.0.x API + Logback 1.5.x).
+    implementation(libs.bundles.logging)
+
+    // --- pitest ---
+    testImplementation(libs.bundles.pitest)
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 
+// Resolve Mockito agent jar path from the test runtime classpath lazily
+val mockitoAgentJar: Provider<String> = configurations.named("testRuntimeClasspath").map { cfg ->
+    cfg.files.firstOrNull { it.name.startsWith("mockito-core") && it.name.endsWith(".jar") }?.absolutePath ?: ""
+}
+
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
-    // Suppress JDK warning about dynamic Java agent loading (e.g., Byte Buddy used by Mockito)
-    jvmArgs("-XX:+EnableDynamicAgentLoading")
-    // Suppress CDS warning: "Sharing is only supported for bootloader classes because bootstrap classpath has been appended"
-    // by disabling Class Data Sharing for the test JVM, since Mockito's Byte Buddy agent appends to the bootstrap classpath
+
+    // Prefer passing Mockito as a javaagent instead of relying on self-attachment (future-JDK-safe)
+    val agentPath = mockitoAgentJar.get()
+    if (agentPath.isNotBlank()) {
+        jvmArgs("-javaagent:$agentPath")
+    }
+
+    // Disabling CDS avoids noisy warnings when agents append to bootstrap classpath on some JDKs
     jvmArgs("-Xshare:off")
     finalizedBy(tasks.jacocoTestReport)
 
-    // Use Provider-based build directory (Gradle 7+; recommended for 8/9+)
+    // Use a Provider-based build directory (Gradle 7+; recommended for 8/9+)
     val reportsDir = layout.buildDirectory.dir("reports/spock")
 
     // Pass absolute path lazily to the test JVM
@@ -65,7 +76,6 @@ tasks.withType<Test>().configureEach {
     systemProperty("com.athaydes.spockframework.report.projectVersion", "2.0-SNAPSHOT")
     systemProperty("com.athaydes.spockframework.report.outputFormats", "html")
     systemProperty("com.athaydes.spockframework.report.showCodeBlocks", "true")
-    // systemProperty("com.athaydes.spockframework.report.template.ReportConfiguration.showSummary", "true")
 }
 
 tasks.jacocoTestReport {
@@ -130,14 +140,18 @@ pitest {
     pitestVersion.set("1.20.1")
 
     // --- JDK 21 module openness fixes (Mockito/ByteBuddy/etc.) ---
-    jvmArgs.set(
-        listOf(
-            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-            "--add-opens", "java.base/java.util=ALL-UNNAMED",
-            "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
-            "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED"
-        )
+    // and attach Mockito as a Java agent to avoid self-attach warnings in future JDKs
+    val pitJvmArgs = mutableListOf(
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED"
     )
+    val pitAgentPath = mockitoAgentJar.get()
+    if (pitAgentPath.isNotBlank()) {
+        pitJvmArgs += listOf("-javaagent:$pitAgentPath")
+    }
+    jvmArgs.set(pitJvmArgs)
 
     // --- diagnostics ---
     verbose.set(true)                     // More PIT logs

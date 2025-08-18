@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.times;
+import org.mockito.ArgumentCaptor;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -51,7 +53,12 @@ class OrderServiceTest {
         // Then
         assertNotNull(result);
         assertNotNull(result.id());
-        verify(eventPublisher).publishEvent(any(OrderCreateEvent.class));
+        // capture the published event and ensure it contains the created order
+        ArgumentCaptor<OrderCreateEvent> captor = ArgumentCaptor.forClass(OrderCreateEvent.class);
+        verify(eventPublisher, times(1)).publishEvent(captor.capture());
+        OrderCreateEvent published = captor.getValue();
+        assertNotNull(published);
+        assertEquals(result, published.order());
     }
 
     @Test
