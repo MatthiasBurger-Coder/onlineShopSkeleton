@@ -86,12 +86,12 @@ inspections:
     - id: CyclomaticComplexityInspection
       enabled: true
       severity: INFORMATION
-      threshold: 0
+      limit: 0
     - id: OverlyComplexMethod
       enabled: true
       severity: INFORMATION
-      threshold: 0
+      limit: 0
     - id: OverlyComplexClass
       enabled: true
       severity: INFORMATION
-      threshold: 0
+      limit: 0
