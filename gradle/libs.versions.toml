@@ -1,0 +1,86 @@
+[versions]
+
+java = "21"
+
+# Core
+spring         = "6.2.8"
+annotations    = "24.1.0"
+lombok         = "1.18.38"
+
+# JUnit / Platform
+junit          = "5.13.4"
+junitPlatform  = "1.13.4"
+
+# Groovy / Spock
+groovy         = "4.0.22"
+spock          = "2.3-groovy-4.0"
+spockReports   = "2.5.1-groovy-4.0"
+
+# Mockito / Hamcrest
+mockito        = "5.18.0"
+hamcrest       = "3.0"
+
+# Logging
+slf4j          = "2.0.16"
+logback        = "1.5.13"
+
+# PIT
+pitest         = "1.20.1"
+pitestJunit5   = "1.2.3"
+pitestGradle   = "1.19.0-rc.1"
+
+[libraries]
+# --- Spring ---
+spring-context = { module = "org.springframework:spring-context", version.ref = "spring" }
+spring-core    = { module = "org.springframework:spring-core",    version.ref = "spring" }
+spring-beans   = { module = "org.springframework:spring-beans",   version.ref = "spring" }
+spring-test    = { module = "org.springframework:spring-test",    version.ref = "spring" }
+
+# --- JetBrains ---
+annotations    = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+
+# --- Lombok ---
+lombok         = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+
+# --- JUnit Jupiter / Platform ---
+junit-jupiter-api      = { module = "org.junit.jupiter:junit-jupiter-api",     version.ref = "junit" }
+junit-jupiter-params   = { module = "org.junit.jupiter:junit-jupiter-params",  version.ref = "junit" }
+junit-jupiter-engine   = { module = "org.junit.jupiter:junit-jupiter-engine",  version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatform" }
+
+# --- Groovy / Spock ---
+groovy-bom     = { module = "org.apache.groovy:groovy-bom", version.ref = "groovy" }
+groovy         = { module = "org.apache.groovy:groovy",     version.ref = "groovy" }
+spock-core     = { module = "org.spockframework:spock-core",   version.ref = "spock" }
+spock-spring   = { module = "org.spockframework:spock-spring", version.ref = "spock" }
+spock-reports  = { module = "com.athaydes:spock-reports",       version.ref = "spockReports" }
+
+# --- Mockito / Hamcrest ---
+mockito-core           = { module = "org.mockito:mockito-core",          version.ref = "mockito" }
+mockito-junit-jupiter  = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+hamcrest               = { module = "org.hamcrest:hamcrest",             version.ref = "hamcrest" }
+
+# --- Logging (SLF4J + Logback) ---
+slf4j-api              = { module = "org.slf4j:slf4j-api",               version.ref = "slf4j" }
+logback-classic        = { module = "ch.qos.logback:logback-classic",    version.ref = "logback" }
+
+# --- PIT ---
+pitest                 = { module = "org.pitest:pitest",                         version.ref = "pitest" }
+pitest-junit5          = { module = "org.pitest:pitest-junit5-plugin",           version.ref = "pitestJunit5" }
+
+[bundles]
+# NOTE: Bundles expand in a single configuration (e.g., implementation/testImplementation).
+# BOMs können nicht "als platform" in Bundles verankert werden → separat im Buildscript referenzieren.
+spring    = ["spring-context", "spring-core", "spring-beans"]
+junitApi  = ["junit-jupiter-api", "junit-jupiter-params"]
+junitRt   = ["junit-jupiter-engine", "junit-platform-launcher"]
+spock     = ["groovy", "spock-core", "spock-spring", "spock-reports"]
+mockito   = ["mockito-core", "mockito-junit-jupiter"]
+logging   = ["slf4j-api", "logback-classic"]
+pitest    = ["pitest", "pitest-junit5"]
+
+[plugins]
+# Gradle-Plugin-Alias für PIT (damit kein Plugin-Artefakt in Dependencies landet)
+pitest = { id = "info.solidsoft.pitest",  version.ref = "pitestGradle" }
+
+
