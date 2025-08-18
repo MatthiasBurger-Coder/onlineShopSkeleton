@@ -82,6 +82,19 @@ inspections:
     options:
       limit: 4
 
+  - inspection: OverlyComplexAnonymousInnerClass
+    enabled: true
+    severity: INFORMATION
+    options:
+      limit: 0
+
+  - inspection: OverlyNestedMethod
+    enabled: true
+    severity: INFORMATION
+    options:
+      limit: 0
+
+
   - inspection: CyclomaticComplexityInspection
     enabled: true
     severity: INFORMATION
