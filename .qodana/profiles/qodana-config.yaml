@@ -82,16 +82,20 @@ inspections:
     options:
       limit: 4
 
-  - inspections:
-    - id: CyclomaticComplexityInspection
-      enabled: true
-      severity: INFORMATION
+  - inspections: CyclomaticComplexityInspection
+    enabled: true
+    severity: INFORMATION
+    options:
       limit: 0
-    - id: OverlyComplexMethod
-      enabled: true
-      severity: INFORMATION
+
+  - inspections: OverlyComplexMethod
+    enabled: true
+    severity: INFORMATION
+    options:
       limit: 0
-    - id: OverlyComplexClass
-      enabled: true
-      severity: INFORMATION
+
+  - inspections: OverlyComplexClass
+    enabled: true
+    severity: INFORMATION
+    options:
       limit: 0
