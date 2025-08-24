@@ -9,7 +9,7 @@ plugins {
     id("jacoco")
     id("pmd")
     alias(libs.plugins.pitest)
-}
+ }
 
 group = "de.burger.it"
 version = "2.0-SNAPSHOT"
@@ -32,8 +32,7 @@ dependencies {
     testImplementation(libs.bundles.mockito)
     testImplementation(libs.hamcrest)
 
-    // --- Logging (SLF4J API + binding) ---
-    // Provided via version catalog bundle (SLF4J 2.0.x API + Logback 1.5.x).
+    // --- Logging ---
     implementation(libs.bundles.logging)
 
     // --- pitest ---

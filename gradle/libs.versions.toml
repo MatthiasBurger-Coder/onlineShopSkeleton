@@ -21,8 +21,8 @@ mockito        = "5.18.0"
 hamcrest       = "3.0"
 
 # Logging
-slf4j          = "2.0.16"
-logback        = "1.5.13"
+slf4j = "2.0.17"
+log4j2 = "2.25.1"
 
 # PIT
 pitest         = "1.20.1"
@@ -35,6 +35,17 @@ spring-context = { module = "org.springframework:spring-context", version.ref = 
 spring-core    = { module = "org.springframework:spring-core",    version.ref = "spring" }
 spring-beans   = { module = "org.springframework:spring-beans",   version.ref = "spring" }
 spring-test    = { module = "org.springframework:spring-test",    version.ref = "spring" }
+
+# --- Logging ---
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+jul-to-slf4j = { group = "org.slf4j", name = "jul-to-slf4j", version.ref = "slf4j" }
+jcl-over-slf4j = { group = "org.slf4j", name = "jcl-over-slf4j", version.ref = "slf4j" }
+log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j2" }
+log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j2" }
+log4j-slf4j2-impl = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j2" }
+log4j-12-api = { group = "org.apache.logging.log4j", name = "log4j-1.2-api", version.ref = "log4j2" }
+log4j-bom = { group = "org.apache.logging.log4j", name = "log4j-bom", version.ref = "log4j2" }
+
 
 # --- JetBrains ---
 annotations    = { module = "org.jetbrains:annotations", version.ref = "annotations" }
@@ -60,10 +71,6 @@ mockito-core           = { module = "org.mockito:mockito-core",          version
 mockito-junit-jupiter  = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 hamcrest               = { module = "org.hamcrest:hamcrest",             version.ref = "hamcrest" }
 
-# --- Logging (SLF4J + Logback) ---
-slf4j-api              = { module = "org.slf4j:slf4j-api",               version.ref = "slf4j" }
-logback-classic        = { module = "ch.qos.logback:logback-classic",    version.ref = "logback" }
-
 # --- PIT ---
 pitest                 = { module = "org.pitest:pitest",                         version.ref = "pitest" }
 pitest-junit5          = { module = "org.pitest:pitest-junit5-plugin",           version.ref = "pitestJunit5" }
@@ -76,11 +83,10 @@ junitApi  = ["junit-jupiter-api", "junit-jupiter-params"]
 junitRt   = ["junit-jupiter-engine", "junit-platform-launcher"]
 spock     = ["groovy", "spock-core", "spock-spring", "spock-reports"]
 mockito   = ["mockito-core", "mockito-junit-jupiter"]
-logging   = ["slf4j-api", "logback-classic"]
+logging   = ["slf4j-api", "log4j-core", "log4j-12-api" ,"log4j-api","log4j-bom","log4j-slf4j2-impl"]
 pitest    = ["pitest", "pitest-junit5"]
 
 [plugins]
 # Gradle-Plugin-Alias für PIT (damit kein Plugin-Artefakt in Dependencies landet)
 pitest = { id = "info.solidsoft.pitest",  version.ref = "pitestGradle" }
-
 
