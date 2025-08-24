@@ -17,6 +17,7 @@ dependencies {
     "runtimeOnly"(libs.findBundle("loggingRuntime").get())
 
     "testImplementation"(libs.findBundle("loggingTesting").get())
+    "testImplementation"(libs.findBundle("loggingBridges").get())
 
     // Route legacy JUL/JCL logs into SLF4J (enable if your app uses them)
     "implementation"(libs.findBundle("loggingBridges").get())
@@ -32,32 +33,24 @@ configurations.all {
     exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
 }
 
-tasks.withType<ProcessResources>().configureEach {
-    // Copy the shared log4j2.xml into each module's resources
-    from(project.rootProject.layout.projectDirectory.dir("config/logging")) {
-        include("log4j2.xml")
-        into("") // copy into resource root
-    }
-}
 
 tasks.withType<Test>().configureEach {
     // Ensure bridges active during tests
     jvmArgs("-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager")
 }
-sourceSets{
-    named("main") {
-        // Provide shared logging config to every module at runtime
-        resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
-        // Do not ship the test variant with main
-        resources.exclude("log4j2-test.xml")
-    }
-    named("test") {
-        // Allow tests to prefer log4j2-test.xml automatically
-        resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
-    }
+val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
+sourceSets.named("main") {
+    // Provide shared logging config to every module at runtime
+    resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
+    // Do not ship the test variant with main
+    resources.exclude("log4j2-test.xml")
+}
+sourceSets.named("test") {
+    // Allow tests to prefer log4j2-test.xml automatically
+    resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
 }
 
-java {
+extensions.configure<JavaPluginExtension> {
     // Keep consistent dependency resolution across compile/runtime
     @Suppress("UnstableApiUsage")
     consistentResolution {
