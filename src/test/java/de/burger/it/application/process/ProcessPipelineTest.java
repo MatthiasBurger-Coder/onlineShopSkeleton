@@ -57,7 +57,6 @@ class ProcessPipelineTest {
         inOrder.verify(c3).accept(captor.capture());
         int c3Arg = captor.getAllValues().get(2);
 
-        System.out.println("[DEBUG_LOG] c1Arg=" + c1Arg + ", c2Arg=" + c2Arg + ", c3Arg=" + c3Arg);
         assertEquals(1, c1Arg);
         assertEquals(2, c2Arg);
         assertEquals(4, c3Arg);
