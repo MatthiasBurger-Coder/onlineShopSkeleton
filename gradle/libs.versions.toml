@@ -23,6 +23,7 @@ hamcrest       = "3.0"
 # Logging
 slf4j = "2.0.17"
 log4j2 = "2.25.1"
+disruptor = "3.4.4"
 
 # PIT
 pitest         = "1.20.1"
@@ -36,16 +37,16 @@ spring-core    = { module = "org.springframework:spring-core",    version.ref = 
 spring-beans   = { module = "org.springframework:spring-beans",   version.ref = "spring" }
 spring-test    = { module = "org.springframework:spring-test",    version.ref = "spring" }
 
-# --- Logging ---
-slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
-jul-to-slf4j = { group = "org.slf4j", name = "jul-to-slf4j", version.ref = "slf4j" }
-jcl-over-slf4j = { group = "org.slf4j", name = "jcl-over-slf4j", version.ref = "slf4j" }
-log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j2" }
-log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j2" }
-log4j-slf4j2-impl = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j2" }
-log4j-12-api = { group = "org.apache.logging.log4j", name = "log4j-1.2-api", version.ref = "log4j2" }
-log4j-bom = { group = "org.apache.logging.log4j", name = "log4j-bom", version.ref = "log4j2" }
-
+# --- Logging (module format) ---
+slf4j-api         = { module = "org.slf4j:slf4j-api",               version.ref = "slf4j" }
+jul-to-slf4j      = { module = "org.slf4j:jul-to-slf4j",            version.ref = "slf4j" }
+jcl-over-slf4j    = { module = "org.slf4j:jcl-over-slf4j",          version.ref = "slf4j" }
+log4j-core        = { module = "org.apache.logging.log4j:log4j-core",        version.ref = "log4j2" }
+log4j-api         = { module = "org.apache.logging.log4j:log4j-api",         version.ref = "log4j2" }
+log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j2" }
+log4j-12-api      = { module = "org.apache.logging.log4j:log4j-1.2-api",     version.ref = "log4j2" }
+log4j-bom         = { module = "org.apache.logging.log4j:log4j-bom",         version.ref = "log4j2" }
+disruptor         = { module = "com.lmax:disruptor",                         version.ref = "disruptor" }
 
 # --- JetBrains ---
 annotations    = { module = "org.jetbrains:annotations", version.ref = "annotations" }
@@ -76,15 +77,33 @@ pitest                 = { module = "org.pitest:pitest",                        
 pitest-junit5          = { module = "org.pitest:pitest-junit5-plugin",           version.ref = "pitestJunit5" }
 
 [bundles]
-# NOTE: Bundles expand in a single configuration (e.g., implementation/testImplementation).
-# BOMs können nicht "als platform" in Bundles verankert werden → separat im Buildscript referenzieren.
-spring    = ["spring-context", "spring-core", "spring-beans"]
-junitApi  = ["junit-jupiter-api", "junit-jupiter-params"]
-junitRt   = ["junit-jupiter-engine", "junit-platform-launcher"]
-spock     = ["groovy", "spock-core", "spock-spring", "spock-reports"]
-mockito   = ["mockito-core", "mockito-junit-jupiter"]
-logging   = ["slf4j-api", "log4j-core", "log4j-12-api" ,"log4j-api","log4j-bom","log4j-slf4j2-impl"]
-pitest    = ["pitest", "pitest-junit5"]
+
+spring     = ["spring-context", "spring-core", "spring-beans"]
+junitApi   = ["junit-jupiter-api", "junit-jupiter-params"]
+junitRt    = ["junit-jupiter-engine", "junit-platform-launcher"]
+spock      = ["groovy", "spock-core", "spock-spring", "spock-reports"]
+mockito    = ["mockito-core", "mockito-junit-jupiter"]
+pitest     = ["pitest", "pitest-junit5"]
+
+loggingApi = ["slf4j-api"]
+
+# Log4j2 backend and the single SLF4J binding (use in runtimeOnly)
+loggingRuntime        = ["log4j-api", "log4j-core", "log4j-slf4j2-impl"]
+
+loggingTesting        =["log4j-api","log4j-core","log4j-slf4j2-impl"]
+
+# Route legacy frameworks to SLF4J (JUL/JCL)
+loggingBridges        = ["jul-to-slf4j", "jcl-over-slf4j"]
+
+# Optional: bridge for legacy org.apache.log4j.* usage (temporary only)
+loggingLegacy         = ["log4j-12-api"]
+
+# Optional: async logging support via LMAX Disruptor
+loggingAsync          = ["disruptor"]
+
+# Convenience aggregates
+loggingStd            = ["slf4j-api", "log4j-api", "log4j-core", "log4j-slf4j2-impl"]
+loggingStdWithBridges = ["slf4j-api", "log4j-api", "log4j-core", "log4j-slf4j2-impl", "jul-to-slf4j", "jcl-over-slf4j"]
 
 [plugins]
 # Gradle-Plugin-Alias für PIT (damit kein Plugin-Artefakt in Dependencies landet)

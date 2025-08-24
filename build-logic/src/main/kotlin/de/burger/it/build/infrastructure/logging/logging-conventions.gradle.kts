@@ -2,11 +2,6 @@
 
 package de.burger.it.build.infrastructure.logging
 
-import org.gradle.api.artifacts.VersionCatalogsExtension
-import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.`java-library`
-import org.gradle.kotlin.dsl.the
-
 plugins {
     `java-library`
     id("de.burger.it.build.domain.platform-conventions")
@@ -15,19 +10,16 @@ plugins {
 val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    // Facade (compile-time)
-    "api"(libs.findLibrary("slf4j-api").get())
+    // Use SLF4J facade for API surface
+    "api"(libs.findBundle("loggingApi").get())
 
-    // Bridges (route legacy frameworks into SLF4J)
-    "implementation"(libs.findLibrary("jul-to-slf4j").get())
-    "implementation"(libs.findLibrary("jcl-over-slf4j").get())
+    // Bring Log4j2 backend + the single SLF4J binding at runtime
+    "runtimeOnly"(libs.findBundle("loggingRuntime").get())
 
-    // SLF4J -> Log4j2 binding (runtime only)
-    "runtimeOnly"(libs.findLibrary("log4j-slf4j2-impl").get())
+    "testImplementation"(libs.findBundle("loggingTesting").get())
 
-    // Core backend
-    "runtimeOnly"(libs.findLibrary("log4j-core").get())
-    "runtimeOnly"(libs.findLibrary("log4j-api").get())
+    // Route legacy JUL/JCL logs into SLF4J (enable if your app uses them)
+    "implementation"(libs.findBundle("loggingBridges").get())
 }
 
 configurations.all {
@@ -40,7 +32,35 @@ configurations.all {
     exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
 }
 
+tasks.withType<ProcessResources>().configureEach {
+    // Copy the shared log4j2.xml into each module's resources
+    from(project.rootProject.layout.projectDirectory.dir("config/logging")) {
+        include("log4j2.xml")
+        into("") // copy into resource root
+    }
+}
+
 tasks.withType<Test>().configureEach {
     // Ensure bridges active during tests
     jvmArgs("-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager")
+}
+sourceSets{
+    named("main") {
+        // Provide shared logging config to every module at runtime
+        resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
+        // Do not ship the test variant with main
+        resources.exclude("log4j2-test.xml")
+    }
+    named("test") {
+        // Allow tests to prefer log4j2-test.xml automatically
+        resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
+    }
+}
+
+java {
+    // Keep consistent dependency resolution across compile/runtime
+    @Suppress("UnstableApiUsage")
+    consistentResolution {
+        useCompileClasspathVersions()
+    }
 }

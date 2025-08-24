@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- All comments in English -->
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_LEVEL">DEBUG</Property>
+        <Property name="PATTERN">%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg %X%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console"><PatternLayout pattern="${PATTERN}"/></Console>
+    </Appenders>
+    <Loggers>
+        <Root level="${LOG_LEVEL}">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

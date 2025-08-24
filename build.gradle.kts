@@ -2,6 +2,7 @@ plugins {
     application
     id("de.burger.it.build.application.spring-app")
     id("de.burger.it.build.application.lombok-app")
+    id("de.burger.it.build.application.logging-app")
     id("de.burger.it.build.application.jetbrains-annotations-app")
     id("de.burger.it.build.infrastructure.spring.spring-test-conventions")
     id("java")
@@ -31,9 +32,6 @@ dependencies {
     // --- Mockito / Hamcrest ---
     testImplementation(libs.bundles.mockito)
     testImplementation(libs.hamcrest)
-
-    // --- Logging ---
-    implementation(libs.bundles.logging)
 
     // --- pitest ---
     testImplementation(libs.bundles.pitest)
