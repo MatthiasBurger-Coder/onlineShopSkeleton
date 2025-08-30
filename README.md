@@ -4,6 +4,12 @@ A sophisticated state management system for e-commerce applications, demonstrati
 
 **Version:** 2.0-SNAPSHOT
 
+### What’s new (structure & build-logic)
+- Consolidated Gradle 9 + Java 21 toolchain and CI (GitHub Actions uses Java 21).
+- Introduced a composite build under `build-logic/` with convention plugins to keep `build.gradle.kts` lean.
+- New logging conventions via `de.burger.it.build.infrastructure.logging.logging-conventions` and the aggregate `de.burger.it.build.application.logging-app` for unified SLF4J + Log4j2 setup.
+- Clear layering of domain platform conventions, infrastructure conventions (Spring, Lombok, JetBrains annotations, Logging), and application aggregates.
+
 ## Features
 
 - **State Management**: Robust state machine implementation for carts, customers, and orders
@@ -81,18 +87,18 @@ The application demonstrates 9 key workflows:
 
 ## Technologies Used
 
-- Java 21: Latest Java features including records and pattern matching (strictly Java 21; Mockito/Byte Buddy supports up to Java 21)
-- Spring Framework 6.2.8: Core, Context, and Beans modules for dependency injection
-- Lombok 1.18.38: Reducing boilerplate code
-- JUnit Jupiter 5.13.4: Primary testing framework for Java tests
-- Spock 2.3 (Groovy 4.0): BDD-style testing framework used alongside JUnit (see SanitySpec.groovy)
-- Mockito 5.18.0: Mocking framework for testing
-- Hamcrest 3.0: Fluent assertions with assertThat
-- JetBrains Annotations 24.1.0: Annotations for better code analysis
-- Gradle 9.0.0: Build automation via Gradle Wrapper
-- JaCoCo 0.8.12: Code coverage with report and verification (min 86% line coverage)
-- PIT Mutation Testing 1.20.1: Mutation testing engine (configured via Gradle plugin)
-- Qodana (2025.1): Static analysis in CI via GitHub Actions and local runs via qodana.yaml
+- Java 21: Strictly Java 21 toolchain; code uses records and pattern matching. Mockito/Byte Buddy stack is validated on Java 21 in this project.
+- Spring Framework 6.2.8: Core, Context, Beans (plus Spring Test for testing support).
+- Lombok 1.18.38: Reduces boilerplate (compileOnly + annotationProcessor via convention plugin).
+- JetBrains Annotations 24.1.0: Static analysis annotations.
+- JUnit Jupiter 5.13.4: Primary testing framework on JUnit Platform 1.13.4.
+- Spock 2.3 for Groovy 4.0 (Groovy BOM 4.0.22): BDD tests alongside JUnit; HTML reports via spock-reports 2.5.1.
+- Mockito 5.18.0 and Hamcrest 3.0: Mocking and fluent assertions.
+- SLF4J 2.0.17 + Log4j2 2.25.1 (via convention plugin): Unified logging stack with bridges (JUL/JCL) and optional async logging (LMAX Disruptor 3.4.4). AspectJ 1.9.24 runtime/weaver included for AOP support.
+- Gradle 9.x (wrapper): Build automation; composite build with build-logic convention plugins.
+- JaCoCo 0.8.12: Coverage reporting and verification (min 86% line coverage enforced).
+- PIT Mutation Testing 1.20.1: Mutation testing via Gradle plugin; threshold 80%.
+- Qodana 2025.1: Static analysis locally (qodana.yaml) and in CI (GitHub Actions).
 
 ## Gradle Plugin System (build-logic)
 
@@ -107,12 +113,13 @@ This project uses an embedded Gradle convention plugins system (composite build)
 - Applying plugins in this project (see `build.gradle.kts`):
   - `id("de.burger.it.build.application.spring-app")`
   - `id("de.burger.it.build.application.lombok-app")`
+  - `id("de.burger.it.build.application.logging-app")` ← new
   - `id("de.burger.it.build.application.jetbrains-annotations-app")`
   - `id("de.burger.it.build.infrastructure.spring.spring-test-conventions")`
 - Layering of conventions:
   - Domain/platform base: `de.burger.it.build.domain.platform-conventions` (toolchain, encoding, release target)
-  - Infrastructure: e.g., `...spring.spring-core-conventions`, `...spring.spring-test-conventions`, `...lombok.lombok-conventions`, `...jetbrains.jetbrains-annotations-conventions`
-  - App aggregates: e.g., `de.burger.it.build.application.spring-app`, which bundles infrastructure conventions
+  - Infrastructure: e.g., `...spring.spring-core-conventions`, `...spring.spring-test-conventions`, `...lombok.lombok-conventions`, `...jetbrains.jetbrains-annotations-conventions`, `...logging.logging-conventions` ← new
+  - App aggregates: e.g., `de.burger.it.build.application.spring-app`, `de.burger.it.build.application.logging-app` ← new, which bundle infrastructure conventions
 - Versions and libraries are managed centrally via the Version Catalog: `gradle\libs.versions.toml`
   - Accessed inside plugins via `VersionCatalogsExtension` (e.g., `libs.findBundle("spring")`)
 - How to add a new convention plugin (quick recipe):
@@ -120,6 +127,26 @@ This project uses an embedded Gradle convention plugins system (composite build)
   2. Set the `package` declaration to match the directory structure
   3. Declare required plugins/dependencies (via the `libs` catalog)
   4. Apply it in the project with `id("de.burger.it.build.<scope>.<name>")`
+
+### Logging conventions (new)
+
+The logging stack is provided via a reusable convention plugin to ensure a single SLF4J binding and consistent Log4j2 usage across modules:
+- Infrastructure plugin: `de.burger.it.build.infrastructure.logging.logging-conventions`
+  - Exposes slf4j-api (api), adds log4j-api/core and log4j-slf4j2-impl at runtime
+  - Bridges for JUL and JCL are included, and conflicting bindings (logback, log4j-to-slf4j) are excluded globally
+  - Aligns Log4j versions with the Log4j BOM and supports async logging via `disruptor`
+  - Adds AspectJ runtime (and weaver at runtime) to support AOP-based logging
+- Application aggregate: `de.burger.it.build.application.logging-app`
+  - Composes `platform-conventions` and `logging-conventions`
+
+Usage in root build.gradle.kts (already applied):
+```
+plugins {
+    id("de.burger.it.build.application.logging-app")
+}
+```
+
+You can now use SLF4J with Log4j2 backend without manually declaring these dependencies; the convention plugin wires them for you.
 
 ## Setup Instructions
 
@@ -291,11 +318,22 @@ build-logic/
 │                   └── it/
 │                       └── build/
 │                           ├── domain/
+│                           │   └── platform-conventions.gradle.kts
 │                           ├── application/
+│                           │   ├── spring-app.gradle.kts
+│                           │   ├── lombok-app.gradle.kts
+│                           │   ├── logging-app.gradle.kts
+│                           │   └── jetbrains-annotations-app.gradle.kts
 │                           └── infrastructure/
 │                               ├── spring/
+│                               │   ├── spring-core-conventions.gradle.kts
+│                               │   └── spring-test-conventions.gradle.kts
 │                               ├── lombok/
+│                               │   └── lombok-conventions.gradle.kts
+│                               ├── logging/
+│                               │   └── logging-conventions.gradle.kts
 │                               └── jetbrains/
+│                                   └── jetbrains-annotations-conventions.gradle.kts
 
 gradle/
 └── wrapper/
