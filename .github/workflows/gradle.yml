@@ -90,6 +90,7 @@ jobs:
 
   dependency-submission:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     permissions:
       contents: write
 
@@ -109,3 +110,4 @@ jobs:
 
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@v4
+        continue-on-error: true
