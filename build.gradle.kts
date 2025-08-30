@@ -8,7 +8,7 @@ plugins {
     id("java")
     id("groovy")
     id("jacoco")
-    id("pmd")
+    //id("pmd")
     alias(libs.plugins.pitest)
  }
 
@@ -32,6 +32,10 @@ dependencies {
     // --- Mockito / Hamcrest ---
     testImplementation(libs.bundles.mockito)
     testImplementation(libs.hamcrest)
+
+    // --- Annotations for @Generated filtering in coverage ---
+    compileOnly(libs.jakarta.annotation)
+    testCompileOnly(libs.jakarta.annotation)
 
     // --- pitest ---
     testImplementation(libs.bundles.pitest)

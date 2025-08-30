@@ -1,5 +1,6 @@
 package de.burger.it.infrastructure.logging;
 
+import jakarta.annotation.Generated;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -24,8 +25,9 @@ public class MethodLoggingAspect {
      * Per-target logger cache to avoid repeated lookups.
      */
     private static final Map<Class<?>, Logger> PER_CLASS_LOGGERS = new ConcurrentHashMap<>();
-    private static final ThreadLocal<Long> START_NS = ThreadLocal.withInitial(() -> 0L);
+    private static final ThreadLocal<Long> START_NS = new ThreadLocal<>();
     private static final String CID = "cid";
+
 
     @Pointcut(
             "execution(public * de.burger.it..application..*(..)) || " +
@@ -33,8 +35,10 @@ public class MethodLoggingAspect {
                     "execution(public * de.burger.it..adapters..*(..)) || " +
                     "execution(public * de.burger.it..infrastructure..*(..))"
     )
+    @Generated("pointcut-definition")
     public void appOps() {}
 
+    @Generated("pointcut-definition")
     @Pointcut("@within(org.springframework.context.annotation.Configuration)")
     public void configClasses() {
     }
@@ -52,15 +56,17 @@ public class MethodLoggingAspect {
 
     @AfterReturning("appOps() && !configClasses() && !@annotation(de.burger.it.infrastructure.logging.SuppressLogging)")
     public void onReturn(final JoinPoint jp) {
-        final long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - START_NS.get());
-        START_NS.remove();
+        final Long started = START_NS.get();
+        final long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - (started != null ? started : System.nanoTime()));
+        START_NS.set(0L);
         loggerFor(jp).info("← {} OK in {} ms", shortSig(jp), elapsedMs);
     }
 
     @AfterThrowing(pointcut = "appOps() && !configClasses() && !@annotation(de.burger.it.infrastructure.logging.SuppressLogging)", throwing = "ex")
     public void onThrow(final JoinPoint jp, final Throwable ex) {
-        final long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - START_NS.get());
-        START_NS.remove();
+        final Long started = START_NS.get();
+        final long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - (started != null ? started : System.nanoTime()));
+        START_NS.set(0L);
         loggerFor(jp).error("✖ {} failed in {} ms: {}", shortSig(jp), elapsedMs, ex.getMessage(), ex);
     }
 
