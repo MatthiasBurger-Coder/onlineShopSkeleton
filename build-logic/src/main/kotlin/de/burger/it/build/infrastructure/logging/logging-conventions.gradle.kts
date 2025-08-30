@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
+
 package de.burger.it.build.infrastructure.logging
+import org.gradle.api.artifacts.VersionCatalogsExtension
 
 plugins {
     `java-library`
@@ -9,18 +11,39 @@ plugins {
 
 val libs = the<VersionCatalogsExtension>().named("libs")
 
+fun v(alias: String) = libs.findVersion(alias).get().requiredVersion
+
 dependencies {
-    // Use SLF4J facade for API surface
-    "api"(libs.findBundle("loggingApi").get())
+    // Expose the SLF4J facade to downstream modules
+    api(libs.findLibrary("slf4j-api").get())
 
-    // Bring Log4j2 backend + the single SLF4J binding at runtime
-    "runtimeOnly"(libs.findBundle("loggingRuntime").get())
+    // Route legacy frameworks to SLF4J (enable if you actually use JUL/JCL)
+    implementation(libs.findLibrary("jul-to-slf4j").get())
+    implementation(libs.findLibrary("jcl-over-slf4j").get())
 
-    "testImplementation"(libs.findBundle("loggingTesting").get())
-    "testImplementation"(libs.findBundle("loggingBridges").get())
+    // Log4j2 backend + single SLF4J binding at runtime
+    runtimeOnly(libs.findLibrary("log4j-api").get())
+    runtimeOnly(libs.findLibrary("log4j-core").get())
+    runtimeOnly(libs.findLibrary("log4j-slf4j2-impl").get())
 
-    // Route legacy JUL/JCL logs into SLF4J (enable if your app uses them)
-    "implementation"(libs.findBundle("loggingBridges").get())
+    // Optional: bridge for legacy org.apache.log4j.* usage (remove after migration)
+    // runtimeOnly(libs.findLibrary("log4j-12-api").get())
+
+    // Optional: align Log4j versions via BOM (must be added with platform, not as a plain dependency)
+    implementation(platform(libs.findLibrary("log4j-bom").get()))
+
+    // Optional: async logging support (only if you use AsyncLoggers)
+    runtimeOnly(libs.findLibrary("disruptor").get())
+
+    // Tests: compile against Log4j types; ListAppender lives in the tests classifier
+    testImplementation(libs.findLibrary("log4j-api").get())
+    testImplementation(libs.findLibrary("log4j-core-test").get())
+    testRuntimeOnly(libs.findLibrary("log4j-slf4j2-impl").get())
+
+    // AOP: Spring AOP + AspectJ runtime (weaver only for LTW)
+    //implementation(libs.findLibrary("spring-aop").get())
+    implementation(libs.findLibrary("aspectj-rt").get())
+    runtimeOnly(libs.findLibrary("aspectj-weaver").get()) // only if you enable LTW
 }
 
 configurations.all {
@@ -34,21 +57,21 @@ configurations.all {
 }
 
 
-tasks.withType<Test>().configureEach {
-    // Ensure bridges active during tests
-    jvmArgs("-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager")
-}
-val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
-sourceSets.named("main") {
-    // Provide shared logging config to every module at runtime
-    resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
-    // Do not ship the test variant with main
-    resources.exclude("log4j2-test.xml")
-}
-sourceSets.named("test") {
-    // Allow tests to prefer log4j2-test.xml automatically
-    resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
-}
+//tasks.withType<Test>().configureEach {
+//    // Ensure bridges active during tests
+//    jvmArgs("-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager")
+//}
+//val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
+//sourceSets.named("main") {
+//    // Provide shared logging config to every module at runtime
+//    resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
+//    // Do not ship the test variant with main
+//    resources.exclude("log4j2-test.xml")
+//}
+//sourceSets.named("test") {
+//    // Allow tests to prefer log4j2-test.xml automatically
+//    resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
+//}
 
 extensions.configure<JavaPluginExtension> {
     // Keep consistent dependency resolution across compile/runtime
