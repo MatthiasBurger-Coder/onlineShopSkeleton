@@ -11,8 +11,6 @@ plugins {
 
 val libs = the<VersionCatalogsExtension>().named("libs")
 
-fun v(alias: String) = libs.findVersion(alias).get().requiredVersion
-
 dependencies {
     // Expose the SLF4J facade to downstream modules
     api(libs.findLibrary("slf4j-api").get())
@@ -55,23 +53,6 @@ configurations.all {
     // Prevent loops: do NOT allow log4j-to-slf4j when using log4j-slf4j2-impl
     exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
 }
-
-
-//tasks.withType<Test>().configureEach {
-//    // Ensure bridges active during tests
-//    jvmArgs("-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager")
-//}
-//val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
-//sourceSets.named("main") {
-//    // Provide shared logging config to every module at runtime
-//    resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
-//    // Do not ship the test variant with main
-//    resources.exclude("log4j2-test.xml")
-//}
-//sourceSets.named("test") {
-//    // Allow tests to prefer log4j2-test.xml automatically
-//    resources.srcDir(rootProject.layout.projectDirectory.dir("config/logging"))
-//}
 
 extensions.configure<JavaPluginExtension> {
     // Keep consistent dependency resolution across compile/runtime
