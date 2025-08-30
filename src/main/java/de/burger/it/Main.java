@@ -8,10 +8,11 @@ import de.burger.it.domain.cart.model.Cart;
 import de.burger.it.domain.customer.model.CustomerDefault;
 import de.burger.it.domain.customer.model.Customer;
 import de.burger.it.domain.order.model.Order;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.UUID;
-
+@Slf4j
 public class Main {
     public static void main(String[] args) {
         // Initialize Spring context
@@ -22,9 +23,9 @@ public class Main {
         var cartService = context.getBean(CartService.class);
         var orderService = context.getBean(OrderService.class);
         
-        System.out.println("==========================================================");
-        System.out.println("                CUSTOMER WORKFLOWS                        ");
-        System.out.println("==========================================================");
+        log.info("==========================================================");
+        log.info("                CUSTOMER WORKFLOWS                        ");
+        log.info("==========================================================");
         
         // 1. Customer Creation Workflow
         System.out.println("\n--- 1. CUSTOMER CREATION WORKFLOW ---");
