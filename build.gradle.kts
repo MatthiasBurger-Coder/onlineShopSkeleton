@@ -8,6 +8,7 @@ plugins {
     id("java")
     id("groovy")
     id("jacoco")
+    id("de.burger.forensics.btmgen") version "0.0.2-SNAPSHOT"
     //id("pmd")
     alias(libs.plugins.pitest)
  }
@@ -179,3 +180,8 @@ pitest {
         )
     )
 }
+
+
+
+
+

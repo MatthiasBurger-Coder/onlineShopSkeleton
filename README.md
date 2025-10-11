@@ -520,3 +520,160 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Inspired by Domain-Driven Design principles and best practices
 
 
+## How to execute the Forensics BTMGen Gradle plugin
+
+The project is already configured to apply the plugin with ID `de.burger.forensics.btmgen` in `build.gradle.kts`, and to resolve it from your local Maven repository via `settings.gradle.kts`.
+
+Follow these steps to run it.
+
+1) Publish the plugin to your local Maven cache (only needed once per change)
+- In the plugin project (the one that declares `id("de.burger.forensics.btmgen")`), run:
+  - Windows: `gradlew.bat publishToMavenLocal`
+  - macOS/Linux: `./gradlew publishToMavenLocal`
+
+2) Make sure this project resolves the plugin from mavenLocal
+- Already set in `settings.gradle.kts`:
+  - `pluginManagement { repositories { mavenLocal(); gradlePluginPortal(); mavenCentral() } }`
+  - And a mapping to the marker module: `useModule("de.burger.forensics.btmgen:de.burger.forensics.btmgen.gradle.plugin:1.0.0")`
+
+3) Verify the build sees the plugin and list available tasks
+- From this project root, run:
+  - `gradlew.bat --refresh-dependencies tasks --all`
+- Then filter for anything the plugin contributes (examples):
+  - `gradlew.bat tasks --all | findstr /i btm`
+  - `gradlew.bat tasks --all | findstr /i byteman`
+- If the plugin adds tasks, you will see them grouped (often under a group like "forensics" or similar).
+
+4) Execute the plugin task(s)
+- Once you know the task name, run it directly. Examples (the exact name depends on the plugin implementation):
+  - `gradlew.bat btmGen`
+  - `gradlew.bat generateBytemanRules`
+  - `gradlew.bat btmGenMain` (if the plugin creates per-source-set tasks)
+- Add `-i` for info logs or `-d` for debug logs to see detailed output:
+  - `gradlew.bat btmGen -i`
+
+5) If you don’t see any new tasks
+- Some plugins act as convention plugins and perform their work during existing lifecycle tasks.
+- Try running a regular build with info logs and look for plugin messages:
+  - `gradlew.bat clean build -i`
+- Also make sure Gradle isn’t reusing a stale configuration-cache entry:
+  - `gradlew.bat --no-configuration-cache tasks --all`
+- If you just published a new plugin version locally, refresh dependencies:
+  - `gradlew.bat --refresh-dependencies tasks`
+
+6) Troubleshooting checklist
+- Confirm the plugin is applied in `build.gradle.kts`:
+  - `plugins { id("de.burger.forensics.btmgen") }`
+- Confirm the IDs and coordinates match the published plugin:
+  - Plugin ID: `de.burger.forensics.btmgen`
+  - Marker module used in settings: `de.burger.forensics.btmgen:de.burger.forensics.btmgen.gradle.plugin:1.0.0`
+- Ensure Java/Gradle versions match what the plugin was built for (Java 21, Gradle 9.x in this repo).
+- Run with `--stacktrace -i` if a task fails, and check logs for classes or extensions the plugin registers.
+
+7) Where are the outputs?
+- If the plugin generates files (e.g., Byteman .btm rule files), they are typically placed under this project’s `build/` directory (for example, `build/btmgen` or a similar folder), unless the plugin exposes configuration to change the output. Inspect the Gradle logs to find the exact output directory.
+
+If you’d like, share the exact task names the plugin registers (if any) and I can wire a convenience aggregate task (e.g., `generateTracingRules`) in this build that depends on them.
+
+
+
+
+## Forensics Tracing BTM Generator — Setup and Usage
+
+This project applies the Gradle plugin de.burger.forensics.btmgen, which analyzes Kotlin (and optionally simple Java) sources and generates Byteman rules to obtain forensic traces of call-chains, decisions, and selected variable writes.
+
+Features (plugin)
+- Generates AT ENTRY / AT EXIT rules for functions and methods to trace call-chains.
+- Adds decision tracing for if/when/is expressions (true/false branches).
+- Emits AFTER WRITE rules for configured local variables.
+- Optional naive Java parser for additional coverage.
+- Uses Kotlin PSI via kotlin-compiler-embeddable; no IDE required.
+
+Prerequisites
+- Gradle 7.0+ (this repo uses Gradle 9.x) and Kotlin DSL support
+- Byteman JAR (e.g., byteman-download-<version>/lib/byteman.jar) for runtime injection
+- A helper class implementation such as de.burger.forensics.ForensicsHelper providing methods invoked from rules (enter, exit, iff, writeVar, …)
+
+Configuration in this project
+- The plugin is applied in build.gradle.kts: id("de.burger.forensics.btmgen")
+- Plugin is resolved from mavenLocal via settings.gradle.kts using the marker module mapping for version 1.0.0
+- Defaults are configured via the forensicsBtmGen extension (Java sources, include Java parser, package prefix de.burger.it, helper FQN de.burger.forensics.ForensicsHelper)
+- A concrete task generateBtmRules is registered to produce rules under build/forensics
+
+Example configuration (already present in build.gradle.kts)
+- Extension defaults:
+  forensicsBtmGen {
+      srcDirs.set(listOf("src/main/java"))
+      pkgPrefix.set("")
+      pkgPrefixes.set(listOf("de.burger.it"))
+      helperFqn.set("de.burger.forensics.ForensicsHelper")
+      entryExit.set(true)
+      trackedVars.set(listOf("approved", "status"))
+      includeJava.set(true)
+  }
+- Task to generate rules:
+  tasks.register<de.burger.forensics.plugin.GenerateBtmTask>("generateBtmRules") { ... outputDir.set(layout.buildDirectory.dir("forensics")) }
+
+How to generate Byteman rules
+- Publish the plugin to your local Maven cache (only needed when you change the plugin):
+  - Windows: gradlew.bat publishToMavenLocal
+  - macOS/Linux: ./gradlew publishToMavenLocal
+- From this project root, run:
+  - Windows: gradlew.bat generateBtmRules
+  - macOS/Linux: ./gradlew generateBtmRules
+- Output: build/forensics/ with shard files such as tracing-0001-00001.btm
+
+Load the generated rules with Byteman
+1) Start your target JVM with the Byteman agent listening on a port (example: 9091):
+- Linux/macOS:
+  java -javaagent:/path/to/byteman.jar=listener:true,port:9091 -jar app.jar
+- Windows:
+  java -javaagent:C:\path\to\byteman.jar=listener:true,port:9091 -jar app.jar
+2) Submit all generated .btm files:
+- Linux/macOS:
+  for f in build/forensics/*.btm; do
+    bmsubmit -p 9091 -l "$f"
+  done
+- Windows cmd:
+  for %f in (build\forensics\*.btm) do bmsubmit.bat -p 9091 -l "%f"
+3) To unload later:
+- bmsubmit -p 9091 -u
+
+Generated rule highlights
+- Call chain tracing: paired enter/exit helper calls for selected functions
+- Decisions: iff, sw, and kase helper calls with preserved source line numbers
+- Variable writes: AFTER WRITE rules for configured trackedVars
+
+Example bootstrap snippet
+RULE bootstrap@Forensics
+CLASS *
+METHOD *
+HELPER de.burger.forensics.ForensicsHelper
+AT ENTRY
+IF true
+DO startTrace("/var/log/forensics.log"), setQuota(5000), enableSampling(10)
+ENDRULE
+
+RULE shutdown@Forensics
+CLASS *
+METHOD *
+HELPER de.burger.forensics.ForensicsHelper
+AT EXIT
+IF true
+DO stopTrace()
+ENDRULE
+
+Kotlin specifics
+- Top-level functions appear under synthetic <FileName>Kt classes
+- Nested classes/objects use $ separators in JVM binary names
+- Property writes use generated setters; trackedVars targets local variable assignments
+- Inline/suspend functions are handled at PSI level; logical structure preserved
+
+CI/CD note
+- The plugin repository supports publishing to Plugin Portal and Maven Central via GitHub Actions. Provide credentials to enable automated releases on tags.
+
+Troubleshooting
+- Ensure the helper class FQN exists at runtime when loading rules into your JVM
+- If tasks aren’t visible, refresh dependencies and disable configuration cache for a run:
+  - gradlew.bat --refresh-dependencies --no-configuration-cache tasks --all
+- Run with --stacktrace -i for more diagnostics

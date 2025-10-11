@@ -11,7 +11,10 @@ rootProject.name = "build-logic"
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories { mavenCentral() }
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
     versionCatalogs {
         // Einmalig: bindet den zentralen Catalog aus dem Root ein
         create("libs") {
